@@ -1,0 +1,27 @@
+{
+  "app": {
+    "name": "Hêz",
+    "tagline": "Rêwîtiya tenduristiya we li vir dest pê dike"
+  },
+  "nav": {
+    "home": "Mal",
+    "workouts": "Temrîn",
+    "progress": "Pêşveçûn",
+    "profile": "Profîl"
+  },
+  "common": {
+    "save": "Tomar bike",
+    "cancel": "Betal bike",
+    "delete": "Jê bibe",
+    "edit": "Sererast bike",
+    "loading": "Barkirin...",
+    "error": "Tiştek xelet çû",
+    "retry": "Dîsa biceribîne"
+  },
+  "theme": {
+    "select": "Mijarekê hilbijêre",
+    "system": "Sîstem",
+    "light": "Ronahî",
+    "dark": "Tarî"
+  }
+}

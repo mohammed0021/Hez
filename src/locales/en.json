@@ -1,0 +1,27 @@
+{
+  "app": {
+    "name": "Hêz",
+    "tagline": "Your fitness journey starts here"
+  },
+  "nav": {
+    "home": "Home",
+    "workouts": "Workouts",
+    "progress": "Progress",
+    "profile": "Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry"
+  },
+  "theme": {
+    "select": "Select Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  }
+}

@@ -1,0 +1,104 @@
+:root,
+[data-theme='hez-green'] {
+  --theme-primary: 167 68% 46%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 215 25% 27%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 160 84% 39%;
+  --theme-ring: 167 68% 46%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='blossom-pink'] {
+  --theme-primary: 330 81% 60%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 340 65% 25%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 330 75% 55%;
+  --theme-ring: 330 81% 60%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='ocean-blue'] {
+  --theme-primary: 217 91% 60%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 220 50% 20%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 200 95% 50%;
+  --theme-ring: 217 91% 60%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='purple'] {
+  --theme-primary: 258 90% 66%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 260 50% 25%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 270 85% 60%;
+  --theme-ring: 258 90% 66%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='orange'] {
+  --theme-primary: 24 95% 53%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 20 60% 25%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 30 90% 50%;
+  --theme-ring: 24 95% 53%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='crimson'] {
+  --theme-primary: 0 72% 51%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 0 60% 25%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 0 80% 45%;
+  --theme-ring: 0 72% 51%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='midnight'] {
+  --theme-primary: 222 47% 20%;
+  --theme-primary-foreground: 0 0% 100%;
+  --theme-secondary: 215 25% 27%;
+  --theme-secondary-foreground: 0 0% 100%;
+  --theme-accent: 220 40% 35%;
+  --theme-ring: 222 47% 20%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
+
+[data-theme='snow'] {
+  --theme-primary: 0 0% 95%;
+  --theme-primary-foreground: 0 0% 10%;
+  --theme-secondary: 0 0% 85%;
+  --theme-secondary-foreground: 0 0% 10%;
+  --theme-accent: 0 0% 90%;
+  --theme-ring: 0 0% 70%;
+  --theme-success: 160 84% 39%;
+  --theme-warning: 38 92% 50%;
+  --theme-error: 0 72% 51%;
+  --theme-info: 217 91% 60%;
+}
