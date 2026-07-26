@@ -6,7 +6,10 @@ import { canNotify, notify } from '@/lib/notification-service';
 
 function playBeep() {
   try {
-    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    const ctx = new (
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+    )();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = 'sine';
@@ -39,6 +42,7 @@ export function RestTimer({
 }) {
   const [remaining, setRemaining] = useState(0);
   const expiredRef = useRef(false);
+  const hadEndTimeRef = useRef(false);
 
   useEffect(() => {
     requestNotificationPermission();
@@ -46,11 +50,15 @@ export function RestTimer({
 
   useEffect(() => {
     if (!endTime) {
-      setRemaining(0);
-      expiredRef.current = false;
+      if (hadEndTimeRef.current) {
+        hadEndTimeRef.current = false;
+        setRemaining(0);
+        expiredRef.current = false;
+      }
       return;
     }
 
+    hadEndTimeRef.current = true;
     expiredRef.current = false;
 
     const tick = () => {
@@ -62,7 +70,10 @@ export function RestTimer({
           if (canNotify()) {
             notify('Rest Over!', { body: 'Time for your next set', tag: 'rest_timer_alert' });
           } else if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Rest Over!', { body: 'Time for your next set', icon: '/icons/icon-192x192.png' });
+            new Notification('Rest Over!', {
+              body: 'Time for your next set',
+              icon: '/icons/icon-192x192.png',
+            });
           }
           onExpire();
         }
@@ -94,7 +105,9 @@ export function RestTimer({
         <svg className="absolute inset-0 -rotate-90" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="44" fill="none" stroke="hsl(var(--muted))" strokeWidth="6" />
           <circle
-            cx="50" cy="50" r="44"
+            cx="50"
+            cy="50"
+            r="44"
             fill="none"
             stroke="hsl(var(--primary))"
             strokeWidth="6"
@@ -103,14 +116,14 @@ export function RestTimer({
             className="transition-all duration-100"
           />
         </svg>
-        <span className="text-4xl font-bold text-foreground tabular-nums">
+        <span className="text-foreground text-4xl font-bold tabular-nums">
           {minutes}:{secs.toString().padStart(2, '0')}
         </span>
       </div>
-      <p className="text-sm text-muted-foreground">Rest</p>
+      <p className="text-muted-foreground text-sm">Rest</p>
       <button
         onClick={onSkip}
-        className="rounded-xl bg-primary px-6 py-2 text-sm font-medium text-primary-foreground active:scale-95 transition-transform"
+        className="bg-primary text-primary-foreground rounded-xl px-6 py-2 text-sm font-medium transition-transform active:scale-95"
       >
         Skip Rest
       </button>

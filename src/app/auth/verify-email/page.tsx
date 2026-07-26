@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Mail, RefreshCw, ArrowLeft } from 'lucide-react';
@@ -8,17 +8,43 @@ import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { useToastStore } from '@/stores/toast-store';
+import { createClient } from '@/lib/supabase-client';
 
 export default function VerifyEmailPage() {
   const router = useRouter();
   const toast = useToastStore();
+  const [email, setEmail] = useState('');
   const [isResending, setIsResending] = useState(false);
 
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) setEmail(user.email);
+    });
+  }, []);
+
   const handleResend = async () => {
+    if (!email) {
+      toast.error('Unable to determine your email address. Please try logging in again.');
+      return;
+    }
     setIsResending(true);
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsResending(false);
-    toast.success('Verification email sent!');
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+      });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Verification email sent!');
+      }
+    } catch {
+      toast.error('Failed to resend verification email');
+    } finally {
+      setIsResending(false);
+    }
   };
 
   const handleCheck = () => {
@@ -26,8 +52,11 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <div className="flex min-h-screen-safe flex-col bg-background px-6 pt-16 pb-8">
-      <Link href="/auth/login" className="mb-6 flex size-10 items-center justify-center rounded-xl bg-muted">
+    <div className="min-h-screen-safe bg-background flex flex-col px-6 pt-16 pb-8">
+      <Link
+        href="/auth/login"
+        className="bg-muted mb-6 flex size-10 items-center justify-center rounded-xl"
+      >
         <ArrowLeft size={20} className="text-foreground" />
       </Link>
 
@@ -37,7 +66,7 @@ export default function VerifyEmailPage() {
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         className="flex flex-1 flex-col items-center justify-center text-center"
       >
-        <div className="mb-6 flex size-20 items-center justify-center rounded-[2rem] bg-primary/10">
+        <div className="bg-primary/10 mb-6 flex size-20 items-center justify-center rounded-[2rem]">
           <motion.div
             animate={{ y: [0, -5, 0] }}
             transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
@@ -45,12 +74,12 @@ export default function VerifyEmailPage() {
             <Mail size={36} className="text-primary" />
           </motion.div>
         </div>
-        <h1 className="text-2xl font-bold text-foreground">Check your email</h1>
-        <p className="mt-2 max-w-xs text-sm text-muted-foreground leading-relaxed">
+        <h1 className="text-foreground text-2xl font-bold">Check your email</h1>
+        <p className="text-muted-foreground mt-2 max-w-xs text-sm leading-relaxed">
           We sent a verification link to your email. Click the link to activate your account.
         </p>
 
-        <div className="mt-8 space-y-3 w-full max-w-xs">
+        <div className="mt-8 w-full max-w-xs space-y-3">
           <Button className="w-full" onClick={handleCheck}>
             I&apos;ve verified my email
           </Button>
@@ -65,7 +94,7 @@ export default function VerifyEmailPage() {
           </Button>
         </div>
 
-        <p className="mt-6 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-6 text-xs">
           Didn&apos;t receive it? Check your spam folder or try a different email address.
         </p>
       </motion.div>

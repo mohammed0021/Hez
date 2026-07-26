@@ -1,9 +1,14 @@
 import { NextResponse } from 'next/server';
+import { withSecurity } from '@/lib/security/with-security';
+import { getEnvOrThrow } from '@/lib/security/env-validator';
 
-export async function GET() {
-  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-  if (!publicKey) {
-    return NextResponse.json({ error: 'VAPID public key not configured' }, { status: 500 });
-  }
+async function publicKeyHandler() {
+  const publicKey = getEnvOrThrow('NEXT_PUBLIC_VAPID_PUBLIC_KEY');
   return NextResponse.json({ publicKey });
 }
+
+export const GET = withSecurity(publicKeyHandler, {
+  requireAuth: false,
+  requireCsrf: false,
+  rateLimitPath: '/api/push/public-key',
+});

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
 import { useAuthStore } from '@/stores/auth-store';
 import { useNotificationScheduler } from '@/lib/use-notification-scheduler';
+import { useGamificationSync } from '@/lib/use-gamification-sync';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -12,6 +13,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isLoading = useAuthStore((s) => s.isLoading);
 
   useNotificationScheduler();
+  useGamificationSync();
 
   useEffect(() => {
     if (!isLoading && !user) {

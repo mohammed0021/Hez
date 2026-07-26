@@ -4,11 +4,15 @@ import { motion } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
 import { NAV_ITEMS } from '@/lib/constants';
 import { useMediaQuery } from '@/hooks/use-media-query';
-import { Home, Dumbbell, BarChart3, User } from 'lucide-react';
+import { Home, Dumbbell, BarChart3, User, Sparkles } from 'lucide-react';
 import type React from 'react';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  Home, Dumbbell, BarChart3, User,
+  Home,
+  Dumbbell,
+  Sparkles,
+  BarChart3,
+  User,
 };
 
 export function BottomNav() {
@@ -23,11 +27,14 @@ export function BottomNav() {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 safe-bottom">
-      <div className="mx-auto max-w-lg border-t border-border/50 bg-background/95 backdrop-blur-xl">
+    <nav className="safe-bottom fixed right-0 bottom-0 left-0 z-50">
+      <div className="border-border/50 bg-background/95 mx-auto max-w-lg border-t backdrop-blur-xl">
         <div className="flex items-center justify-around px-2 py-1">
           {NAV_ITEMS.map((item) => {
-            const Icon = iconMap[item.icon] as React.ComponentType<{ size?: number; className?: string }>;
+            const Icon = iconMap[item.icon] as React.ComponentType<{
+              size?: number;
+              className?: string;
+            }>;
             const isActive = pathname === item.href;
             return (
               <button
@@ -38,7 +45,7 @@ export function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="nav-pill"
-                    className="absolute inset-0 mx-4 rounded-xl bg-primary/10"
+                    className="bg-primary/10 absolute inset-0 mx-4 rounded-xl"
                     transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                   />
                 )}

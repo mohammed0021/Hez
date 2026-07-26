@@ -27,25 +27,30 @@ export function listenForInstallPrompt() {
 
 export function useInstallPrompt() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const ua = window.navigator.userAgent;
+    const iOS = /iphone|ipad|ipod/i.test(ua);
+    const standalone = window.matchMedia('(display-mode: standalone)').matches;
+    const iosStandalone =
+      iOS &&
+      'standalone' in window.navigator &&
+      (window.navigator as unknown as { standalone?: boolean }).standalone;
+    return standalone || !!iosStandalone;
+  });
+  const [isIOS] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  });
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const ua = window.navigator.userAgent;
-    const iOS = /iphone|ipad|ipod/i.test(ua);
-    const standalone = window.matchMedia('(display-mode: standalone)').matches;
-    const iosStandalone = iOS && 'standalone' in window.navigator && (window.navigator as unknown as { standalone?: boolean }).standalone;
-
-    setIsIOS(iOS);
-    setIsInstalled(standalone || !!iosStandalone);
-
-    const handler = (p: BeforeInstallPromptEvent | null) => setPrompt(p);
+    const handler = (p: BeforeInstallPromptEvent | null) => setPrompt(() => p);
     listeners.push(handler);
 
     if (deferredPrompt) {
-      setPrompt(deferredPrompt);
+      handler(deferredPrompt);
     }
 
     return () => {

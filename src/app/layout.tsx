@@ -3,8 +3,15 @@ import Script from 'next/script';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Providers } from '@/components/providers';
 import { PwaProvider } from '@/components/pwa-provider';
+import { validateEnvOnStartup } from '@/lib/security/with-security';
 import './globals.css';
 import enMessages from '@/locales/en.json';
+
+if (typeof globalThis !== 'undefined' && process.env.NODE_ENV === 'production') {
+  try {
+    validateEnvOnStartup();
+  } catch {}
+}
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -17,7 +24,9 @@ const geistMono = Geist_Mono({
 });
 
 const APP_NAME = 'Hêz';
-const APP_DESCRIPTION = 'Premium fitness tracking experience';
+const APP_DESCRIPTION =
+  'Premium fitness tracking experience. Track workouts, log nutrition, monitor progress, and achieve your fitness goals with Hêz — the all-in-one fitness companion.';
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://hez.fit';
 
 export const metadata: Metadata = {
   title: {
@@ -26,13 +35,37 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   manifest: '/manifest.webmanifest',
+  metadataBase: new URL(APP_URL),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: '/',
+    siteName: APP_NAME,
+    title: `${APP_NAME} — Premium Fitness Tracking`,
+    description: APP_DESCRIPTION,
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: APP_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${APP_NAME} — Premium Fitness Tracking`,
+    description: APP_DESCRIPTION,
+    images: ['/opengraph-image.png'],
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
     title: APP_NAME,
-    startupImage: [
-      '/splash/apple-splash-2048x2732.png',
-    ],
+    startupImage: ['/splash/apple-splash-2048x2732.png'],
   },
   formatDetection: {
     telephone: false,
@@ -97,13 +130,39 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
+        <Script
+          id="structured-data"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebApplication',
+              name: APP_NAME,
+              url: APP_URL,
+              description: APP_DESCRIPTION,
+              applicationCategory: 'HealthApplication',
+              operatingSystem: 'Web, iOS, Android',
+              offers: {
+                '@type': 'Offer',
+                price: '0',
+                priceCurrency: 'USD',
+              },
+              author: {
+                '@type': 'Organization',
+                name: 'Hêz Fitness',
+              },
+            }),
+          }}
+        />
         <Script id="theme-init" strategy="beforeInteractive">
           {`
             (function() {
               try {
+                function s(v) { return typeof v === 'string' ? v.replace(/[^a-zA-Z0-9_-]/g, '') : 'hez-green'; }
+                function m(v) { return v === 'dark' || v === 'light' || v === 'system' ? v : 'system'; }
                 var theme = JSON.parse(localStorage.getItem('hez-theme') || '{}');
-                var mode = theme.mode || 'system';
-                var themeId = theme.themeId || 'hez-green';
+                var mode = m(theme.mode);
+                var themeId = s(theme.themeId) || 'hez-green';
                 document.documentElement.setAttribute('data-theme', themeId);
                 if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.documentElement.classList.add('dark');
@@ -115,9 +174,7 @@ export default function RootLayout({
           `}
         </Script>
         <Providers locale="en" messages={enMessages}>
-          <PwaProvider>
-            {children}
-          </PwaProvider>
+          <PwaProvider>{children}</PwaProvider>
         </Providers>
       </body>
     </html>

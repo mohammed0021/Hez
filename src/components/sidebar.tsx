@@ -5,15 +5,42 @@ import { motion } from 'framer-motion';
 import { useUiStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { SIDEBAR_ITEMS, SIDEBAR_BOTTOM_ITEMS } from '@/lib/constants';
-import { LayoutDashboard, Dumbbell, BookOpen, NotebookText, BarChart3, Apple, Pill, Calendar, User, Settings, LogOut } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Dumbbell,
+  BookOpen,
+  NotebookText,
+  BarChart3,
+  Apple,
+  Pill,
+  Calendar,
+  User,
+  Settings,
+  LogOut,
+  Sparkles,
+} from 'lucide-react';
 import { signOut } from '@/services/auth';
 import type React from 'react';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
-  LayoutDashboard, Dumbbell, BookOpen, NotebookText, BarChart3, Apple, Pill, Calendar, User, Settings,
+  LayoutDashboard,
+  Dumbbell,
+  BookOpen,
+  NotebookText,
+  Sparkles,
+  BarChart3,
+  Apple,
+  Pill,
+  Calendar,
+  User,
+  Settings,
 };
 
-function SidebarItem({ item, isActive, onNavigate }: {
+function SidebarItem({
+  item,
+  isActive,
+  onNavigate,
+}: {
   item: { id: string; label: string; icon: string; href: string };
   isActive: boolean;
   onNavigate: (href: string) => void;
@@ -32,7 +59,7 @@ function SidebarItem({ item, isActive, onNavigate }: {
       {isActive && (
         <motion.div
           layoutId="sidebar-active"
-          className="absolute inset-0 rounded-xl bg-primary/10"
+          className="bg-primary/10 absolute inset-0 rounded-xl"
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         />
       )}
@@ -75,21 +102,21 @@ export function Sidebar() {
 
       {/* Sidebar */}
       <aside
-        className={`fixed left-0 top-0 z-40 flex h-full w-64 flex-col border-r border-border/50 bg-background transition-transform duration-200 ${
+        className={`border-border/50 bg-background fixed top-0 left-0 z-40 flex h-full w-64 flex-col border-r transition-transform duration-200 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
         {/* Logo */}
-        <div className="flex h-14 items-center gap-3 border-b border-border/50 px-5">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-primary">
-            <span className="text-sm font-bold text-primary-foreground">H</span>
+        <div className="border-border/50 flex h-14 items-center gap-3 border-b px-5">
+          <div className="bg-primary flex size-8 items-center justify-center rounded-xl">
+            <span className="text-primary-foreground text-sm font-bold">H</span>
           </div>
-          <span className="text-lg font-bold text-foreground">Hêz</span>
+          <span className="text-foreground text-lg font-bold">Hêz</span>
         </div>
 
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
-          <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-muted-foreground/60 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
             Main
           </p>
           <div className="space-y-1">
@@ -103,7 +130,7 @@ export function Sidebar() {
             ))}
           </div>
 
-          <p className="mb-2 mt-6 px-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-muted-foreground/60 mt-6 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
             Account
           </p>
           <div className="space-y-1">
@@ -119,18 +146,18 @@ export function Sidebar() {
         </nav>
 
         {/* User footer */}
-        <div className="border-t border-border/50 px-4 py-3">
+        <div className="border-border/50 border-t px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-sm font-medium text-primary">
+            <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full text-sm font-medium">
               {displayName.charAt(0).toUpperCase()}
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
-              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-foreground truncate text-sm font-medium">{displayName}</p>
+              <p className="text-muted-foreground truncate text-xs">{user?.email}</p>
             </div>
             <button
               onClick={handleSignOut}
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+              className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-8 items-center justify-center rounded-lg"
             >
               <LogOut size={16} />
             </button>

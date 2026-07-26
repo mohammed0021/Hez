@@ -14,6 +14,10 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "public/sw.js",
     "public/workbox-*.js",
+    ".lintstagedrc.js",
+    "src/test/**",
+    "e2e/**",
+    "**/__tests__/**",
   ]),
 ]);
 

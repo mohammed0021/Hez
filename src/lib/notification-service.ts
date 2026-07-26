@@ -44,6 +44,9 @@ function isInQuietHours(): boolean {
   const [eh, em] = quietHours.end.split(':').map(Number);
   const start = sh! * 60 + sm!;
   const end = eh! * 60 + em!;
+  if (start <= end) {
+    return current >= start && current < end;
+  }
   return current >= start || current < end;
 }
 
@@ -162,18 +165,20 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return outputArray;
 }
 
-export function getMessageForType(type: NotificationTypeId): { title: string; body: string } | null {
+export function getMessageForType(
+  type: NotificationTypeId,
+): { title: string; body: string } | null {
   const state = useNotificationStore.getState();
   const prefs = state.types[type];
   if (!prefs || !prefs.enabled || !state.globalEnabled) return null;
 
   switch (type) {
     case 'workout_reminder':
-      return { title: 'Time to Work Out!', body: 'Your daily workout is waiting — let\'s go!' };
+      return { title: 'Time to Work Out!', body: "Your daily workout is waiting — let's go!" };
     case 'pre_gym_reminder':
       return { title: 'Gym Prep Time', body: 'Your workout starts soon — get ready!' };
     case 'creatine_reminder':
-      return { title: 'Creatine Time', body: 'Don\'t forget to take your creatine today.' };
+      return { title: 'Creatine Time', body: "Don't forget to take your creatine today." };
     case 'water_reminder':
       return { title: 'Hydration Reminder', body: 'Time to drink some water!' };
     case 'meal_reminder':
@@ -183,7 +188,10 @@ export function getMessageForType(type: NotificationTypeId): { title: string; bo
     case 'rest_timer_alert':
       return { title: 'Rest Over!', body: 'Time for your next set.' };
     case 'workout_tomorrow_reminder':
-      return { title: 'Workout Tomorrow', body: 'Don\'t forget — you have a workout scheduled for tomorrow!' };
+      return {
+        title: 'Workout Tomorrow',
+        body: "Don't forget — you have a workout scheduled for tomorrow!",
+      };
     case 'weekly_summary':
       return { title: 'Weekly Summary', body: 'Check out your progress this week.' };
     case 'monthly_summary':

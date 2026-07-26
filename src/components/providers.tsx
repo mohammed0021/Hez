@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { NextIntlClientProvider } from 'next-intl';
 import { ThemeProvider } from './theme-provider';
+import { AnalyticsProvider } from './analytics-provider';
 import { useState } from 'react';
 
 interface ProvidersProps {
@@ -29,7 +30,9 @@ export function Providers({ children, locale, messages }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AnalyticsProvider>{children}</AnalyticsProvider>
+        </ThemeProvider>
       </NextIntlClientProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

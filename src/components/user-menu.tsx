@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { User, Settings, LogOut, Moon, Sun, Monitor } from 'lucide-react';
 import { THEMES } from '@/lib/constants';
 import { useThemeStore } from '@/stores/theme-store';
+import type { ThemeId } from '@/types/theme';
 
 function ThemeItem({ theme }: { theme: { id: string; label: string; color: string } }) {
   const currentTheme = useThemeStore((s) => s.themeId);
@@ -17,19 +18,19 @@ function ThemeItem({ theme }: { theme: { id: string; label: string; color: strin
   return (
     <button
       onClick={() => {
-        setThemeId(theme.id as any);
+        setThemeId(theme.id as ThemeId);
         useUiStore.getState().setUserMenuOpen(false);
       }}
-      className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors hover:bg-muted ${
-        isActive ? 'font-medium text-foreground' : 'text-muted-foreground'
+      className={`hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors ${
+        isActive ? 'text-foreground font-medium' : 'text-muted-foreground'
       }`}
     >
       <div
-        className="size-4 shrink-0 rounded-full border border-border/50"
+        className="border-border/50 size-4 shrink-0 rounded-full border"
         style={{ backgroundColor: theme.color }}
       />
       {theme.label}
-      {isActive && <span className="ml-auto text-[10px] text-primary">Active</span>}
+      {isActive && <span className="text-primary ml-auto text-[10px]">Active</span>}
     </button>
   );
 }
@@ -56,7 +57,7 @@ export function UserMenu() {
     <div className="relative">
       <button
         onClick={() => setUserMenuOpen(!userMenuOpen)}
-        className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+        className="bg-primary/10 text-primary hover:bg-primary/20 flex size-9 items-center justify-center rounded-xl text-sm font-medium transition-colors"
       >
         {displayName.charAt(0).toUpperCase()}
       </button>
@@ -76,45 +77,57 @@ export function UserMenu() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -8 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-50 mt-2 w-56 origin-top-right overflow-hidden rounded-xl border border-border/50 bg-background shadow-xl"
+              className="border-border/50 bg-background absolute top-full right-0 z-50 mt-2 w-56 origin-top-right overflow-hidden rounded-xl border shadow-xl"
             >
-              <div className="border-b border-border/50 px-4 py-3">
-                <p className="text-sm font-medium text-foreground truncate">{displayName}</p>
-                <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+              <div className="border-border/50 border-b px-4 py-3">
+                <p className="text-foreground truncate text-sm font-medium">{displayName}</p>
+                <p className="text-muted-foreground truncate text-xs">{user?.email}</p>
               </div>
 
               <div className="py-1">
                 <button
-                  onClick={() => { setUserMenuOpen(false); router.push('/profile'); }}
-                  className="flex w-full items-center gap-3 px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    router.push('/profile');
+                  }}
+                  className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
                   <User size={16} /> Profile
                 </button>
                 <button
-                  onClick={() => { setUserMenuOpen(false); router.push('/settings'); }}
-                  className="flex w-full items-center gap-3 px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    router.push('/settings');
+                  }}
+                  className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
                   <Settings size={16} /> Settings
                 </button>
               </div>
 
-              <div className="border-t border-border/50 py-1">
-                <p className="px-4 py-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/60">Theme</p>
+              <div className="border-border/50 border-t py-1">
+                <p className="text-muted-foreground/60 px-4 py-1 text-[10px] font-semibold tracking-widest uppercase">
+                  Theme
+                </p>
                 <div className="max-h-40 overflow-y-auto">
-                  {THEMES.map((t) => <ThemeItem key={t.id} theme={t} />)}
+                  {THEMES.map((t) => (
+                    <ThemeItem key={t.id} theme={t} />
+                  ))}
                 </div>
               </div>
 
-              <div className="border-t border-border/50 py-1">
+              <div className="border-border/50 border-t py-1">
                 <button
-                  onClick={() => { setMode(nextMode); }}
-                  className="flex w-full items-center gap-3 px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted"
+                  onClick={() => {
+                    setMode(nextMode);
+                  }}
+                  className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
                   {modeIcon({ size: 16 })} {modeLabel} mode
                 </button>
                 <button
                   onClick={handleSignOut}
-                  className="flex w-full items-center gap-3 px-4 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
+                  className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
                   <LogOut size={16} /> Sign out
                 </button>

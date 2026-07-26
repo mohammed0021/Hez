@@ -1,4 +1,5 @@
 export type * from './theme';
+export type * from './profile';
 
 export interface NavItem {
   id: string;
@@ -11,7 +12,8 @@ export interface Notification {
   id: string;
   title: string;
   body?: string;
-  type: 'workout_reminder' | 'achievement_unlocked' | 'challenge' | 'progress' | 'system' | 'social';
+  type:
+    'workout_reminder' | 'achievement_unlocked' | 'challenge' | 'progress' | 'system' | 'social';
   read: boolean;
   created_at: string;
   data?: Record<string, unknown>;

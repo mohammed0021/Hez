@@ -393,11 +393,11 @@ create policy "Anyone can view achievements"
 -- Achievements are managed via Supabase dashboard / service role
 create policy "Only service role can manage achievements"
   on public.achievements for insert
-  with check (false);
+  with check (auth.role() = 'service_role');
 
 create policy "Only service role can update achievements"
   on public.achievements for update
-  using (false);
+  using (auth.role() = 'service_role');
 
 -- ===== USER ACHIEVEMENTS =====
 alter table public.user_achievements enable row level security;
@@ -420,11 +420,11 @@ create policy "Anyone can view challenges"
 
 create policy "Only service role can manage challenges"
   on public.challenges for insert
-  with check (false);
+  with check (auth.role() = 'service_role');
 
 create policy "Only service role can update challenges"
   on public.challenges for update
-  using (false);
+  using (auth.role() = 'service_role');
 
 -- ===== USER CHALLENGES =====
 alter table public.user_challenges enable row level security;
@@ -452,11 +452,13 @@ create policy "Users can view own records"
 -- Records are calculated and inserted by the system
 create policy "System can insert records"
   on public.personal_records for insert
-  with check (true);
+  with check (auth.role() = 'service_role');
 
-create policy "System can update records"
+-- Users can update their own personal records (e.g., manually correcting a PR)
+create policy "Users can update own records"
   on public.personal_records for update
-  using (true);
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 -- ===== SETTINGS =====
 alter table public.settings enable row level security;
@@ -483,8 +485,8 @@ create policy "Users can view own analytics"
 
 create policy "System can create analytics snapshots"
   on public.analytics_snapshots for insert
-  with check (true);
+  with check (auth.role() = 'service_role');
 
 create policy "System can update analytics snapshots"
   on public.analytics_snapshots for update
-  using (true);
+  using (auth.role() = 'service_role');

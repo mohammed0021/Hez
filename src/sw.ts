@@ -1,9 +1,12 @@
-// @ts-nocheck
 import { defaultCache } from '@serwist/next/worker';
 import { installSerwist } from '@serwist/sw';
 
+declare const self: ServiceWorkerGlobalScope;
+
 installSerwist({
-  precacheEntries: self.__SW_MANIFEST || self.__WB_MANIFEST,
+  precacheEntries:
+    (self as unknown as { __SW_MANIFEST: unknown }).__SW_MANIFEST ||
+    (self as unknown as { __WB_MANIFEST: unknown }).__WB_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
@@ -40,7 +43,10 @@ async function syncWorkouts() {
 self.addEventListener('fetch', (event) => {
   if (event.request.mode === 'navigate') {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match('/offline') || caches.match('/')),
+      fetch(event.request).catch(async () => {
+        const offline = await caches.match('/offline');
+        return offline || (await caches.match('/'))!;
+      }),
     );
   }
 });
@@ -69,8 +75,8 @@ self.addEventListener('push', (event) => {
         tag,
         data: notificationData,
         requireInteraction,
-        actions,
-        vibrate,
+        actions: actions as unknown as undefined,
+        vibrate: vibrate as unknown as undefined,
       }),
     );
   } catch {

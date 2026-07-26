@@ -4,7 +4,8 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Hêz — Premium Fitness Tracking',
     short_name: 'Hêz',
-    description: 'Premium fitness tracking experience. Track workouts, monitor progress, and achieve your fitness goals.',
+    description:
+      'Premium fitness tracking experience. Track workouts, monitor progress, and achieve your fitness goals.',
     start_url: '/',
     display: 'standalone',
     orientation: 'portrait-primary',
@@ -37,6 +38,29 @@ export default function manifest(): MetadataRoute.Manifest {
         description: 'View your profile and settings',
         url: '/profile',
         icons: [{ src: '/icons/icon-96x96.png', sizes: '96x96' }],
+      },
+    ],
+    screenshots: [
+      {
+        src: '/screenshots/dashboard.webp',
+        sizes: '1170x2532',
+        type: 'image/webp',
+        form_factor: 'narrow',
+        label: 'Dashboard overview with workout, nutrition, and progress widgets',
+      },
+      {
+        src: '/screenshots/workout.webp',
+        sizes: '1170x2532',
+        type: 'image/webp',
+        form_factor: 'narrow',
+        label: 'Active workout tracking with real-time set logging',
+      },
+      {
+        src: '/screenshots/progress.webp',
+        sizes: '1170x2532',
+        type: 'image/webp',
+        form_factor: 'narrow',
+        label: 'Progress charts for weight, measurements, and strength trends',
       },
     ],
     icons: [
