@@ -47,8 +47,17 @@ export default function VerifyEmailPage() {
     }
   };
 
-  const handleCheck = () => {
-    router.refresh();
+  const handleCheck = async () => {
+    const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user?.email_confirmed_at) {
+      toast.success('Email verified! Welcome to Hêz.');
+      router.replace('/onboarding');
+    } else {
+      toast.error('Email not yet verified. Check your inbox or resend.');
+    }
   };
 
   return (

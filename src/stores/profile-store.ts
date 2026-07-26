@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createClient } from '@/lib/supabase-client';
 
 export type FitnessGoal =
   'lose_fat' | 'build_muscle' | 'maintain' | 'increase_strength' | 'improve_endurance';
@@ -25,8 +26,11 @@ export interface ProfileState {
   showAchievements: boolean;
   showBodyStats: boolean;
 
-  updateProfile: (data: Partial<Omit<ProfileState, 'updateProfile' | 'reset'>>) => void;
+  updateProfile: (
+    data: Partial<Omit<ProfileState, 'updateProfile' | 'reset' | 'syncFromServer'>>,
+  ) => Promise<void>;
   reset: () => void;
+  syncFromServer: () => Promise<void>;
 }
 
 export const useProfileStore = create<ProfileState>()(
@@ -50,7 +54,27 @@ export const useProfileStore = create<ProfileState>()(
       showAchievements: true,
       showBodyStats: true,
 
-      updateProfile: (data) => set((s) => ({ ...s, ...data })),
+      updateProfile: async (data) => {
+        set((s) => ({ ...s, ...data }));
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user) {
+            await supabase
+              .from('profiles')
+              .update({
+                display_name: data.displayName || undefined,
+                bio: data.bio || undefined,
+                height_cm: data.heightCm || undefined,
+              })
+              .eq('id', user.id);
+          }
+        } catch (e) {
+          console.error('Failed to sync profile to server:', e);
+        }
+      },
 
       reset: () =>
         set({
@@ -70,6 +94,31 @@ export const useProfileStore = create<ProfileState>()(
           showAchievements: true,
           showBodyStats: true,
         }),
+
+      syncFromServer: async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user) return;
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
+          if (profile) {
+            set({
+              displayName: profile.display_name || '',
+              bio: profile.bio || '',
+              avatar: profile.avatar_url || '',
+              heightCm: profile.height_cm || 175,
+            });
+          }
+        } catch (e) {
+          console.error('Failed to sync profile from server:', e);
+        }
+      },
     }),
     {
       name: 'hez-profile',

@@ -164,7 +164,7 @@ export default function GamificationPage() {
                   const isUnlocked = lvl <= level.level;
                   const fill = isCurrent ? levelProgress : isUnlocked ? 100 : 0;
                   return (
-                    <div key={lvl} className="flex items-center gap-2">
+                    <div key={i} className="flex items-center gap-2">
                       <div
                         className={`flex size-6 shrink-0 items-center justify-center rounded-lg text-[9px] font-bold ${
                           isUnlocked

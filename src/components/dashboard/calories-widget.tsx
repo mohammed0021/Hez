@@ -3,25 +3,32 @@
 import { CircularProgress } from './circular-progress';
 import { DashboardWidget } from './widget-shell';
 import { AnimatedCounter } from './animated-counter';
+import { useNutritionStore } from '@/stores/nutrition-store';
+import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
 
 export function CaloriesWidget() {
-  const consumed = 1280;
-  const goal = 2200;
+  const today = new Date().toISOString().split('T')[0] ?? '';
+  const log = useNutritionStore((s) => s.getLog(today));
+  const consumed = log?.totalCalories ?? 0;
+  const macroGoals = useNutritionGoalsStore((s) => s.goals);
+  const goal = macroGoals.calories || 2200;
 
   return (
     <DashboardWidget title="Calories">
       <div className="flex items-center gap-4">
         <CircularProgress value={consumed} max={goal} size={72} strokeWidth={5}>
-          <span className="text-lg font-bold text-foreground">
-            {Math.round((consumed / goal) * 100)}%
+          <span className="text-foreground text-lg font-bold">
+            {goal > 0 ? `${Math.round((consumed / goal) * 100)}%` : '0%'}
           </span>
         </CircularProgress>
         <div>
-          <p className="text-2xl font-bold text-foreground">
+          <p className="text-foreground text-2xl font-bold">
             <AnimatedCounter value={consumed} decimals={0} />
           </p>
-          <p className="text-xs text-muted-foreground">of {goal} kcal</p>
-          <p className="mt-1 text-[10px] text-muted-foreground/60">Remaining: {goal - consumed} kcal</p>
+          <p className="text-muted-foreground text-xs">of {goal} kcal</p>
+          <p className="text-muted-foreground/60 mt-1 text-[10px]">
+            {goal > 0 ? `Remaining: ${Math.max(goal - consumed, 0)} kcal` : 'No daily goal set'}
+          </p>
         </div>
       </div>
     </DashboardWidget>

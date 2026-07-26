@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createClient } from '@/lib/supabase-client';
 
 export interface FoodItem {
   id: string;
@@ -63,7 +64,9 @@ function uid() {
   return Math.random().toString(36).substring(2, 10);
 }
 
-function recalcMeal(foods: MealFood[]): Pick<MealEntry, 'totalCalories' | 'totalProtein' | 'totalCarbs' | 'totalFat' | 'totalFiber'> {
+function recalcMeal(
+  foods: MealFood[],
+): Pick<MealEntry, 'totalCalories' | 'totalProtein' | 'totalCarbs' | 'totalFat' | 'totalFiber'> {
   return {
     totalCalories: foods.reduce((s, f) => s + f.calories * f.servings, 0),
     totalProtein: foods.reduce((s, f) => s + f.protein * f.servings, 0),
@@ -73,7 +76,9 @@ function recalcMeal(foods: MealFood[]): Pick<MealEntry, 'totalCalories' | 'total
   };
 }
 
-function recalcDay(meals: MealEntry[]): Pick<DailyLog, 'totalCalories' | 'totalProtein' | 'totalCarbs' | 'totalFat' | 'totalFiber'> {
+function recalcDay(
+  meals: MealEntry[],
+): Pick<DailyLog, 'totalCalories' | 'totalProtein' | 'totalCarbs' | 'totalFat' | 'totalFiber'> {
   return {
     totalCalories: meals.reduce((s, m) => s + m.totalCalories, 0),
     totalProtein: meals.reduce((s, m) => s + m.totalProtein, 0),
@@ -92,6 +97,7 @@ interface NutritionState {
   saveAsTemplate: (name: string, mealType: MealEntry['mealType'], foods: MealFood[]) => void;
   deleteTemplate: (id: string) => void;
   clearLogs: () => void;
+  syncFromServer: () => Promise<void>;
 }
 
 export const useNutritionStore = create<NutritionState>()(
@@ -100,7 +106,7 @@ export const useNutritionStore = create<NutritionState>()(
       logs: [],
       mealTemplates: [],
 
-      addMeal: (date, mealType, foods) => {
+      addMeal: async (date, mealType, foods) => {
         const totals = recalcMeal(foods);
         const meal: MealEntry = { id: uid(), date, mealType, foods, ...totals };
         set((s) => {
@@ -118,15 +124,40 @@ export const useNutritionStore = create<NutritionState>()(
           }
           return { logs: updatedLogs };
         });
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user) {
+            const inserts = foods.map((f) => ({
+              user_id: user.id,
+              logged_at: new Date(date).toISOString(),
+              meal_type: mealType,
+              food_name: f.foodName,
+              portion_size: `${f.servings} serving(s)`,
+              calories: Math.round(f.calories * f.servings),
+              protein_g: f.protein * f.servings,
+              carbs_g: f.carbs * f.servings,
+              fat_g: f.fat * f.servings,
+              fiber_g: f.fiber * f.servings,
+            }));
+            await supabase.from('nutrition_logs').insert(inserts);
+          }
+        } catch (e) {
+          console.error('Failed to sync meal to server:', e);
+        }
       },
 
       removeMeal: (date, mealId) => {
         set((s) => ({
-          logs: s.logs.map((l) => {
-            if (l.date !== date) return l;
-            const meals = l.meals.filter((m) => m.id !== mealId);
-            return { ...l, meals, ...recalcDay(meals) };
-          }).filter((l) => l.meals.length > 0),
+          logs: s.logs
+            .map((l) => {
+              if (l.date !== date) return l;
+              const meals = l.meals.filter((m) => m.id !== mealId);
+              return { ...l, meals, ...recalcDay(meals) };
+            })
+            .filter((l) => l.meals.length > 0),
         }));
       },
 
@@ -138,9 +169,66 @@ export const useNutritionStore = create<NutritionState>()(
         set((s) => ({ mealTemplates: [...s.mealTemplates, template] }));
       },
 
-      deleteTemplate: (id) => set((s) => ({ mealTemplates: s.mealTemplates.filter((t) => t.id !== id) })),
+      deleteTemplate: (id) =>
+        set((s) => ({ mealTemplates: s.mealTemplates.filter((t) => t.id !== id) })),
 
       clearLogs: () => set({ logs: [] }),
+
+      syncFromServer: async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user) return;
+          const { data } = await supabase
+            .from('nutrition_logs')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('logged_at', { ascending: false });
+          if (!data || data.length === 0) return;
+          const logMap = new Map<string, MealEntry[]>();
+          for (const entry of data) {
+            const day = entry.logged_at.slice(0, 10);
+            const existing = logMap.get(day) || [];
+            let meal = existing.find((m) => m.mealType === entry.meal_type);
+            if (!meal) {
+              meal = {
+                id: uid(),
+                date: day,
+                mealType: entry.meal_type,
+                foods: [],
+                totalCalories: 0,
+                totalProtein: 0,
+                totalCarbs: 0,
+                totalFat: 0,
+                totalFiber: 0,
+              };
+              existing.push(meal);
+            }
+            meal.foods.push({
+              foodId: uid(),
+              foodName: entry.food_name,
+              servings: 1,
+              calories: entry.calories || 0,
+              protein: entry.protein_g || 0,
+              carbs: entry.carbs_g || 0,
+              fat: entry.fat_g || 0,
+              fiber: entry.fiber_g || 0,
+            });
+            logMap.set(day, existing);
+          }
+          const logs: DailyLog[] = [];
+          for (const [date, meals] of logMap) {
+            const recalculated = meals.map((m) => ({ ...m, ...recalcMeal(m.foods) }));
+            logs.push({ date, meals: recalculated, ...recalcDay(recalculated) });
+          }
+          logs.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+          set({ logs });
+        } catch (e) {
+          console.error('Failed to sync nutrition from server:', e);
+        }
+      },
     }),
     {
       name: 'hez-nutrition-store',

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -7,26 +8,23 @@ export async function GET(request: Request) {
   const next = searchParams.get('next') ?? '/onboarding';
 
   if (code) {
-    const cookieString = request.headers.get('cookie') || '';
-    const cookies = cookieString.split(';').reduce<Record<string, string>>((acc, c) => {
-      const [key, ...val] = c.trim().split('=');
-      if (key) acc[key] = val.join('=');
-      return acc;
-    }, {});
-
+    const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookies[name];
+          getAll() {
+            return cookieStore.getAll();
           },
-          set(name: string, value: string) {
-            cookies[name] = value;
-          },
-          remove(name: string) {
-            delete cookies[name];
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options),
+              );
+            } catch {
+              // Called from Server Component — ignore
+            }
           },
         },
       },

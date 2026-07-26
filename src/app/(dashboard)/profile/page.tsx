@@ -496,9 +496,8 @@ export default function ProfilePage() {
               {recentSessions.length > 0 ? (
                 <div className="space-y-1">
                   {recentSessions.map((session) => (
-                    <Link
+                    <div
                       key={session.id}
-                      href={`/workouts/${session.id}`}
                       className="hover:bg-muted flex items-center justify-between rounded-xl px-3 py-2.5 transition-colors"
                     >
                       <div>
@@ -515,7 +514,7 @@ export default function ProfilePage() {
                           {session.blocks.reduce((s, b) => s + b.exercises.length, 0)} exercises
                         </p>
                       </div>
-                    </Link>
+                    </div>
                   ))}
                 </div>
               ) : (

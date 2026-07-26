@@ -54,6 +54,7 @@ export default function NutritionPage() {
       d.setDate(d.getDate() + 1);
     }
     return data;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [todayLog, getLog]);
 
   return (
@@ -151,7 +152,7 @@ export default function NutritionPage() {
         className="mt-4 grid grid-cols-3 gap-2"
       >
         <Link
-          href="/nutrition/water"
+          href="/nutrition"
           className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"
         >
           <Droplets size={16} className="mx-auto text-blue-500" />

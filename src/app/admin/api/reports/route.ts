@@ -1,0 +1,83 @@
+import { NextResponse } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
+
+export async function GET(request: Request) {
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return cookieStore.getAll();
+        },
+        setAll() {},
+      },
+    },
+  );
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+  if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+
+  const { searchParams } = new URL(request.url);
+  const type = searchParams.get('type') || 'daily-csv';
+
+  const [profilesRes, workoutsRes, nutritionRes] = await Promise.all([
+    supabase.from('profiles').select('id, display_name, created_at, role, goal'),
+    supabase.from('workouts').select('id, user_id, created_at, duration_minutes'),
+    supabase.from('nutrition_logs').select('id, user_id, calories, logged_at'),
+  ]);
+
+  const profiles = profilesRes.data || [];
+  const workouts = workoutsRes.data || [];
+  const nutritionLogs = nutritionRes.data || [];
+
+  const now = new Date();
+  const dateFilter = (dateStr: string) => {
+    const d = new Date(dateStr);
+    if (type.startsWith('daily')) return d.toDateString() === now.toDateString();
+    if (type.startsWith('weekly')) {
+      const weekAgo = new Date(now);
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return d >= weekAgo;
+    }
+    if (type.startsWith('monthly')) {
+      return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+    }
+    return true;
+  };
+
+  const filteredWorkouts = workouts.filter((w) => dateFilter(w.created_at));
+  const filteredNutrition = nutritionLogs.filter((n) => dateFilter(n.logged_at));
+
+  const header = 'Metric,Value';
+  const rows = [
+    header,
+    `Total Users,${profiles.length}`,
+    `New Users (period),${profiles.filter((p) => dateFilter(p.created_at)).length}`,
+    `Total Workouts (period),${filteredWorkouts.length}`,
+    `Total Nutrition Logs (period),${filteredNutrition.length}`,
+    `Avg Workout Duration (min),${filteredWorkouts.length > 0 ? (filteredWorkouts.reduce((s, w) => s + (w.duration_minutes || 0), 0) / filteredWorkouts.length).toFixed(1) : 0}`,
+    `Total Calories Logged (period),${filteredNutrition.reduce((s, n) => s + (n.calories || 0), 0)}`,
+    `Generated,${now.toISOString()}`,
+  ];
+
+  const csv = rows.join('\n');
+
+  return new NextResponse(csv, {
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="hez-report-${type}-${now.toISOString().slice(0, 10)}.csv"`,
+    },
+  });
+}

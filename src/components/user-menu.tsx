@@ -49,7 +49,7 @@ export function UserMenu() {
     router.replace('/auth/login');
   };
 
-  const modeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
+  const ModeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
   const modeLabel = mode === 'dark' ? 'Dark' : mode === 'light' ? 'Light' : 'System';
   const nextMode = mode === 'dark' ? 'light' : mode === 'light' ? 'system' : 'dark';
 
@@ -123,7 +123,7 @@ export function UserMenu() {
                   }}
                   className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
-                  {modeIcon({ size: 16 })} {modeLabel} mode
+                  <ModeIcon size={16} /> {modeLabel} mode
                 </button>
                 <button
                   onClick={handleSignOut}

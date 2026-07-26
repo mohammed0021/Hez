@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { createClient } from '@/lib/supabase-client';
 
 export type UnitSystem = 'metric' | 'imperial';
 export type WeightUnit = 'kg' | 'lbs';
@@ -21,10 +22,14 @@ export interface SettingsState {
   setUnitSystem: (system: UnitSystem) => void;
   updateSettings: (
     data: Partial<
-      Omit<SettingsState, 'setLanguage' | 'setUnitSystem' | 'updateSettings' | 'reset'>
+      Omit<
+        SettingsState,
+        'setLanguage' | 'setUnitSystem' | 'updateSettings' | 'reset' | 'syncFromServer'
+      >
     >,
-  ) => void;
+  ) => Promise<void>;
   reset: () => void;
+  syncFromServer: () => Promise<void>;
 }
 
 export const useSettingsStore = create<SettingsState>()(
@@ -40,15 +45,56 @@ export const useSettingsStore = create<SettingsState>()(
       soundEnabled: true,
       vibrationEnabled: true,
 
-      setLanguage: (language) => set({ language }),
+      setLanguage: (language) => {
+        set({ language });
+        try {
+          const supabase = createClient();
+          supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user) supabase.from('settings').update({ language }).eq('user_id', user.id);
+          });
+        } catch {}
+      },
+
       setUnitSystem: (system) => {
         if (system === 'imperial') {
           set({ unitSystem: 'imperial', weightUnit: 'lbs', heightUnit: 'ft_in', waterUnit: 'oz' });
         } else {
           set({ unitSystem: 'metric', weightUnit: 'kg', heightUnit: 'cm', waterUnit: 'ml' });
         }
+        try {
+          const supabase = createClient();
+          supabase.auth.getUser().then(({ data: { user } }) => {
+            if (user)
+              supabase
+                .from('settings')
+                .update({ measurement_system: system })
+                .eq('user_id', user.id);
+          });
+        } catch {}
       },
-      updateSettings: (data) => set((s) => ({ ...s, ...data })),
+
+      updateSettings: async (data) => {
+        set((s) => ({ ...s, ...data }));
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (user) {
+            const updates: Record<string, unknown> = {};
+            if (data.defaultRestTimer !== undefined)
+              updates.rest_timer_default = data.defaultRestTimer;
+            if (data.soundEnabled !== undefined) updates.notifications_enabled = data.soundEnabled;
+            if (data.language !== undefined) updates.language = data.language;
+            if (Object.keys(updates).length > 0) {
+              await supabase.from('settings').update(updates).eq('user_id', user.id);
+            }
+          }
+        } catch (e) {
+          console.error('Failed to sync settings to server:', e);
+        }
+      },
+
       reset: () =>
         set({
           language: 'en',
@@ -61,6 +107,31 @@ export const useSettingsStore = create<SettingsState>()(
           soundEnabled: true,
           vibrationEnabled: true,
         }),
+
+      syncFromServer: async () => {
+        try {
+          const supabase = createClient();
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user) return;
+          const { data: settings } = await supabase
+            .from('settings')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+          if (settings) {
+            set({
+              language: settings.language || 'en',
+              unitSystem: (settings.measurement_system as UnitSystem) || 'metric',
+              defaultRestTimer: settings.rest_timer_default || 90,
+              soundEnabled: settings.notifications_enabled ?? true,
+            });
+          }
+        } catch (e) {
+          console.error('Failed to sync settings from server:', e);
+        }
+      },
     }),
     {
       name: 'hez-settings',

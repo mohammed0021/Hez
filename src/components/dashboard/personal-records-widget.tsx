@@ -1,45 +1,68 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Trophy } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardWidget } from './widget-shell';
-
-const records = [
-  { exercise: 'Bench Press', value: '85 kg', date: '2 weeks ago', type: 'max_weight' },
-  { exercise: 'Deadlift', value: '140 kg', date: '1 month ago', type: 'max_weight' },
-  { exercise: 'Squat', value: '120 kg', date: '3 weeks ago', type: 'max_weight' },
-];
+import { usePRStore } from '@/stores/pr-store';
+import Link from 'next/link';
 
 const recordIcons: Record<string, string> = {
   max_weight: '🏆',
   max_reps: '🔥',
-  best_volume: '📊',
+  max_volume: '📊',
+  estimated_1rm: '💪',
 };
 
 export function PersonalRecordsWidget() {
+  const records = usePRStore((s) => s.getAllRecords());
+  const topRecords = records.slice(0, 3);
+
   return (
     <DashboardWidget title="Personal Records">
-      <div className="space-y-3">
-        {records.map((r, i) => (
-          <motion.div
-            key={r.exercise}
-            initial={{ opacity: 0, x: -10 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: i * 0.05 }}
-            className="flex items-center gap-3"
-          >
-            <span className="text-lg">{recordIcons[r.type] || '🏆'}</span>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground">{r.exercise}</p>
-              <p className="text-[10px] text-muted-foreground/60">{r.date}</p>
-            </div>
-            <span className="text-sm font-bold text-primary">{r.value}</span>
-          </motion.div>
-        ))}
-      </div>
-      <button className="mt-3 flex w-full items-center justify-center gap-1 rounded-xl bg-muted py-2 text-xs text-muted-foreground transition-colors hover:bg-muted/80">
+      {topRecords.length > 0 ? (
+        <div className="space-y-3">
+          {topRecords.map((r, i) => (
+            <motion.div
+              key={`${r.exerciseName}-${r.type}`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05 }}
+              className="flex items-center gap-3"
+            >
+              <span className="text-lg">{recordIcons[r.type] || '🏆'}</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-foreground text-sm font-medium">{r.exerciseName}</p>
+                <p className="text-muted-foreground/60 text-[10px]">
+                  {new Date(r.date).toLocaleDateString()}
+                </p>
+              </div>
+              <span className="text-primary text-sm font-bold">
+                {r.type === 'max_weight'
+                  ? `${r.value} kg`
+                  : r.type === 'max_reps'
+                    ? `${r.value} reps`
+                    : r.type === 'max_volume'
+                      ? `${r.value.toLocaleString()} kg`
+                      : r.type === 'estimated_1rm'
+                        ? `${r.value} kg`
+                        : `${r.value}`}
+              </span>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-muted-foreground flex flex-col items-center py-4">
+          <Trophy size={24} className="mb-2 opacity-40" />
+          <p className="text-xs">No records yet</p>
+          <p className="text-muted-foreground/60 text-[10px]">Complete workouts to set PRs</p>
+        </div>
+      )}
+      <Link
+        href="/progress"
+        className="bg-muted text-muted-foreground hover:bg-muted/80 mt-3 flex w-full items-center justify-center gap-1 rounded-xl py-2 text-xs transition-colors"
+      >
         View all records <ArrowRight size={12} />
-      </button>
+      </Link>
     </DashboardWidget>
   );
 }

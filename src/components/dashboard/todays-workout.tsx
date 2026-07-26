@@ -3,32 +3,60 @@
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
+import { useWorkoutStore } from '@/stores/workout-store';
 
 export function TodaysWorkout() {
-  return (
-    <DashboardWidget className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20">
-      <div className="flex items-start justify-between">
-        <div className="space-y-1">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-primary">Today&apos;s Workout</p>
-          <p className="text-lg font-bold text-foreground">Upper Body Push</p>
-          <div className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span>6 exercises</span>
-            <span>•</span>
-            <span>~45 min</span>
+  const savedWorkouts = useWorkoutStore((s) => s.savedWorkouts);
+  const latest = savedWorkouts.length > 0 ? savedWorkouts[0] : null;
+
+  if (!latest) {
+    return (
+      <DashboardWidget className="from-primary/10 to-primary/5 border-primary/20 bg-gradient-to-br">
+        <div className="flex items-start justify-between">
+          <div className="space-y-1">
+            <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
+              Today&apos;s Workout
+            </p>
+            <p className="text-foreground text-lg font-bold">No workout yet</p>
+            <p className="text-muted-foreground text-xs">Create a workout to get started</p>
           </div>
         </div>
-        <div className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg">
+      </DashboardWidget>
+    );
+  }
+
+  const exerciseCount = latest.blocks.reduce((s, b) => s + b.exercises.length, 0);
+  const exerciseNames = latest.blocks
+    .flatMap((b) => b.exercises)
+    .slice(0, 6)
+    .map((e) => e.exerciseName);
+
+  return (
+    <DashboardWidget className="from-primary/10 to-primary/5 border-primary/20 bg-gradient-to-br">
+      <div className="flex items-start justify-between">
+        <div className="space-y-1">
+          <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
+            Today&apos;s Workout
+          </p>
+          <p className="text-foreground text-lg font-bold">{latest.name}</p>
+          <div className="text-muted-foreground flex items-center gap-3 text-xs">
+            <span>{exerciseCount} exercises</span>
+            <span>•</span>
+            <span>~{latest.estimatedDuration} min</span>
+          </div>
+        </div>
+        <div className="bg-primary text-primary-foreground flex size-12 items-center justify-center rounded-full shadow-lg">
           <Play size={20} className="ml-0.5" />
         </div>
       </div>
       <div className="mt-4 flex gap-2">
-        {['Bench Press', 'Incline DB', 'Lat Pulldown', 'Lateral Raise', 'Triceps', 'Curls'].map((ex, i) => (
+        {exerciseNames.map((ex, i) => (
           <motion.div
-            key={ex}
+            key={`${ex}-${i}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + i * 0.03 }}
-            className="rounded-lg bg-background/60 px-2 py-1 text-[10px] font-medium text-foreground backdrop-blur-sm"
+            className="bg-background/60 text-foreground rounded-lg px-2 py-1 text-[10px] font-medium backdrop-blur-sm"
           >
             {ex}
           </motion.div>

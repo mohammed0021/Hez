@@ -2,38 +2,50 @@
 
 import { DashboardWidget } from './widget-shell';
 import { AnimatedCounter } from './animated-counter';
+import { useNutritionStore } from '@/stores/nutrition-store';
 
 export function ProteinWidget() {
-  const consumed = 86;
+  const today = new Date().toISOString().split('T')[0] ?? '';
+  const log = useNutritionStore((s) => s.getLog(today));
+  const consumed = log?.totalProtein ?? 0;
   const goal = 150;
+
+  const topFoods =
+    log?.meals
+      .flatMap((m) => m.foods)
+      .sort((a, b) => b.protein - a.protein)
+      .slice(0, 3) ?? [];
 
   return (
     <DashboardWidget title="Protein Goal">
       <div className="space-y-2">
         <div className="flex items-end justify-between">
-          <span className="text-2xl font-bold text-foreground">
+          <span className="text-foreground text-2xl font-bold">
             <AnimatedCounter value={consumed} suffix="g" decimals={0} />
           </span>
-          <span className="text-xs text-muted-foreground">Goal: {goal}g</span>
+          <span className="text-muted-foreground text-xs">Goal: {goal}g</span>
         </div>
-        <div className="h-2.5 overflow-hidden rounded-full bg-muted">
+        <div className="bg-muted h-2.5 overflow-hidden rounded-full">
           <div
             className="h-full rounded-full bg-blue-500 transition-all duration-1000 ease-out"
             style={{ width: `${Math.min((consumed / goal) * 100, 100)}%` }}
           />
         </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground/60">
-          <span>Chicken breast</span>
-          <span>+32g</span>
-        </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground/60">
-          <span>Protein shake</span>
-          <span>+25g</span>
-        </div>
-        <div className="flex justify-between text-[10px] text-muted-foreground/60">
-          <span>Greek yogurt</span>
-          <span>+15g</span>
-        </div>
+        {topFoods.length > 0 ? (
+          topFoods.map((f) => (
+            <div
+              key={f.foodId}
+              className="text-muted-foreground/60 flex justify-between text-[10px]"
+            >
+              <span>{f.foodName}</span>
+              <span>+{Math.round(f.protein * f.servings)}g</span>
+            </div>
+          ))
+        ) : (
+          <div className="text-muted-foreground/40 flex justify-center pt-1 text-[10px]">
+            Log meals to track protein
+          </div>
+        )}
       </div>
     </DashboardWidget>
   );

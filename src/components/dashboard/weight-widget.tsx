@@ -3,40 +3,73 @@
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { Scale } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
-
-const data = [
-  { day: 'Mon', kg: 78.5 },
-  { day: 'Tue', kg: 78.2 },
-  { day: 'Wed', kg: 78.8 },
-  { day: 'Thu', kg: 78.1 },
-  { day: 'Fri', kg: 77.8 },
-  { day: 'Sat', kg: 77.5 },
-  { day: 'Sun', kg: 77.2 },
-];
+import { useWeightStore } from '@/stores/weight-store';
 
 export function WeightWidget() {
-  const latest = data[data.length - 1] ?? data[0];
-  const first = data[0];
+  const entries = useWeightStore((s) => s.entries);
+  const recent = entries.slice(0, 7).reverse();
+
+  const latest = recent[recent.length - 1];
+
+  if (entries.length === 0) {
+    return (
+      <DashboardWidget title="Weight Progress">
+        <div className="mb-3 flex items-center gap-3">
+          <Scale size={18} className="text-muted-foreground" />
+          <span className="text-muted-foreground text-sm">No entries yet</span>
+        </div>
+        <p className="text-muted-foreground/60 text-[10px]">
+          Log your weight in Progress to start tracking
+        </p>
+      </DashboardWidget>
+    );
+  }
+
+  const first = recent[0];
   if (!latest || !first) return null;
-  const change = latest.kg - first.kg;
+  const change = latest.weightKg - first.weightKg;
   const isDown = change < 0;
 
+  const chartData = recent.map((e) => ({
+    day: new Date(e.date).toLocaleDateString(undefined, { weekday: 'short' }),
+    kg: e.weightKg,
+  }));
+
   return (
-    <DashboardWidget title="Weight Progress" action={<span className={isDown ? 'text-green-500' : 'text-red-500'}>{isDown ? '▼' : '▲'} {Math.abs(change).toFixed(1)} kg</span>}>
-      <div className="flex items-center gap-3 mb-3">
+    <DashboardWidget
+      title="Weight Progress"
+      action={
+        <span className={isDown ? 'text-green-500' : 'text-red-500'}>
+          {isDown ? '▼' : '▲'} {Math.abs(change).toFixed(1)} kg
+        </span>
+      }
+    >
+      <div className="mb-3 flex items-center gap-3">
         <Scale size={18} className="text-muted-foreground" />
-        <span className="text-2xl font-bold text-foreground">{latest.kg.toFixed(1)}</span>
-        <span className="text-xs text-muted-foreground">kg</span>
+        <span className="text-foreground text-2xl font-bold">{latest.weightKg.toFixed(1)}</span>
+        <span className="text-muted-foreground text-xs">kg</span>
       </div>
       <div className="h-20">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data}>
+          <LineChart data={chartData}>
             <XAxis dataKey="day" hide />
             <Tooltip
-              contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 12 }}
+              contentStyle={{
+                background: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: 8,
+                fontSize: 12,
+              }}
               labelStyle={{ color: 'hsl(var(--foreground))' }}
             />
-            <Line type="monotone" dataKey="kg" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+            <Line
+              type="monotone"
+              dataKey="kg"
+              stroke="hsl(var(--primary))"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4 }}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>

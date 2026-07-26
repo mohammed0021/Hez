@@ -15,6 +15,23 @@ export async function signUpWithEmail(email: string, password: string, name: str
     options: { data: { name } },
   });
   if (error) throw error;
+  if (data.user) {
+    const { error: profileError } = await supabase.from('profiles').upsert(
+      {
+        id: data.user.id,
+        display_name: name,
+        username: `user_${data.user.id.slice(0, 8)}`,
+      },
+      { onConflict: 'id' },
+    );
+    if (
+      profileError &&
+      profileError.code !== 'PGRST116' &&
+      !profileError.message?.includes('duplicate')
+    ) {
+      console.error('Profile creation error:', profileError);
+    }
+  }
   return data;
 }
 
@@ -70,10 +87,4 @@ export async function getUser() {
   const { data, error } = await supabase.auth.getUser();
   if (error) throw error;
   return data.user;
-}
-
-export async function updateProfile(data: { name?: string; username?: string; bio?: string; goal?: string }) {
-  const supabase = createClient();
-  const { error } = await supabase.auth.updateUser({ data });
-  if (error) throw error;
 }

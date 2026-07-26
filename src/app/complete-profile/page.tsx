@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { completeProfileSchema, type CompleteProfileFormData } from '@/schemas/auth';
-import { updateProfile } from '@/services/auth';
+import { createClient } from '@/lib/supabase-client';
 import { useToastStore } from '@/stores/toast-store';
 import { useAuthStore } from '@/stores/auth-store';
 
@@ -45,15 +45,22 @@ export default function CompleteProfilePage() {
   const onSubmit = async (data: CompleteProfileFormData) => {
     setIsLoading(true);
     try {
-      await updateProfile({
-        name: data.name,
-        username: data.username,
-        bio: data.bio,
-        goal: data.goal,
-      });
+      const supabase = createClient();
+      const user = (await supabase.auth.getUser()).data.user;
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({
+            display_name: data.name,
+            username: data.username,
+            bio: data.bio,
+            goal: data.goal,
+          })
+          .eq('id', user.id);
+      }
       setOnboarded(true);
       localStorage.setItem('hez-onboarded', 'true');
-      toast.success('Profile complete! Let\'s go!');
+      toast.success("Profile complete! Let's go!");
       router.replace('/');
     } catch {
       toast.error('Failed to save profile. Try again.');
@@ -63,19 +70,17 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="flex min-h-screen-safe flex-col bg-background px-6 pt-16 pb-8">
+    <div className="min-h-screen-safe bg-background flex flex-col px-6 pt-16 pb-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <div className="mb-2 inline-flex size-10 items-center justify-center rounded-2xl bg-primary">
+        <div className="bg-primary mb-2 inline-flex size-10 items-center justify-center rounded-2xl">
           <User size={20} className="text-primary-foreground" />
         </div>
-        <h1 className="mt-4 text-2xl font-bold text-foreground">Complete your profile</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          Help us personalize your experience.
-        </p>
+        <h1 className="text-foreground mt-4 text-2xl font-bold">Complete your profile</h1>
+        <p className="text-muted-foreground mt-1.5 text-sm">Help us personalize your experience.</p>
       </motion.div>
 
       <motion.div
@@ -94,13 +99,16 @@ export default function CompleteProfilePage() {
               autoFocus
               {...register('name')}
             />
-            {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
+            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="username">Username</Label>
             <div className="relative">
-              <AtSign size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <AtSign
+                size={16}
+                className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
+              />
               <Input
                 id="username"
                 placeholder="username"
@@ -110,17 +118,15 @@ export default function CompleteProfilePage() {
                 {...register('username')}
               />
             </div>
-            {errors.username && <p className="text-xs text-destructive">{errors.username.message}</p>}
+            {errors.username && (
+              <p className="text-destructive text-xs">{errors.username.message}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="bio">Bio (optional)</Label>
-            <Input
-              id="bio"
-              placeholder="Tell us about yourself..."
-              {...register('bio')}
-            />
-            {errors.bio && <p className="text-xs text-destructive">{errors.bio.message}</p>}
+            <Input id="bio" placeholder="Tell us about yourself..." {...register('bio')} />
+            {errors.bio && <p className="text-destructive text-xs">{errors.bio.message}</p>}
           </div>
 
           <div className="space-y-3">
@@ -133,16 +139,16 @@ export default function CompleteProfilePage() {
                   onClick={() => setValue('goal', goal.value, { shouldValidate: true })}
                   className={`flex flex-col items-center gap-1.5 rounded-xl p-3 text-center transition-all ${
                     selectedGoal === goal.value
-                      ? 'bg-primary/15 ring-2 ring-primary'
+                      ? 'bg-primary/15 ring-primary ring-2'
                       : 'bg-muted hover:bg-muted/80'
                   }`}
                 >
                   <span className="text-xl">{goal.emoji}</span>
-                  <span className="text-xs font-medium text-foreground">{goal.label}</span>
+                  <span className="text-foreground text-xs font-medium">{goal.label}</span>
                 </button>
               ))}
             </div>
-            {errors.goal && <p className="text-xs text-destructive">{errors.goal.message}</p>}
+            {errors.goal && <p className="text-destructive text-xs">{errors.goal.message}</p>}
           </div>
 
           <motion.div whileTap={{ scale: 0.98 }}>
