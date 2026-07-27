@@ -138,20 +138,18 @@ export const SEARCH_RESULTS: SearchResult[] = [
 ];
 
 export const THEMES = [
-  { id: 'hez-green', label: 'Green', color: '#10b981' },
-  { id: 'hez-blue', label: 'Blue', color: '#3b82f6' },
-  { id: 'hez-purple', label: 'Purple', color: '#8b5cf6' },
-  { id: 'hez-red', label: 'Red', color: '#ef4444' },
-  { id: 'hez-orange', label: 'Orange', color: '#f97316' },
-  { id: 'hez-pink', label: 'Pink', color: '#ec4899' },
-  { id: 'hez-teal', label: 'Teal', color: '#14b8a6' },
-  { id: 'hez-rose', label: 'Rose', color: '#f43f5e' },
+  { id: 'hez-green', label: 'Hêz Green', color: '#10b981' },
+  { id: 'blossom-pink', label: 'Blossom Pink', color: '#f472b6' },
+  { id: 'ocean-blue', label: 'Ocean Blue', color: '#3b82f6' },
+  { id: 'purple', label: 'Purple', color: '#8b5cf6' },
+  { id: 'orange', label: 'Orange', color: '#f97316' },
+  { id: 'crimson', label: 'Crimson', color: '#ef4444' },
+  { id: 'midnight', label: 'Midnight', color: '#1e293b' },
+  { id: 'snow', label: 'Snow', color: '#f1f5f9' },
 ] as const;
 
 export const LANGUAGES = [
   { code: 'en', label: 'English', nativeLabel: 'English' },
-  { code: 'fr', label: 'French', nativeLabel: 'Français' },
-  { code: 'es', label: 'Spanish', nativeLabel: 'Español' },
-  { code: 'de', label: 'German', nativeLabel: 'Deutsch' },
+  { code: 'ku', label: 'Kurdish', nativeLabel: 'Kurdî' },
   { code: 'ar', label: 'Arabic', nativeLabel: 'العربية' },
 ] as const;

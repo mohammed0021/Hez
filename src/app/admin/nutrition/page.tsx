@@ -20,8 +20,6 @@ import type { NutritionAnalytics } from '@/types/admin';
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 
-type PieLabel = { name: string; percent: number };
-
 export default function NutritionAnalyticsPage() {
   const { data, isLoading, error, fetch } = useAnalyticsStore();
 
@@ -109,8 +107,8 @@ export default function NutritionAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={90}
-                  label={({ name, percent }: PieLabel) =>
-                    `${name} ${((percent ?? 0) * 100).toFixed(0)}%`
+                  label={(props: { name?: string; percent?: number }) =>
+                    `${props.name ?? ''} ${((props.percent ?? 0) * 100).toFixed(0)}%`
                   }
                 >
                   {na.mostUsedSupplements?.map((_, i: number) => (

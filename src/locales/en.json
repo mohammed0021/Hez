@@ -16,12 +16,42 @@
     "edit": "Edit",
     "loading": "Loading...",
     "error": "Something went wrong",
-    "retry": "Retry"
+    "retry": "Retry",
+    "confirm": "Confirm",
+    "search": "Search",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "done": "Done",
+    "continue": "Continue"
   },
   "theme": {
     "select": "Select Theme",
     "system": "System",
     "light": "Light",
-    "dark": "Dark"
+    "dark": "Dark",
+    "accent_color": "Accent Color",
+    "mode": "Mode"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your Hêz experience",
+    "theme": "Theme",
+    "language": "Language",
+    "units": "Units",
+    "workout": "Workout Preferences",
+    "notifications": "Notifications",
+    "privacy": "Privacy",
+    "export": "Data Export",
+    "delete": "Account Deletion",
+    "help": "Help & Support",
+    "about": "About Hêz"
+  },
+  "welcome": {
+    "title": "Welcome to Hêz",
+    "subtitle": "Choose your language and theme to get started",
+    "start": "Begin Your Journey",
+    "language_prompt": "Choose your language",
+    "theme_prompt": "Choose a theme"
   }
 }

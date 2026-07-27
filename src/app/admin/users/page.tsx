@@ -23,8 +23,6 @@ import type { UserAnalytics } from '@/types/admin';
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6'];
 
-type PieLabel = { payload: Record<string, string>; percent: number };
-
 export default function UserAnalyticsPage() {
   const { data, isLoading, error, fetch } = useAnalyticsStore();
 
@@ -218,9 +216,10 @@ export default function UserAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ payload, percent }: PieLabel) =>
-                    `${payload.language} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
+                  label={(props: unknown) => {
+                    const p = props as { payload?: Record<string, string>; percent?: number };
+                    return `${p.payload?.language ?? ''} ${((p.percent ?? 0) * 100).toFixed(0)}%`;
+                  }}
                 >
                   {ua.byLanguage?.map((_, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -277,9 +276,10 @@ export default function UserAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ payload, percent }: PieLabel) =>
-                    `${payload.level} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
+                  label={(props: unknown) => {
+                    const p = props as { payload?: Record<string, string>; percent?: number };
+                    return `${p.payload?.level ?? ''} ${((p.percent ?? 0) * 100).toFixed(0)}%`;
+                  }}
                 >
                   {ua.byExperience?.map((_, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />

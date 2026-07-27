@@ -24,6 +24,11 @@ export default function SplashScreen() {
 
   useEffect(() => {
     if (progress >= 100) {
+      const hasLocale = localStorage.getItem('hez-locale');
+      if (!hasLocale) {
+        router.replace('/welcome');
+        return;
+      }
       const supabase = createClient();
       supabase.auth.getSession().then(({ data: { session } }) => {
         const onboarded = localStorage.getItem('hez-onboarded') === 'true';

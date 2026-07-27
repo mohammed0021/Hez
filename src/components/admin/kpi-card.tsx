@@ -6,13 +6,18 @@ import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface KpiCardProps {
   title: string;
-  value: string | number;
+  value: string | number | null | undefined;
   change?: number;
   changeLabel?: string;
   icon: React.ReactNode;
   color: string;
   index?: number;
   format?: 'number' | 'duration' | 'percent' | 'storage';
+}
+
+function normalizeValue(value: string | number | null | undefined): string | number {
+  if (value === null || value === undefined) return 0;
+  return value;
 }
 
 export function KpiCard({
@@ -26,7 +31,7 @@ export function KpiCard({
   format = 'number',
 }: KpiCardProps) {
   const isPositive = (change ?? 0) >= 0;
-  const formattedValue = formatValue(value, format);
+  const formattedValue = formatValue(normalizeValue(value), format);
 
   return (
     <motion.div

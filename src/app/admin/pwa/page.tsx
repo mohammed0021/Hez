@@ -144,7 +144,7 @@ export default function PwaAnalyticsPage() {
                     borderRadius: '8px',
                     fontSize: '12px',
                   }}
-                  formatter={(v: number) => `${Number(v).toFixed(1)}%`}
+                  formatter={(value: unknown) => `${Number(value as number).toFixed(1)}%`}
                 />
                 <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
               </BarChart>

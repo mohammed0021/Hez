@@ -42,7 +42,7 @@ export default function ProgressAnalyticsPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <KpiCard
           title="Avg Weight Change"
-          value={`${pa.averageWeightChange > 0 ? '+' : ''}${pa.averageWeightChange?.toFixed(1) || '0.0'} kg`}
+          value={`${(pa.averageWeightChange ?? 0) > 0 ? '+' : ''}${(pa.averageWeightChange ?? 0).toFixed(1)} kg`}
           icon={<TrendingDown size={16} />}
           color="emerald"
           index={0}
@@ -63,7 +63,7 @@ export default function ProgressAnalyticsPage() {
         />
         <KpiCard
           title="Goal Completion Rate"
-          value={pa.goalCompletionRate}
+          value={pa.goalCompletionRate ?? 0}
           icon={<Award size={16} />}
           color="amber"
           format="percent"

@@ -1,8 +1,36 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+const LOCALE_COOKIE = 'NEXT_LOCALE';
+const SUPPORTED_LOCALES = ['en', 'ku', 'ar'];
+const DEFAULT_LOCALE = 'en';
+
+function getLocale(request: NextRequest): string {
+  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (cookieLocale && SUPPORTED_LOCALES.includes(cookieLocale)) {
+    return cookieLocale;
+  }
+  const acceptLang = request.headers.get('Accept-Language') || '';
+  if (!acceptLang) return DEFAULT_LOCALE;
+
+  const rawLocales: string[] = [];
+  for (const part of acceptLang.split(',')) {
+    const locale = part.trim().split(';')[0]?.split('-')[0];
+    if (locale) rawLocales.push(locale.toLowerCase());
+  }
+
+  for (const lang of rawLocales) {
+    if (SUPPORTED_LOCALES.includes(lang)) return lang;
+  }
+
+  return DEFAULT_LOCALE;
+}
+
+export const supportedLocales = SUPPORTED_LOCALES;
+
 const publicRoutes = new Set([
   '/splash',
+  '/welcome',
   '/auth/login',
   '/auth/register',
   '/auth/forgot-password',
@@ -28,8 +56,6 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (
-    publicRoutes.has(pathname) ||
-    pathname === '/' ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/icons') ||
     pathname.startsWith('/splash') ||
@@ -41,7 +67,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  let supabaseResponse = NextResponse.next({ request });
+  const locale = getLocale(request);
+  const response = NextResponse.next();
+
+  const existingCookie = request.cookies.get(LOCALE_COOKIE);
+  if (!existingCookie || existingCookie.value !== locale) {
+    response.cookies.set(LOCALE_COOKIE, locale, {
+      path: '/',
+      maxAge: 31536000,
+      sameSite: 'lax',
+    });
+  }
+
+  if (publicRoutes.has(pathname) || pathname === '/') {
+    return response;
+  }
+
+  let supabaseResponse = response;
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,

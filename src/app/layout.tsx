@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { cookies } from 'next/headers';
 import { Providers } from '@/components/providers';
+import { LocaleInit } from '@/components/locale-init';
 import { PwaProvider } from '@/components/pwa-provider';
 import { validateEnvOnStartup } from '@/lib/security/with-security';
+import { locales, defaultLocale, getDirection } from '@/i18n/locales';
 import './globals.css';
-import enMessages from '@/locales/en.json';
 
 if (typeof globalThis !== 'undefined' && process.env.NODE_ENV === 'production') {
   try {
@@ -118,14 +120,29 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('NEXT_LOCALE')?.value;
+  const locale = locales.includes(localeCookie as (typeof locales)[number])
+    ? (localeCookie as (typeof locales)[number])
+    : defaultLocale;
+  const dir = getDirection(locale);
+
+  let messages: Record<string, unknown>;
+  try {
+    messages = (await import(`@/locales/${locale}.json`)).default;
+  } catch {
+    messages = (await import(`@/locales/en.json`)).default;
+  }
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dir}
       className={`${geistSans.variable} ${geistMono.variable}`}
       suppressHydrationWarning
     >
@@ -160,10 +177,15 @@ export default function RootLayout({
               try {
                 function s(v) { return typeof v === 'string' ? v.replace(/[^a-zA-Z0-9_-]/g, '') : 'hez-green'; }
                 function m(v) { return v === 'dark' || v === 'light' || v === 'system' ? v : 'system'; }
+                function l(v) { return v === 'en' || v === 'ku' || v === 'ar' ? v : 'en'; }
                 var theme = JSON.parse(localStorage.getItem('hez-theme') || '{}');
+                var localeData = JSON.parse(localStorage.getItem('hez-locale') || '{}');
                 var mode = m(theme.mode);
                 var themeId = s(theme.themeId) || 'hez-green';
+                var locale = l(localeData.locale);
                 document.documentElement.setAttribute('data-theme', themeId);
+                document.documentElement.setAttribute('lang', locale);
+                document.documentElement.setAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr');
                 if (mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                   document.documentElement.classList.add('dark');
                 } else {
@@ -173,7 +195,8 @@ export default function RootLayout({
             })();
           `}
         </Script>
-        <Providers locale="en" messages={enMessages}>
+        <Providers locale={locale} messages={messages}>
+          <LocaleInit cookieLocale={locale} />
           <PwaProvider>{children}</PwaProvider>
         </Providers>
       </body>

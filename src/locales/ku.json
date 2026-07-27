@@ -16,12 +16,42 @@
     "edit": "Sererast bike",
     "loading": "Barkirin...",
     "error": "Tiştek xelet çû",
-    "retry": "Dîsa biceribîne"
+    "retry": "Dîsa biceribîne",
+    "confirm": "Piştrast bike",
+    "search": "Lêbigere",
+    "close": "Bigre",
+    "back": "Paşve",
+    "next": "Pêşve",
+    "done": "Temam",
+    "continue": "Bidomîne"
   },
   "theme": {
     "select": "Mijarekê hilbijêre",
     "system": "Sîstem",
     "light": "Ronahî",
-    "dark": "Tarî"
+    "dark": "Tarî",
+    "accent_color": "Rengê Taybet",
+    "mode": "Mod"
+  },
+  "settings": {
+    "title": "Eyar",
+    "subtitle": "Tecrûbeya Hêzê xweş bike",
+    "theme": "Mijar",
+    "language": "Ziman",
+    "units": "Yekîne",
+    "workout": "Vebijarkên Temrînan",
+    "notifications": "Agahdarî",
+    "privacy": "Nepenî",
+    "export": "Derxistina Daneyan",
+    "delete": "Jêbirina Hesabê",
+    "help": "Alîkarî û Piştgirî",
+    "about": "Derbarê Hêzê"
+  },
+  "welcome": {
+    "title": "Bi xêr hatî Hêzê",
+    "subtitle": "Ziman û mijara xwe hilbijêre ku dest pê bikî",
+    "start": "Rêwîtiya xwe dest pê bike",
+    "language_prompt": "Zimanê xwe hilbijêre",
+    "theme_prompt": "Mijarekê hilbijêre"
   }
 }

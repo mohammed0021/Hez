@@ -94,7 +94,7 @@ export default function PerformanceAnalyticsPage() {
                     borderRadius: '8px',
                     fontSize: '12px',
                   }}
-                  formatter={(v: number) => `${Number(v).toFixed(1)}s`}
+                  formatter={(value: unknown) => `${Number(value as number).toFixed(1)}s`}
                 />
                 <Bar dataKey="loadTime" fill="#ef4444" radius={[0, 4, 4, 0]} />
               </BarChart>
@@ -126,7 +126,7 @@ export default function PerformanceAnalyticsPage() {
                     borderRadius: '8px',
                     fontSize: '12px',
                   }}
-                  formatter={(v: number) => `${Number(v).toFixed(2)}s`}
+                  formatter={(value: unknown) => `${Number(value as number).toFixed(2)}s`}
                 />
                 <Bar dataKey="avgTime" fill="#3b82f6" radius={[0, 4, 4, 0]} />
               </BarChart>

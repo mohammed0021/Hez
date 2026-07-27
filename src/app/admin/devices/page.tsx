@@ -19,8 +19,6 @@ import type { DeviceAnalytics } from '@/types/admin';
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899'];
 
-type PieLabel = { payload: Record<string, string>; percent: number };
-
 export default function DeviceAnalyticsPage() {
   const { data, isLoading, error, fetch } = useAnalyticsStore();
 
@@ -54,9 +52,10 @@ export default function DeviceAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ payload, percent }: PieLabel) =>
-                    `${payload.device} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
+                  label={(props: unknown) => {
+                    const p = props as { payload?: Record<string, string>; percent?: number };
+                    return `${p.payload?.device ?? ''} ${((p.percent ?? 0) * 100).toFixed(0)}%`;
+                  }}
                 >
                   {da.byDevice?.map((_, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -86,9 +85,10 @@ export default function DeviceAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ payload, percent }: PieLabel) =>
-                    `${payload.browser} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
+                  label={(props: unknown) => {
+                    const p = props as { payload?: Record<string, string>; percent?: number };
+                    return `${p.payload?.browser ?? ''} ${((p.percent ?? 0) * 100).toFixed(0)}%`;
+                  }}
                 >
                   {da.byBrowser?.map((_, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
@@ -118,9 +118,10 @@ export default function DeviceAnalyticsPage() {
                   cx="50%"
                   cy="50%"
                   outerRadius={80}
-                  label={({ payload, percent }: PieLabel) =>
-                    `${payload.os} ${((percent ?? 0) * 100).toFixed(0)}%`
-                  }
+                  label={(props: unknown) => {
+                    const p = props as { payload?: Record<string, string>; percent?: number };
+                    return `${p.payload?.os ?? ''} ${((p.percent ?? 0) * 100).toFixed(0)}%`;
+                  }}
                 >
                   {da.byOS?.map((_, i: number) => (
                     <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />

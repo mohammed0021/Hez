@@ -85,7 +85,7 @@ export default function FeedbackCenterPage() {
   };
 
   if (isLoading && feedback.length === 0) return <LoadingSkeleton count={3} />;
-  if (error) return <ErrorState message={error} onRetry={fetchFeedback} />;
+  if (error) return <ErrorState message={error} onRetry={reload} />;
 
   return (
     <div className="p-4 md:p-6 lg:p-8">

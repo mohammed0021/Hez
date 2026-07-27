@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Palette,
@@ -22,7 +23,9 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
+import { useLocaleStore } from '@/stores/locale-store';
 import type { ThemeId, ThemeMode } from '@/types/theme';
+import type { Locale } from '@/i18n/locales';
 import { THEMES, LANGUAGES } from '@/lib/constants';
 import { useSettingsStore, type UnitSystem, type SettingsState } from '@/stores/settings-store';
 import { useProfileStore, VISIBILITY_OPTIONS, type ProfileState } from '@/stores/profile-store';
@@ -60,7 +63,9 @@ const SECTIONS: {
 ];
 
 export default function SettingsPage() {
+  const router = useRouter();
   const { themeId, mode, setThemeId, setMode } = useThemeStore();
+  const { setLocale } = useLocaleStore();
   const settings = useSettingsStore();
   const profile = useProfileStore();
 
@@ -156,7 +161,11 @@ export default function SettingsPage() {
                       {section.id === 'language' && (
                         <LanguageSection
                           current={settings.language}
-                          onSelect={settings.setLanguage}
+                          onSelect={(code) => {
+                            settings.setLanguage(code);
+                            setLocale(code as Locale);
+                            setTimeout(() => router.refresh(), 100);
+                          }}
                         />
                       )}
                       {section.id === 'units' && <UnitsSection settings={settings} />}
@@ -279,7 +288,7 @@ function LanguageSection({
         </button>
       ))}
       <p className="text-muted-foreground/60 mt-2 text-[10px]">
-        Language affects UI text. Currently only English translations are available.
+        Language changes apply immediately.
       </p>
     </div>
   );
