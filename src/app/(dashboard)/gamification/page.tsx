@@ -47,7 +47,7 @@ export default function GamificationPage() {
 
   const getChallengeProgress = useGamificationStore((s) => s.getChallengeProgress);
 
-  const levelProgress = (level.currentXp / level.nextXp) * 100;
+  const levelProgress = level.nextXp > 0 ? (level.currentXp / level.nextXp) * 100 : 0;
 
   return (
     <>

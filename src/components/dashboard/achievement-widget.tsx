@@ -1,21 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Award, Dumbbell, Zap, Flame, Star, Target, Heart, Clock, Trophy } from 'lucide-react';
+import {
+  Award, Dumbbell, Zap, Flame, Star, Target, Heart, Clock, Trophy,
+  Swords, Weight, CalendarCheck, Calendar, Sunrise, Moon, Crown,
+  Ruler, Apple, Pill, TrendingUp, Compass, ArrowUp, ArrowUpCircle,
+  Gem, ListTodo, Droplets, CalendarDays,
+} from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
 import { useGamificationStore } from '@/stores/gamification-store';
 import { ACHIEVEMENTS } from '@/lib/gamification-types';
 
 const iconMap: Record<string, typeof Dumbbell> = {
-  Dumbbell,
-  Zap,
-  Flame,
-  Star,
-  Target,
-  Heart,
-  Clock,
-  Award,
-  Trophy,
+  Dumbbell, Zap, Flame, Star, Target, Heart, Clock, Award, Trophy,
+  Swords, Weight, CalendarCheck, Calendar, Sunrise, Moon, Crown,
+  Ruler, Apple, Pill, TrendingUp, Compass, ArrowUp, ArrowUpCircle,
+  Gem, ListTodo, Droplets, CalendarDays,
 };
 
 export function AchievementWidget() {

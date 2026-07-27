@@ -14,6 +14,7 @@ const REPORT_TYPES = [
 ];
 
 const EXPORT_FORMATS = ['CSV', 'Excel', 'PDF'];
+const DISABLED_FORMATS = ['Excel', 'PDF'];
 
 export default function ReportsPage() {
   const toast = useToastStore();
@@ -74,13 +75,15 @@ export default function ReportsPage() {
             <div className="mt-4 flex items-center gap-2">
               {EXPORT_FORMATS.map((fmt) => {
                 const key = `${report.id}-${fmt.toLowerCase()}`;
+                const isDisabled = DISABLED_FORMATS.includes(fmt);
                 return (
                   <Button
                     key={fmt}
                     variant="outline"
                     size="xs"
-                    onClick={() => handleGenerate(key)}
-                    disabled={generating === key}
+                    onClick={() => !isDisabled && handleGenerate(key)}
+                    disabled={isDisabled || generating === key}
+                    title={isDisabled ? 'CSV only — Excel/PDF export not yet implemented' : undefined}
                   >
                     {generating === key ? (
                       'Generating...'
@@ -94,6 +97,10 @@ export default function ReportsPage() {
                 );
               })}
             </div>
+
+            <p className="text-muted-foreground/50 mt-2 text-[10px]">
+              Only CSV export is currently implemented. Excel and PDF coming soon.
+            </p>
 
             {generated.includes(`${report.id}-csv`) && (
               <div className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-500">

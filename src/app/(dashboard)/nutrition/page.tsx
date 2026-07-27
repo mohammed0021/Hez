@@ -38,7 +38,7 @@ export default function NutritionPage() {
   };
 
   const dayMeals = todayLog?.meals || [];
-  const waterPct = Math.min((waterMl / waterGoal) * 100, 100);
+  const waterPct = waterGoal > 0 ? Math.min((waterMl / waterGoal) * 100, 100) : 0;
 
   const weekData = useMemo(() => {
     const data: { day: string; calories: number }[] = [];
@@ -110,7 +110,9 @@ export default function NutritionPage() {
                 initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
                 animate={{
                   strokeDashoffset:
-                    2 * Math.PI * 42 * (1 - Math.min(macros.calories / goals.calories, 1)),
+                    goals.calories > 0
+                      ? 2 * Math.PI * 42 * (1 - Math.min(macros.calories / goals.calories, 1))
+                      : 2 * Math.PI * 42,
                 }}
                 transition={{ duration: 0.8, ease: 'easeOut' }}
               />
@@ -151,14 +153,13 @@ export default function NutritionPage() {
         transition={{ delay: 0.04 }}
         className="mt-4 grid grid-cols-3 gap-2"
       >
-        <Link
-          href="/nutrition"
+        <div
           className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"
         >
           <Droplets size={16} className="mx-auto text-blue-500" />
           <p className="text-foreground mt-1 text-sm font-bold">{waterMl}ml</p>
           <p className="text-muted-foreground text-[9px]">Water</p>
-        </Link>
+        </div>
         <Link
           href="/nutrition/goals"
           className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"

@@ -93,7 +93,16 @@ export const useWorkoutHistoryStore = create<WorkoutHistoryState>()(
               volume: 0,
               blocks: [],
             }));
-            set({ sessions });
+            set((state) => {
+              const merged = [...state.sessions];
+              for (const serverSession of sessions) {
+                const idx = merged.findIndex((s) => s.id === serverSession.id);
+                if (idx === -1) {
+                  merged.push(serverSession);
+                }
+              }
+              return { sessions: merged };
+            });
           }
         } catch (e) {
           console.error('Failed to sync workouts from server:', e);

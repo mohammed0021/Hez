@@ -15,17 +15,21 @@ export function AnimatedCounter({
   duration?: number;
   prefix?: string;
 }) {
-  const [display, setDisplay] = useState(0);
+  const [display, setDisplay] = useState(value);
   const startTime = useRef<number>(0);
   const raf = useRef<number>(0);
+  const fromValue = useRef<number>(value);
+  const toValue = useRef<number>(value);
 
   useEffect(() => {
+    fromValue.current = display;
+    toValue.current = value;
     startTime.current = performance.now();
     const animate = (now: number) => {
       const elapsed = now - startTime.current;
       const progress = Math.min(elapsed / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(value * eased);
+      setDisplay(fromValue.current + (toValue.current - fromValue.current) * eased);
       if (progress < 1) raf.current = requestAnimationFrame(animate);
     };
     raf.current = requestAnimationFrame(animate);

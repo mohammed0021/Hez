@@ -124,7 +124,7 @@ export function Sidebar() {
               <SidebarItem
                 key={item.id}
                 item={item}
-                isActive={pathname === item.href}
+                isActive={pathname === item.href || pathname.startsWith(item.href + '/')}
                 onNavigate={handleNavigate}
               />
             ))}
@@ -138,7 +138,7 @@ export function Sidebar() {
               <SidebarItem
                 key={item.id}
                 item={item}
-                isActive={pathname === item.href}
+                isActive={pathname === item.href || pathname.startsWith(item.href + '/')}
                 onNavigate={handleNavigate}
               />
             ))}

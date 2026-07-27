@@ -80,7 +80,7 @@ export const metadata: Metadata = {
   referrer: 'origin-when-cross-origin',
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.png', sizes: 'any' },
       { url: '/icons/icon-72x72.png', sizes: '72x72', type: 'image/png' },
       { url: '/icons/icon-96x96.png', sizes: '96x96', type: 'image/png' },
       { url: '/icons/icon-128x128.png', sizes: '128x128', type: 'image/png' },
@@ -95,7 +95,6 @@ export const metadata: Metadata = {
     ],
     other: [
       { rel: 'apple-touch-icon-precomposed', url: '/icons/apple-icon-180x180.png' },
-      { rel: 'mask-icon', url: '/icons/icon.svg', color: '#10b981' },
     ],
   },
   other: {

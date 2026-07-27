@@ -87,7 +87,8 @@ export function KpiCard({
 }
 
 function formatValue(value: string | number, format: string): string {
-  const num = typeof value === 'string' ? parseFloat(value) : value;
+  if (typeof value === 'string') return value;
+  const num = value;
   if (isNaN(num)) return String(value);
 
   switch (format) {

@@ -39,9 +39,10 @@ export default function SupplementsPage() {
   useEffect(() => {
     if (!reminder.enabled) return;
     const check = setInterval(() => {
+      const state = useSupplementStore.getState();
       const now = new Date();
-      if (now.getHours() === reminder.hour && now.getMinutes() === reminder.minute) {
-        const missed = supplements.filter((s) => getTodayLog()[s.id] !== 'taken');
+      if (now.getHours() === state.reminder.hour && now.getMinutes() === state.reminder.minute) {
+        const missed = state.supplements.filter((s) => state.getTodayLog()[s.id] !== 'taken');
         if (missed.length > 0) {
           if (canNotify()) {
             notify('Supplements Reminder', {
@@ -50,7 +51,7 @@ export default function SupplementsPage() {
               data: { type: 'creatine_reminder' },
               onClick: () => {
                 for (const s of missed) {
-                  markTaken(s.id);
+                  state.markTaken(s.id);
                 }
               },
             });
@@ -64,7 +65,7 @@ export default function SupplementsPage() {
             notification.onclick = () => {
               window.focus();
               for (const s of missed) {
-                markTaken(s.id);
+                state.markTaken(s.id);
               }
             };
           }
@@ -72,7 +73,7 @@ export default function SupplementsPage() {
       }
     }, 60000);
     return () => clearInterval(check);
-  }, [reminder, supplements, markTaken, getTodayLog]);
+  }, [reminder]);
 
   return (
     <>

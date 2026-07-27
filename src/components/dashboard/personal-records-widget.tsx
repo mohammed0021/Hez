@@ -1,20 +1,22 @@
 'use client';
 
-import { ArrowRight, Trophy } from 'lucide-react';
+import { useMemo } from 'react';
+import { ArrowRight, Trophy, Flame, BarChart3, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DashboardWidget } from './widget-shell';
 import { usePRStore } from '@/stores/pr-store';
 import Link from 'next/link';
 
-const recordIcons: Record<string, string> = {
-  max_weight: '🏆',
-  max_reps: '🔥',
-  max_volume: '📊',
-  estimated_1rm: '💪',
+const recordIcons: Record<string, typeof Trophy> = {
+  max_weight: Trophy,
+  max_reps: Flame,
+  max_volume: BarChart3,
+  estimated_1rm: Zap,
 };
 
 export function PersonalRecordsWidget() {
-  const records = usePRStore((s) => s.getAllRecords());
+  const getAllRecords = usePRStore((s) => s.getAllRecords);
+  const records = useMemo(() => getAllRecords(), [getAllRecords]);
   const topRecords = records.slice(0, 3);
 
   return (
@@ -29,7 +31,12 @@ export function PersonalRecordsWidget() {
               transition={{ delay: i * 0.05 }}
               className="flex items-center gap-3"
             >
-              <span className="text-lg">{recordIcons[r.type] || '🏆'}</span>
+              <span className="text-muted-foreground flex size-8 items-center justify-center rounded-lg bg-amber-500/10">
+                {(() => {
+                  const Icon = recordIcons[r.type] || Trophy;
+                  return <Icon size={16} className="text-amber-500" />;
+                })()}
+              </span>
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-sm font-medium">{r.exerciseName}</p>
                 <p className="text-muted-foreground/60 text-[10px]">

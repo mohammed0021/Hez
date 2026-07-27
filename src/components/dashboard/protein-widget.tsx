@@ -3,12 +3,13 @@
 import { DashboardWidget } from './widget-shell';
 import { AnimatedCounter } from './animated-counter';
 import { useNutritionStore } from '@/stores/nutrition-store';
+import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
 
 export function ProteinWidget() {
   const today = new Date().toISOString().split('T')[0] ?? '';
   const log = useNutritionStore((s) => s.getLog(today));
   const consumed = log?.totalProtein ?? 0;
-  const goal = 150;
+  const goal = useNutritionGoalsStore((s) => s.goals.protein);
 
   const topFoods =
     log?.meals

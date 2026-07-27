@@ -1,14 +1,26 @@
 'use client';
 
 import { useRequireAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
 import { MobileLayout } from '@/components/mobile-layout';
 import { motion } from 'framer-motion';
 import { Dumbbell, Activity, TrendingUp, Flame } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ErrorState } from '@/components/ui/error-state';
+import { useGamificationStore } from '@/stores/gamification-store';
+import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 
 export default function HomePage() {
+  const router = useRouter();
   const { user, isLoading } = useRequireAuth();
+  const totalWorkouts = useGamificationStore((s) => s.getTotalWorkouts());
+  const totalVolume = useGamificationStore((s) => s.getTotalVolume());
+  const currentStreak = useGamificationStore((s) => s.getCurrentStreak());
+  const sessions = useWorkoutHistoryStore((s) => s.sessions);
+  const totalMinutes = sessions.reduce((acc, s) => {
+    if (!s.startedAt || !s.completedAt) return acc;
+    return acc + Math.round((new Date(s.completedAt).getTime() - new Date(s.startedAt).getTime()) / 60000);
+  }, 0);
 
   if (isLoading) {
     return (
@@ -35,10 +47,10 @@ export default function HomePage() {
   }
 
   const stats = [
-    { label: 'Workouts', value: '0', icon: Dumbbell, color: 'text-primary' },
-    { label: 'Minutes', value: '0', icon: Activity, color: 'text-blue-500' },
-    { label: 'Streak', value: '0 days', icon: Flame, color: 'text-orange-500' },
-    { label: 'Volume', value: '0 kg', icon: TrendingUp, color: 'text-green-500' },
+    { label: 'Workouts', value: totalWorkouts.toString(), icon: Dumbbell, color: 'text-primary' },
+    { label: 'Minutes', value: totalMinutes.toString(), icon: Activity, color: 'text-blue-500' },
+    { label: 'Streak', value: `${currentStreak} days`, icon: Flame, color: 'text-orange-500' },
+    { label: 'Volume', value: `${totalVolume.toLocaleString()} kg`, icon: TrendingUp, color: 'text-green-500' },
   ];
 
   return (
@@ -81,7 +93,10 @@ export default function HomePage() {
           className="mt-6"
         >
           <h3 className="mb-3 text-lg font-semibold text-foreground">Quick Start</h3>
-          <button className="flex w-full items-center gap-4 rounded-2xl bg-primary p-4 text-primary-foreground">
+          <button
+            onClick={() => router.push('/workouts')}
+            className="flex w-full items-center gap-4 rounded-2xl bg-primary p-4 text-primary-foreground"
+          >
             <Dumbbell size={24} />
             <div className="text-left">
               <p className="font-semibold">Start a Workout</p>

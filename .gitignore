@@ -35,8 +35,6 @@ yarn-error.log*
 !.env.example
 
 # generated assets
-public/icons/*.png
-public/splash/
 public/sw.js
 public/workbox-*.js
 
@@ -46,3 +44,5 @@ public/workbox-*.js
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.vercel

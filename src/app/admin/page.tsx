@@ -28,6 +28,7 @@ import {
 import { KpiCard } from '@/components/admin/kpi-card';
 import { useAnalyticsStore } from '@/stores/admin-store';
 import type { WorkoutAnalytics } from '@/types/admin';
+import { LoadingSkeleton, ErrorState } from './shared';
 
 export default function AdminDashboardPage() {
   const { data, stats, isLoading, error, fetch, fetchStats } = useAnalyticsStore();
@@ -287,30 +288,4 @@ export default function AdminDashboardPage() {
   );
 }
 
-function LoadingSkeleton() {
-  return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="bg-muted mb-8 h-8 w-48 animate-pulse rounded-lg" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {Array.from({ length: 18 }, (_, i) => (
-          <div key={i} className="bg-muted h-28 animate-pulse rounded-2xl" />
-        ))}
-      </div>
-    </div>
-  );
-}
 
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div className="flex h-[50vh] flex-col items-center justify-center gap-3 p-4">
-      <p className="text-sm text-red-500">{message}</p>
-      <p className="text-muted-foreground text-xs">Data may still load from server</p>
-      <button
-        onClick={onRetry}
-        className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-xs font-medium"
-      >
-        Retry
-      </button>
-    </div>
-  );
-}

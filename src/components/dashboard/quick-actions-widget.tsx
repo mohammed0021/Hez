@@ -1,6 +1,6 @@
 'use client';
 
-import { Play, Plus, Apple, Camera, Scale, Target } from 'lucide-react';
+import { Play, Plus, Droplets, Camera, Scale, Target } from 'lucide-react';
 import Link from 'next/link';
 
 const actions = [
@@ -34,7 +34,7 @@ const actions = [
   },
   {
     id: 'water',
-    icon: Apple,
+    icon: Droplets,
     label: 'Log Water',
     color: 'bg-cyan-500/10 text-cyan-500',
     href: '/nutrition',

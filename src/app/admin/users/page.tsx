@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   BarChart,
   Bar,
@@ -20,6 +19,7 @@ import { Users, UserCheck, UserX, Mail, UserCog } from 'lucide-react';
 import { KpiCard } from '@/components/admin/kpi-card';
 import { useAnalyticsStore } from '@/stores/admin-store';
 import type { UserAnalytics } from '@/types/admin';
+import { Section, LoadingSkeleton, ErrorState } from '../shared';
 
 const PIE_COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6'];
 
@@ -302,42 +302,4 @@ export default function UserAnalyticsPage() {
   );
 }
 
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="border-border/50 bg-card relative rounded-2xl border p-6"
-    >
-      <h3 className="text-foreground mb-4 text-sm font-semibold">{title}</h3>
-      {children}
-    </motion.div>
-  );
-}
 
-function LoadingSkeleton() {
-  return (
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="bg-muted mb-8 h-8 w-48 animate-pulse rounded-lg" />
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 7 }, (_, i) => (
-          <div key={i} className="bg-muted h-28 animate-pulse rounded-2xl" />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function ErrorState({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <div className="flex h-[50vh] flex-col items-center justify-center gap-3 p-4">
-      <p className="text-sm text-red-500">{message}</p>
-      <button
-        onClick={onRetry}
-        className="bg-primary text-primary-foreground rounded-lg px-4 py-2 text-xs font-medium"
-      >
-        Retry
-      </button>
-    </div>
-  );
-}

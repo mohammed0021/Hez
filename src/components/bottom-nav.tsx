@@ -35,7 +35,7 @@ export function BottomNav() {
               size?: number;
               className?: string;
             }>;
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
               <button
                 key={item.id}

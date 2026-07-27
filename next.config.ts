@@ -44,6 +44,7 @@ const nextConfig: NextConfig = withBA(
       imageSizes: [48, 64, 96, 128, 256],
       minimumCacheTTL: 31536000,
     },
+    turbopack: {},
     experimental: {
       optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
     },

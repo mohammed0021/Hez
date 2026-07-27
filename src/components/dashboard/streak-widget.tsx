@@ -49,6 +49,14 @@ function computeStreak(sessions: { completedAt: string }[]): number {
     .sort()
     .reverse();
   if (dates.length === 0 || !dates[0]) return 0;
+
+  const todayStr = new Date().toISOString().split('T')[0] ?? '';
+  const yesterday = new Date();
+  yesterday.setDate(yesterday.getDate() - 1);
+  const yesterdayStr = yesterday.toISOString().split('T')[0] ?? '';
+
+  if (dates[0] !== todayStr && dates[0] !== yesterdayStr) return 0;
+
   let streak = 1;
   for (let i = 1; i < dates.length; i++) {
     const curr = new Date(dates[i]!);

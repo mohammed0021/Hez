@@ -64,7 +64,7 @@ export default function CalendarPage() {
         }
       }
     }
-  }, []);
+  }, [recurringSchedules]);
 
   const handleSelectDate = (date: string) => {
     setSelectedDate(date);

@@ -78,6 +78,14 @@ export default function ProfilePage() {
   const unlockedIds = new Set(gamification.achievements.map((a) => a.id));
 
   const recentSessions = sessions.slice(0, 5);
+  const thisWeekSessions = sessions.filter((s) => {
+    const d = new Date(s.completedAt);
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+    return d >= startOfWeek;
+  }).length;
   const recentVolume = sessions.slice(0, 30).reduce((s, e) => s + e.volume, 0);
   const [thirtyDaysAgo] = useState(() => Date.now() - 30 * 86400000);
 
@@ -411,7 +419,7 @@ export default function ProfilePage() {
                       {Array.from({ length: profile.weeklyWorkoutGoal }).map((_, i) => (
                         <div
                           key={i}
-                          className={`h-2 flex-1 rounded-full ${i < Math.min(totalWorkouts % 7, profile.weeklyWorkoutGoal) ? 'bg-primary' : 'bg-muted-foreground/20'}`}
+                          className={`h-2 flex-1 rounded-full ${i < Math.min(thisWeekSessions, profile.weeklyWorkoutGoal) ? 'bg-primary' : 'bg-muted-foreground/20'}`}
                         />
                       ))}
                     </div>

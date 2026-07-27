@@ -30,7 +30,10 @@ export async function GET(request: Request) {
   if (profile?.role !== 'admin') return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type') || 'daily-csv';
+  const param = searchParams.get('type') || 'daily-csv';
+  const parts = param.split('-');
+  const format = parts.pop() || 'csv';
+  const type = parts.join('-');
 
   const [profilesRes, workoutsRes, nutritionRes] = await Promise.all([
     supabase.from('profiles').select('id, display_name, created_at, role, goal'),
@@ -74,10 +77,18 @@ export async function GET(request: Request) {
 
   const csv = rows.join('\n');
 
+  const mimeTypes: Record<string, string> = {
+    csv: 'text/csv',
+    excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    pdf: 'application/pdf',
+  };
+
+  const ext = format === 'excel' ? 'xlsx' : format;
+
   return new NextResponse(csv, {
     headers: {
-      'Content-Type': 'text/csv',
-      'Content-Disposition': `attachment; filename="hez-report-${type}-${now.toISOString().slice(0, 10)}.csv"`,
+      'Content-Type': mimeTypes[format] || 'text/csv',
+      'Content-Disposition': `attachment; filename="hez-report-${type}-${now.toISOString().slice(0, 10)}.${ext}"`,
     },
   });
 }

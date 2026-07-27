@@ -127,7 +127,7 @@ export const useWorkoutStore = create<WorkoutState>()(
           const savedWorkouts =
             existing >= 0
               ? s.savedWorkouts.map((x, i) => (i === existing ? updated : x))
-              : [...s.savedWorkouts, updated];
+              : [updated, ...s.savedWorkouts];
           return { savedWorkouts, currentWorkout: updated, isDirty: false };
         });
       },
@@ -214,7 +214,7 @@ export const useWorkoutStore = create<WorkoutState>()(
           const blocks = s.currentWorkout.blocks.map((b) => ({
             ...b,
             exercises: b.exercises.filter((e) => e.id !== exerciseId).map((e, i) => ({ ...e, sortOrder: i })),
-          })).filter((b) => b.exercises.length > 0 || b.type === 'standard');
+          }));
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
 

@@ -1,13 +1,20 @@
 'use client';
 
+import { useMemo } from 'react';
 import { CheckCircle2, Circle } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
 import { useSupplementStore } from '@/stores/supplement-store';
 
 export function SupplementWidget() {
   const supplements = useSupplementStore((s) => s.supplements);
-  const todayLog = useSupplementStore((s) => s.getTodayLog());
+  const logs = useSupplementStore((s) => s.logs);
   const markTaken = useSupplementStore((s) => s.markTaken);
+
+  const todayLog = useMemo(() => {
+    const d = new Date().toISOString().slice(0, 10);
+    const log = logs.find((l) => l.date === d);
+    return log?.supplements || {};
+  }, [logs]);
 
   const taken = supplements.filter((s) => todayLog[s.id] === 'taken').length;
 

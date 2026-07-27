@@ -125,7 +125,7 @@ export default function NotificationsSettingsPage() {
             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${store.globalEnabled ? 'bg-primary' : 'bg-muted'}`}
           >
             <span
-              className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.globalEnabled ? 'translate-x-6' : 'translate-x-0.5'}`}
+              className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.globalEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}
             />
           </button>
         </motion.div>
@@ -227,7 +227,7 @@ export default function NotificationsSettingsPage() {
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${store.soundEnabled ? 'bg-primary' : 'bg-muted'}`}
             >
               <span
-                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.soundEnabled ? 'translate-x-6' : 'translate-x-0.5'}`}
+                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.soundEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}
               />
             </button>
           </motion.div>
@@ -248,7 +248,7 @@ export default function NotificationsSettingsPage() {
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${store.vibrationEnabled ? 'bg-primary' : 'bg-muted'}`}
             >
               <span
-                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.vibrationEnabled ? 'translate-x-6' : 'translate-x-0.5'}`}
+                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.vibrationEnabled ? 'translate-x-5' : 'translate-x-0.5'}`}
               />
             </button>
           </motion.div>
@@ -274,7 +274,7 @@ export default function NotificationsSettingsPage() {
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${store.quietHours.enabled ? 'bg-primary' : 'bg-muted'}`}
             >
               <span
-                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.quietHours.enabled ? 'translate-x-6' : 'translate-x-0.5'}`}
+                className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${store.quietHours.enabled ? 'translate-x-5' : 'translate-x-0.5'}`}
               />
             </button>
           </div>
@@ -349,7 +349,7 @@ export default function NotificationsSettingsPage() {
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${prefs?.enabled ? 'bg-primary' : 'bg-muted'}`}
                       >
                         <span
-                          className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${prefs?.enabled ? 'translate-x-6' : 'translate-x-0.5'}`}
+                          className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${prefs?.enabled ? 'translate-x-5' : 'translate-x-0.5'}`}
                         />
                       </button>
                     </div>

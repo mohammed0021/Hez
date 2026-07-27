@@ -54,7 +54,7 @@ export default function NutritionAnalyticsPage() {
 
   const adherence = useMemo(() => {
     if (dailyData.length === 0) return 0;
-    const withinRange = dailyData.filter((d) => d.calories >= goals.calories * 0.8 && d.calories <= goals.calories * 1.2).length;
+    const withinRange = dailyData.filter((d) => goals.calories > 0 && d.calories >= goals.calories * 0.8 && d.calories <= goals.calories * 1.2).length;
     return Math.round((withinRange / dailyData.length) * 100);
   }, [dailyData, goals.calories]);
 

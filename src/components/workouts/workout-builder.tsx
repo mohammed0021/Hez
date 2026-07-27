@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Save, Copy, Share2, Bookmark, ArrowLeft, Clock } from 'lucide-react';
 import { useWorkoutStore } from '@/stores/workout-store';
@@ -19,12 +19,16 @@ export function WorkoutBuilder() {
   const isDirty = useWorkoutStore((s) => s.isDirty);
   const [showShare, setShowShare] = useState(false);
   const [saved, setSaved] = useState(false);
+  const savedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Auto-create a new workout if none loaded
   useEffect(() => {
     if (!workout) {
       createNew();
     }
+    return () => {
+      if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+    };
   }, []);
 
   if (!workout) return null;
@@ -32,7 +36,8 @@ export function WorkoutBuilder() {
   const handleSave = () => {
     save();
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    if (savedTimeoutRef.current) clearTimeout(savedTimeoutRef.current);
+    savedTimeoutRef.current = setTimeout(() => setSaved(false), 2000);
   };
 
   const totalSets = workout.blocks.reduce(
