@@ -36,9 +36,13 @@ export function MonthlyChartWidget() {
 
   return (
     <DashboardWidget title="Volume Progress">
-      <div className="mb-2 flex items-baseline gap-2">
-        <span className="text-foreground text-2xl font-bold">{total.toLocaleString()}</span>
-        <span className="text-muted-foreground text-xs">kg this period</span>
+      <div className="mb-3 flex items-baseline gap-2">
+        <span className="text-foreground text-2xl font-bold tracking-tight">
+          {total.toLocaleString()}
+        </span>
+        <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+          kg this period
+        </span>
       </div>
       <div className="h-24">
         <ResponsiveContainer width="100%" height="100%">

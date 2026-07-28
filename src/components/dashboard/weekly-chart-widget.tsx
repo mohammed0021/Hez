@@ -56,7 +56,7 @@ export function WeeklyChartWidget() {
           </BarChart>
         </ResponsiveContainer>
       </div>
-      <div className="text-muted-foreground/60 mt-2 flex justify-between text-[10px]">
+      <div className="text-muted-foreground/60 mt-3 flex justify-between text-[10px] font-medium tracking-wider uppercase">
         <span>Sun</span>
         <span>Mon</span>
         <span>Tue</span>

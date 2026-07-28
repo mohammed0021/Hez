@@ -27,8 +27,14 @@ import {
   useProfileStore,
   FITNESS_GOALS,
   EXPERIENCE_LEVELS,
+  GENDER_OPTIONS,
+  ACTIVITY_LEVELS,
+  UNIT_OPTIONS,
   type FitnessGoal,
   type ExperienceLevel,
+  type Gender,
+  type ActivityLevel,
+  type UnitSystem,
 } from '@/stores/profile-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useWeightStore } from '@/stores/weight-store';
@@ -60,9 +66,14 @@ export default function ProfilePage() {
     birthday: profile.birthday,
     phone: profile.phone,
     heightCm: profile.heightCm,
+    weightKg: profile.weightKg,
+    gender: profile.gender,
     primaryGoal: profile.primaryGoal,
     experienceLevel: profile.experienceLevel,
+    activityLevel: profile.activityLevel,
     weeklyWorkoutGoal: profile.weeklyWorkoutGoal,
+    workoutDuration: profile.workoutDuration,
+    unitSystem: profile.unitSystem,
   });
 
   const email = user?.email || '';
@@ -109,15 +120,21 @@ export default function ProfilePage() {
       birthday: profile.birthday,
       phone: profile.phone,
       heightCm: profile.heightCm,
+      weightKg: profile.weightKg,
+      gender: profile.gender,
       primaryGoal: profile.primaryGoal,
       experienceLevel: profile.experienceLevel,
+      activityLevel: profile.activityLevel,
       weeklyWorkoutGoal: profile.weeklyWorkoutGoal,
+      workoutDuration: profile.workoutDuration,
+      unitSystem: profile.unitSystem,
     });
     setEditing(true);
   };
 
   const saveEdit = () => {
     profile.updateProfile(editForm);
+    useNutritionGoalsStore.getState().autoCalculateFromProfile?.();
     setEditing(false);
   };
 
@@ -174,7 +191,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Tab bar */}
-      <div className="bg-background sticky top-0 z-10 -mx-4 px-4">
+      <div className="bg-background sticky top-0 z-10 -mx-4 overflow-hidden px-4">
         <div className="bg-muted/50 flex gap-1 overflow-x-auto rounded-xl p-1 [&::-webkit-scrollbar]:hidden">
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -183,7 +200,7 @@ export default function ProfilePage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                   isActive
                     ? 'bg-background text-foreground shadow-sm'
                     : 'text-muted-foreground hover:text-foreground'
@@ -236,16 +253,54 @@ export default function ProfilePage() {
                   type="tel"
                   onChange={(v) => setEditForm((f) => ({ ...f, phone: v }))}
                 />
+                <div>
+                  <p className="text-foreground/80 mb-2 text-xs font-medium">Gender</p>
+                  <div className="flex gap-2">
+                    {GENDER_OPTIONS.map((g) => (
+                      <button
+                        key={g.value}
+                        onClick={() => setEditForm((f) => ({ ...f, gender: g.value as Gender }))}
+                        className={`min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors ${
+                          editForm.gender === g.value
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-foreground/80 mb-2 text-xs font-medium">Unit System</p>
+                  <div className="flex gap-2">
+                    {UNIT_OPTIONS.map((u) => (
+                      <button
+                        key={u.value}
+                        onClick={() =>
+                          setEditForm((f) => ({ ...f, unitSystem: u.value as UnitSystem }))
+                        }
+                        className={`min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors ${
+                          editForm.unitSystem === u.value
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {u.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex gap-3 pt-2">
                   <button
                     onClick={cancelEdit}
-                    className="border-border text-muted-foreground hover:bg-muted flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
+                    className="border-border text-muted-foreground hover:bg-muted min-h-[44px] flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={saveEdit}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
                   >
                     Save
                   </button>
@@ -275,18 +330,33 @@ export default function ProfilePage() {
               <SectionHeader icon={Ruler} title="Body Stats" />
               <div className="space-y-3">
                 {editing ? (
-                  <InputField
-                    label={`Height (${heightUnit})`}
-                    value={String(editForm.heightCm)}
-                    type="number"
-                    onChange={(v) => setEditForm((f) => ({ ...f, heightCm: Number(v) }))}
-                  />
+                  <>
+                    <InputField
+                      label={`Height (${heightUnit})`}
+                      value={String(editForm.heightCm)}
+                      type="number"
+                      onChange={(v) => setEditForm((f) => ({ ...f, heightCm: Number(v) }))}
+                    />
+                    <InputField
+                      label={`Weight (${editForm.unitSystem === 'imperial' ? 'lbs' : 'kg'})`}
+                      value={String(editForm.weightKg)}
+                      type="number"
+                      onChange={(v) => setEditForm((f) => ({ ...f, weightKg: Number(v) }))}
+                    />
+                  </>
                 ) : (
-                  <InfoRow icon={Ruler} label="Height" value={formatHeight(profile.heightCm)} />
+                  <>
+                    <InfoRow icon={Ruler} label="Height" value={formatHeight(profile.heightCm)} />
+                    <InfoRow
+                      icon={Weight}
+                      label="Base Weight"
+                      value={`${profile.weightKg || '—'} kg`}
+                    />
+                  </>
                 )}
                 <InfoRow
                   icon={Weight}
-                  label="Weight"
+                  label="Latest Weight"
                   value={
                     latestWeight
                       ? `${formatWeight(latestWeight.weightKg)} ${latestWeight.bodyFatPercent ? `· ${latestWeight.bodyFatPercent}% body fat` : ''}`
@@ -375,16 +445,54 @@ export default function ProfilePage() {
                     type="number"
                     onChange={(v) => setEditForm((f) => ({ ...f, weeklyWorkoutGoal: Number(v) }))}
                   />
+                  <div>
+                    <p className="text-foreground/80 mb-2 text-xs font-medium">Activity Level</p>
+                    <div className="flex flex-wrap gap-2">
+                      {ACTIVITY_LEVELS.map((a) => (
+                        <button
+                          key={a.value}
+                          onClick={() =>
+                            setEditForm((f) => ({ ...f, activityLevel: a.value as ActivityLevel }))
+                          }
+                          className={`min-h-[44px] rounded-xl px-3 py-2 text-sm font-medium transition-colors ${
+                            editForm.activityLevel === a.value
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {a.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-foreground/80 mb-2 text-xs font-medium">Workout Duration</p>
+                    <div className="flex gap-2">
+                      {[30, 45, 60, 90].map((d) => (
+                        <button
+                          key={d}
+                          onClick={() => setEditForm((f) => ({ ...f, workoutDuration: d }))}
+                          className={`min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors ${
+                            editForm.workoutDuration === d
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {d} min
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <div className="flex gap-3 pt-2">
                     <button
                       onClick={cancelEdit}
-                      className="border-border text-muted-foreground hover:bg-muted flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
+                      className="border-border text-muted-foreground hover:bg-muted min-h-[44px] flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={saveEdit}
-                      className="bg-primary text-primary-foreground hover:bg-primary/90 flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
                     >
                       Save
                     </button>
@@ -412,6 +520,28 @@ export default function ProfilePage() {
                     icon={Calendar}
                     label="Weekly Goal"
                     value={`${profile.weeklyWorkoutGoal} sessions`}
+                  />
+                  <InfoRow
+                    icon={Activity}
+                    label="Activity Level"
+                    value={
+                      ACTIVITY_LEVELS.find((a) => a.value === profile.activityLevel)?.label ||
+                      profile.activityLevel
+                    }
+                  />
+                  <InfoRow
+                    icon={Clock}
+                    label="Workout Duration"
+                    value={`${profile.workoutDuration || 45} min`}
+                  />
+                  <InfoRow
+                    icon={User}
+                    label="Gender"
+                    value={
+                      GENDER_OPTIONS.find((g) => g.value === profile.gender)?.label ||
+                      profile.gender ||
+                      'Not set'
+                    }
                   />
                   <div className="bg-muted/30 mt-3 rounded-xl p-3">
                     <p className="text-foreground mb-2 text-xs font-medium">Progress this week</p>

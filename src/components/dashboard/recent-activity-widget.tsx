@@ -51,7 +51,7 @@ export function RecentActivityWidget() {
               <div
                 className={`bg-muted flex size-8 items-center justify-center rounded-lg ${color}`}
               >
-                <Icon size={14} />
+                <Icon size={16} />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-sm font-medium">{s.name}</p>

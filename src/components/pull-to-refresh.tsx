@@ -29,7 +29,10 @@ export function PullToRefresh({ children, onRefresh, threshold = 60 }: PullToRef
   }, [onRefresh, refreshing, y, threshold]);
 
   return (
-    <div className="relative overflow-hidden">
+    <div
+      className="relative overflow-hidden"
+      style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
+    >
       <motion.div
         style={{ y: springY }}
         onPan={(_, info) => {
@@ -41,7 +44,7 @@ export function PullToRefresh({ children, onRefresh, threshold = 60 }: PullToRef
         className="relative"
       >
         <motion.div
-          className="absolute left-0 right-0 flex items-center justify-center"
+          className="absolute right-0 left-0 flex items-center justify-center"
           style={{
             top: useTransform(y, (v) => Math.min(v - 40, 0)),
             opacity: pullProgress,

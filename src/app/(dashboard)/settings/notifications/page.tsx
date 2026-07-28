@@ -98,13 +98,13 @@ export default function NotificationsSettingsPage() {
             store.resetAll();
             setPushStatus('idle');
           }}
-          className="bg-muted text-foreground hover:bg-muted/80 flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
+          className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
           <RotateCcw size={14} /> Reset
         </button>
       </div>
 
-      <div className="mt-6 space-y-4">
+      <div className="mt-6 space-y-3">
         {/* Global toggle */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
@@ -161,7 +161,7 @@ export default function NotificationsSettingsPage() {
           {browserPerm !== 'granted' && (
             <button
               onClick={handleRequestPermission}
-              className="bg-primary text-primary-foreground mt-3 w-full rounded-xl py-2.5 text-xs font-medium transition-transform active:scale-[0.98]"
+              className="bg-primary text-primary-foreground mt-3 min-h-[44px] w-full rounded-xl py-2.5 text-xs font-medium transition-transform active:scale-[0.98]"
             >
               {browserPerm === 'denied'
                 ? 'Open Browser Settings to Enable'
@@ -194,7 +194,7 @@ export default function NotificationsSettingsPage() {
             <button
               onClick={handleTogglePush}
               disabled={pushStatus === 'subscribing'}
-              className={`rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
+              className={`min-h-[44px] rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
                 pushStatus === 'subscribed'
                   ? 'bg-destructive/10 text-destructive hover:bg-destructive/20'
                   : 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -315,7 +315,7 @@ export default function NotificationsSettingsPage() {
 
         {/* Per-type settings */}
         <div className="mt-2">
-          <p className="text-muted-foreground/60 mb-2 px-1 text-[10px] font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground/60 mb-2 px-1 text-[10px] font-medium tracking-wider uppercase">
             Notification Types
           </p>
           <div className="space-y-1.5">
@@ -454,7 +454,7 @@ export default function NotificationsSettingsPage() {
         >
           <button
             onClick={handleSendTest}
-            className="border-border/60 text-muted-foreground hover:bg-muted/50 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed py-3 text-xs transition-colors"
+            className="border-border/60 text-muted-foreground hover:bg-muted/50 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-dashed py-3 text-xs transition-colors"
           >
             <Bell size={14} />
             {testSent ? 'Test notification sent!' : 'Send Test Notification'}

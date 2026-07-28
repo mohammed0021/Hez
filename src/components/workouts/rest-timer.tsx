@@ -123,7 +123,7 @@ export function RestTimer({
       <p className="text-muted-foreground text-sm">Rest</p>
       <button
         onClick={onSkip}
-        className="bg-primary text-primary-foreground rounded-xl px-6 py-2 text-sm font-medium transition-transform active:scale-95"
+        className="bg-primary text-primary-foreground min-h-[44px] rounded-xl px-6 py-2 text-sm font-medium transition-transform active:scale-95"
       >
         Skip Rest
       </button>

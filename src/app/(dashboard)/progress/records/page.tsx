@@ -75,9 +75,9 @@ export default function RecordsPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
+          className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus size={14} /> Add Record
+          <Plus className="size-4" /> Add Record
         </button>
       </div>
 
@@ -127,13 +127,13 @@ export default function RecordsPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowForm(false)}
-              className="bg-muted text-foreground flex-1 rounded-xl py-2 text-xs font-medium"
+              className="bg-muted text-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
               Cancel
             </button>
             <button
               onClick={handleAdd}
-              className="bg-primary text-primary-foreground flex-1 rounded-xl py-2 text-xs font-medium"
+              className="bg-primary text-primary-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
               Save
             </button>
@@ -156,11 +156,11 @@ export default function RecordsPage() {
             key={name}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="border-border/50 bg-card rounded-2xl border p-3"
+            className="border-border/50 bg-card rounded-2xl border p-4"
           >
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/10">
-                <Trophy size={18} className="text-amber-500" />
+                <Trophy className="size-4 text-amber-500" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-sm font-semibold">{name}</p>
@@ -172,7 +172,7 @@ export default function RecordsPage() {
                         key={r.id}
                         className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-medium ${r.source === 'auto' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}
                       >
-                        <RIcon size={10} />
+                        <RIcon className="size-4" />
                         {r.value}
                         {r.type === 'max_weight' || r.type === 'estimated_1rm'
                           ? 'kg'
@@ -188,7 +188,7 @@ export default function RecordsPage() {
                             onClick={() => deleteRecord(r.id)}
                             className="text-muted-foreground/40 hover:text-destructive ml-0.5"
                           >
-                            <Trash2 size={9} />
+                            <Trash2 className="size-4" />
                           </button>
                         )}
                       </span>

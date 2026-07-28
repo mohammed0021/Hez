@@ -50,7 +50,7 @@ function SidebarItem({
   return (
     <button
       onClick={() => onNavigate(item.href)}
-      className={`group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-all ${
+      className={`group relative flex min-h-[44px] w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-medium transition-all ${
         isActive
           ? 'bg-primary/10 text-primary'
           : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -89,7 +89,6 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile overlay */}
       {sidebarOpen && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -100,26 +99,24 @@ export function Sidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`border-border/50 bg-background fixed top-0 left-0 z-40 flex h-full w-64 flex-col border-r transition-transform duration-200 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
+        style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
       >
-        {/* Logo */}
-        <div className="border-border/50 flex h-14 items-center gap-3 border-b px-5">
+        <div className="border-border/50 flex h-14 shrink-0 items-center gap-3 border-b px-5">
           <div className="bg-primary flex size-8 items-center justify-center rounded-xl">
             <span className="text-primary-foreground text-sm font-bold">H</span>
           </div>
           <span className="text-foreground text-lg font-bold">Hêz</span>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="text-muted-foreground/60 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
             Main
           </p>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {SIDEBAR_ITEMS.map((item) => (
               <SidebarItem
                 key={item.id}
@@ -133,7 +130,7 @@ export function Sidebar() {
           <p className="text-muted-foreground/60 mt-6 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
             Account
           </p>
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {SIDEBAR_BOTTOM_ITEMS.map((item) => (
               <SidebarItem
                 key={item.id}
@@ -145,9 +142,11 @@ export function Sidebar() {
           </div>
         </nav>
 
-        {/* User footer */}
-        <div className="border-border/50 border-t px-4 py-3">
-          <div className="flex items-center gap-3">
+        <div
+          className="border-border/50 shrink-0 border-t px-4"
+          style={{ paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))' }}
+        >
+          <div className="flex items-center gap-3 py-3">
             <div className="bg-primary/10 text-primary flex size-8 items-center justify-center rounded-full text-sm font-medium">
               {displayName.charAt(0).toUpperCase()}
             </div>
@@ -158,6 +157,7 @@ export function Sidebar() {
             <button
               onClick={handleSignOut}
               className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-8 items-center justify-center rounded-lg"
+              aria-label="Sign out"
             >
               <LogOut size={16} />
             </button>

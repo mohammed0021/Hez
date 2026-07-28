@@ -3,7 +3,17 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { TrendingUp, BarChart3, Flame } from 'lucide-react';
-import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, LineChart, Line } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  LineChart,
+  Line,
+} from 'recharts';
 import { useNutritionStore } from '@/stores/nutrition-store';
 import { useWaterStore } from '@/stores/water-store';
 import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
@@ -26,7 +36,8 @@ export default function NutritionAnalyticsPage() {
   }, [logs]);
 
   const weeklyAvg = useMemo(() => {
-    if (dailyData.length === 0) return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, water: 0 };
+    if (dailyData.length === 0)
+      return { calories: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, water: 0 };
     const last7 = dailyData.slice(-7);
     const avg = (key: 'calories' | 'protein' | 'carbs' | 'fat' | 'fiber') =>
       Math.round(last7.reduce((s, d) => s + d[key], 0) / last7.length);
@@ -46,7 +57,10 @@ export default function NutritionAnalyticsPage() {
     d.setDate(d.getDate() - 6);
     for (let i = 0; i < 7; i++) {
       const dateStr = d.toISOString().slice(0, 10);
-      data.push({ day: d.toLocaleDateString('en', { weekday: 'short' }), ml: waterLog[dateStr] || 0 });
+      data.push({
+        day: d.toLocaleDateString('en', { weekday: 'short' }),
+        ml: waterLog[dateStr] || 0,
+      });
       d.setDate(d.getDate() + 1);
     }
     return data;
@@ -54,7 +68,12 @@ export default function NutritionAnalyticsPage() {
 
   const adherence = useMemo(() => {
     if (dailyData.length === 0) return 0;
-    const withinRange = dailyData.filter((d) => goals.calories > 0 && d.calories >= goals.calories * 0.8 && d.calories <= goals.calories * 1.2).length;
+    const withinRange = dailyData.filter(
+      (d) =>
+        goals.calories > 0 &&
+        d.calories >= goals.calories * 0.8 &&
+        d.calories <= goals.calories * 1.2,
+    ).length;
     return Math.round((withinRange / dailyData.length) * 100);
   }, [dailyData, goals.calories]);
 
@@ -62,26 +81,69 @@ export default function NutritionAnalyticsPage() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-foreground">Nutrition Analytics</h1>
-      <p className="mt-0.5 text-sm text-muted-foreground">{dailyData.length} days tracked</p>
+      <h1 className="text-foreground text-2xl font-bold">Nutrition Analytics</h1>
+      <p className="text-muted-foreground mt-0.5 text-sm">{dailyData.length} days tracked</p>
 
       {!hasData && (
         <div className="mt-12 text-center">
-          <BarChart3 size={48} className="mx-auto text-muted-foreground/20" />
-          <p className="mt-3 text-sm text-muted-foreground">Start logging meals to see analytics.</p>
+          <BarChart3 size={48} className="text-muted-foreground/20 mx-auto" />
+          <p className="text-muted-foreground mt-3 text-sm">
+            Start logging meals to see analytics.
+          </p>
         </div>
       )}
 
       {hasData && (
         <>
           {/* Summary Cards */}
-          <div className="mt-5 grid grid-cols-2 gap-2.5">
-            <SummaryCard label="Avg Calories" value={weeklyAvg.calories} suffix="kcal" icon={Flame} />
-            <SummaryCard label="Adherence" value={adherence} suffix="%" icon={TrendingUp} color={adherence > 80 ? 'text-green-500' : adherence > 60 ? 'text-yellow-500' : 'text-red-500'} />
-            <SummaryCard label="Avg Protein" value={weeklyAvg.protein} suffix="g" icon={BarChart3} color="text-blue-500" />
-            <SummaryCard label="Avg Carbs" value={weeklyAvg.carbs} suffix="g" icon={BarChart3} color="text-amber-500" />
-            <SummaryCard label="Avg Fat" value={weeklyAvg.fat} suffix="g" icon={BarChart3} color="text-rose-500" />
-            <SummaryCard label="Avg Fiber" value={weeklyAvg.fiber} suffix="g" icon={BarChart3} color="text-green-500" />
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <SummaryCard
+              label="Avg Calories"
+              value={weeklyAvg.calories}
+              suffix="kcal"
+              icon={Flame}
+            />
+            <SummaryCard
+              label="Adherence"
+              value={adherence}
+              suffix="%"
+              icon={TrendingUp}
+              color={
+                adherence > 80
+                  ? 'text-green-500'
+                  : adherence > 60
+                    ? 'text-yellow-500'
+                    : 'text-red-500'
+              }
+            />
+            <SummaryCard
+              label="Avg Protein"
+              value={weeklyAvg.protein}
+              suffix="g"
+              icon={BarChart3}
+              color="text-blue-500"
+            />
+            <SummaryCard
+              label="Avg Carbs"
+              value={weeklyAvg.carbs}
+              suffix="g"
+              icon={BarChart3}
+              color="text-amber-500"
+            />
+            <SummaryCard
+              label="Avg Fat"
+              value={weeklyAvg.fat}
+              suffix="g"
+              icon={BarChart3}
+              color="text-rose-500"
+            />
+            <SummaryCard
+              label="Avg Fiber"
+              value={weeklyAvg.fiber}
+              suffix="g"
+              icon={BarChart3}
+              color="text-green-500"
+            />
           </div>
 
           {/* Calories Chart */}
@@ -89,10 +151,31 @@ export default function NutritionAnalyticsPage() {
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dailyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
-                  <XAxis dataKey="date" tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} width={35} />
-                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11 }} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                    strokeOpacity={0.3}
+                  />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={35}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 11,
+                    }}
+                  />
                   <Bar dataKey="calories" fill="hsl(var(--primary))" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -104,14 +187,63 @@ export default function NutritionAnalyticsPage() {
             <div className="h-48">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={dailyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
-                  <XAxis dataKey="date" tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} width={35} />
-                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11 }} />
-                  <Line type="monotone" dataKey="protein" stroke="#3b82f6" strokeWidth={1.5} dot={false} name="Protein" />
-                  <Line type="monotone" dataKey="carbs" stroke="#f59e0b" strokeWidth={1.5} dot={false} name="Carbs" />
-                  <Line type="monotone" dataKey="fat" stroke="#f43f5e" strokeWidth={1.5} dot={false} name="Fat" />
-                  <Line type="monotone" dataKey="fiber" stroke="#10b981" strokeWidth={1.5} dot={false} name="Fiber" />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                    strokeOpacity={0.3}
+                  />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 8, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={35}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 11,
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="protein"
+                    stroke="#3b82f6"
+                    strokeWidth={1.5}
+                    dot={false}
+                    name="Protein"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="carbs"
+                    stroke="#f59e0b"
+                    strokeWidth={1.5}
+                    dot={false}
+                    name="Carbs"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="fat"
+                    stroke="#f43f5e"
+                    strokeWidth={1.5}
+                    dot={false}
+                    name="Fat"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="fiber"
+                    stroke="#10b981"
+                    strokeWidth={1.5}
+                    dot={false}
+                    name="Fiber"
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -122,10 +254,31 @@ export default function NutritionAnalyticsPage() {
             <div className="h-40">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weekWater}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" strokeOpacity={0.3} />
-                  <XAxis dataKey="day" tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }} axisLine={false} tickLine={false} width={35} />
-                  <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border))', borderRadius: 8, fontSize: 11 }} />
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--border))"
+                    strokeOpacity={0.3}
+                  />
+                  <XAxis
+                    dataKey="day"
+                    tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))' }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={35}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: 8,
+                      fontSize: 11,
+                    }}
+                  />
                   <Bar dataKey="ml" fill="#3b82f6" radius={[3, 3, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
@@ -139,14 +292,35 @@ export default function NutritionAnalyticsPage() {
   );
 }
 
-function SummaryCard({ label, value, suffix, icon: Icon, color = 'text-primary' }: { label: string; value: number; suffix: string; icon: React.ComponentType<{ size?: number; className?: string }>; color?: string }) {
+function SummaryCard({
+  label,
+  value,
+  suffix,
+  icon: Icon,
+  color = 'text-primary',
+}: {
+  label: string;
+  value: number;
+  suffix: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  color?: string;
+}) {
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl border border-border/40 bg-card p-3">
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="border-border/40 bg-card rounded-xl border p-4"
+    >
       <div className="flex items-center gap-2">
-        <Icon size={14} className={color} />
-        <span className="text-[10px] text-muted-foreground">{label}</span>
+        <Icon className={`size-4 ${color}`} />
+        <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+          {label}
+        </span>
       </div>
-      <p className="mt-1 text-lg font-bold text-foreground">{value}<span className="text-xs font-normal text-muted-foreground ml-0.5">{suffix}</span></p>
+      <p className="text-foreground mt-1 text-lg font-bold">
+        {value}
+        <span className="text-muted-foreground ml-0.5 text-xs font-normal">{suffix}</span>
+      </p>
     </motion.div>
   );
 }
@@ -154,7 +328,7 @@ function SummaryCard({ label, value, suffix, icon: Icon, color = 'text-primary' 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <motion.section initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-6">
-      <h2 className="text-sm font-semibold text-foreground mb-3">{title}</h2>
+      <h2 className="text-foreground mb-3 text-sm font-semibold">{title}</h2>
       {children}
     </motion.section>
   );

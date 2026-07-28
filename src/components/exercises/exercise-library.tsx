@@ -143,7 +143,7 @@ export function ExerciseLibrary() {
               <p className="text-muted-foreground text-sm">No exercises match your search</p>
               <button
                 onClick={() => useExerciseStore.getState().clearFilters()}
-                className="bg-muted text-foreground rounded-xl px-4 py-2 text-xs"
+                className="bg-muted text-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs"
               >
                 Clear filters
               </button>
@@ -194,7 +194,7 @@ export function ExerciseLibrary() {
         <div className="hidden lg:block">
           <div className="sticky top-24 space-y-4">
             <div className="border-border/50 bg-card rounded-2xl border p-4">
-              <h3 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+              <h3 className="text-muted-foreground/60 mb-3 text-[10px] font-medium tracking-wider uppercase">
                 Browse by Muscle
               </h3>
               <div className="flex flex-wrap gap-1.5">

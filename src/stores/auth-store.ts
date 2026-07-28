@@ -48,17 +48,26 @@ export const useAuthStore = create<AuthState>()((set) => ({
         if (user) {
           const { data: profile } = await supabase
             .from('profiles')
-            .select('role')
+            .select('role, onboarding_completed')
             .eq('id', user.id)
             .single();
           set({ user, session, role: (profile?.role as UserRole) || 'user', isLoading: false });
+
+          const dbOnboarded = profile?.onboarding_completed === true;
+          const localOnboarded =
+            typeof window !== 'undefined'
+              ? localStorage.getItem('hez-onboarded') === 'true'
+              : false;
+          set({ isOnboarded: dbOnboarded || localOnboarded });
         } else {
           set({ user: null, session: null, isLoading: false });
-        }
 
-        const onboarded =
-          typeof window !== 'undefined' ? localStorage.getItem('hez-onboarded') === 'true' : false;
-        set({ isOnboarded: onboarded });
+          const onboarded =
+            typeof window !== 'undefined'
+              ? localStorage.getItem('hez-onboarded') === 'true'
+              : false;
+          set({ isOnboarded: onboarded });
+        }
       } else {
         set({ user: null, session: null, isLoading: false });
       }

@@ -47,85 +47,89 @@ export default function RegisterPage() {
   };
 
   return (
-    <AuthLayout title="Create account" subtitle="Start your fitness journey">
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Full Name</Label>
-          <Input
-            id="name"
-            placeholder="Alex Johnson"
-            autoCapitalize="words"
-            autoComplete="name"
-            autoFocus
-            {...register('name')}
-          />
-          {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            autoCapitalize="none"
-            autoComplete="email"
-            {...register('email')}
-          />
-          {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
+    <div className="min-h-screen-safe flex flex-col items-center justify-center p-4">
+      <AuthLayout title="Create account" subtitle="Start your fitness journey">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 w-full max-w-sm space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Full Name</Label>
             <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Min. 8 characters"
-              autoComplete="new-password"
-              {...register('password')}
+              id="name"
+              placeholder="Alex Johnson"
+              autoCapitalize="words"
+              autoComplete="name"
+              autoFocus
+              {...register('name')}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+            {errors.name && <p className="text-destructive text-xs">{errors.name.message}</p>}
           </div>
-          {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
-        </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input
-            id="confirmPassword"
-            type="password"
-            placeholder="Repeat your password"
-            autoComplete="new-password"
-            {...register('confirmPassword')}
-          />
-          {errors.confirmPassword && (
-            <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>
-          )}
-        </div>
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              autoCapitalize="none"
+              autoComplete="email"
+              {...register('email')}
+            />
+            {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
+          </div>
 
-        <motion.div whileTap={{ scale: 0.98 }}>
-          <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-            <UserPlus size={18} />
-            {isLoading ? 'Creating account...' : 'Create Account'}
-          </Button>
-        </motion.div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Min. 8 characters"
+                autoComplete="new-password"
+                {...register('password')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-destructive text-xs">{errors.password.message}</p>
+            )}
+          </div>
 
-        <SocialAuthButtons isLoading={isLoading} />
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Input
+              id="confirmPassword"
+              type="password"
+              placeholder="Repeat your password"
+              autoComplete="new-password"
+              {...register('confirmPassword')}
+            />
+            {errors.confirmPassword && (
+              <p className="text-destructive text-xs">{errors.confirmPassword.message}</p>
+            )}
+          </div>
 
-        <p className="text-center text-sm text-muted-foreground">
-          Already have an account?{' '}
-          <Link href="/auth/login" className="font-medium text-primary">
-            Sign in
-          </Link>
-        </p>
-      </form>
-    </AuthLayout>
+          <motion.div whileTap={{ scale: 0.98 }}>
+            <Button type="submit" className="min-h-[44px] w-full" size="lg" disabled={isLoading}>
+              <UserPlus size={18} />
+              {isLoading ? 'Creating account...' : 'Create Account'}
+            </Button>
+          </motion.div>
+
+          <SocialAuthButtons isLoading={isLoading} />
+
+          <p className="text-muted-foreground text-center text-sm">
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-primary font-medium">
+              Sign in
+            </Link>
+          </p>
+        </form>
+      </AuthLayout>
+    </div>
   );
 }

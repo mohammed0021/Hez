@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CalendarDays, CalendarRange, List, Plus, Settings, X, Timer, RefreshCw } from 'lucide-react';
+import {
+  CalendarDays,
+  CalendarRange,
+  List,
+  Plus,
+  Settings,
+  X,
+  Timer,
+  RefreshCw,
+} from 'lucide-react';
 import { MonthlyView } from '@/components/calendar/monthly-view';
 import { WeeklyPlanner } from '@/components/calendar/weekly-planner';
 import { DailyAgenda } from '@/components/calendar/daily-agenda';
@@ -54,12 +63,20 @@ export default function CalendarPage() {
   useEffect(() => {
     const dayOfWeek = today.getDay();
     if (recurringSchedules.some((r) => r.active && r.daysOfWeek.includes(dayOfWeek))) {
-      const matching = recurringSchedules.filter((r) => r.active && r.daysOfWeek.includes(dayOfWeek));
+      const matching = recurringSchedules.filter(
+        (r) => r.active && r.daysOfWeek.includes(dayOfWeek),
+      );
       for (const sched of matching) {
         if (sched.workoutId && !sched.startDate && !sched.endDate) {
           const existing = useCalendarStore.getState().events;
-          if (!existing.some((e) => e.date === todayStr && e.workoutId === sched.workoutId && e.type === 'workout')) {
-            useCalendarStore.getState().scheduleWorkout(todayStr, sched.workoutId, sched.workoutName);
+          if (
+            !existing.some(
+              (e) => e.date === todayStr && e.workoutId === sched.workoutId && e.type === 'workout',
+            )
+          ) {
+            useCalendarStore
+              .getState()
+              .scheduleWorkout(todayStr, sched.workoutId, sched.workoutName);
           }
         }
       }
@@ -82,7 +99,14 @@ export default function CalendarPage() {
       startDate: newSchedule.startDate || undefined,
       endDate: newSchedule.endDate || undefined,
     });
-    setNewSchedule({ name: '', daysOfWeek: [], workoutId: '', workoutName: '', startDate: '', endDate: '' });
+    setNewSchedule({
+      name: '',
+      daysOfWeek: [],
+      workoutId: '',
+      workoutName: '',
+      startDate: '',
+      endDate: '',
+    });
   };
 
   const handleAddCycle = () => {
@@ -102,32 +126,47 @@ export default function CalendarPage() {
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Calendar</h1>
+        <h1 className="text-foreground text-2xl font-bold">Calendar</h1>
         <div className="flex gap-1.5">
-          <button onClick={() => setShowManageModal(true)}
-            className="flex items-center gap-1.5 rounded-xl bg-muted px-3 py-2 text-xs font-medium text-foreground hover:bg-muted/80 transition-colors">
+          <button
+            onClick={() => setShowManageModal(true)}
+            className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors"
+          >
             <Settings size={14} /> Manage
           </button>
-          <button onClick={() => { setSelectedDate(todayStr); setView('daily'); }}
-            className="flex items-center gap-1.5 rounded-xl bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+          <button
+            onClick={() => {
+              setSelectedDate(todayStr);
+              setView('daily');
+            }}
+            className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors"
+          >
             <Plus size={14} /> Today
           </button>
         </div>
       </div>
 
       {/* View switcher */}
-      <div className="mt-4 flex gap-1 rounded-xl bg-muted p-1">
-        {([
+      <div className="bg-muted mt-4 flex gap-1 rounded-xl p-1">
+        {[
           { id: 'monthly' as const, label: 'Month', icon: CalendarDays },
           { id: 'weekly' as const, label: 'Week', icon: CalendarRange },
           { id: 'daily' as const, label: 'Day', icon: List },
-        ]).map((v) => {
+        ].map((v) => {
           const Icon = v.icon;
           return (
-            <button key={v.id} onClick={() => { setView(v.id); if (v.id !== 'daily') setSelectedDate(null); }}
+            <button
+              key={v.id}
+              onClick={() => {
+                setView(v.id);
+                if (v.id !== 'daily') setSelectedDate(null);
+              }}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-all ${
-                view === v.id ? 'bg-card text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
-              }`}>
+                view === v.id
+                  ? 'bg-card text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
               <Icon size={14} />
               {v.label}
             </button>
@@ -138,18 +177,33 @@ export default function CalendarPage() {
       <div className="mt-4">
         <AnimatePresence mode="wait">
           {view === 'monthly' && (
-            <motion.div key="monthly" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}
-              className="rounded-2xl border border-border/50 bg-card p-4">
+            <motion.div
+              key="monthly"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+              className="border-border/50 bg-card rounded-2xl border p-4"
+            >
               <MonthlyView onSelectDate={handleSelectDate} />
             </motion.div>
           )}
           {view === 'weekly' && (
-            <motion.div key="weekly" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}>
+            <motion.div
+              key="weekly"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+            >
               <WeeklyPlanner onSelectDate={handleSelectDate} />
             </motion.div>
           )}
           {view === 'daily' && (
-            <motion.div key="daily" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }}>
+            <motion.div
+              key="daily"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 10 }}
+            >
               <DailyAgenda
                 dateStr={selectedDate || todayStr}
                 onDateChange={setSelectedDate}
@@ -163,37 +217,52 @@ export default function CalendarPage() {
       {/* Manage modal */}
       <AnimatePresence>
         {showManageModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40"
-            onClick={() => setShowManageModal(false)}>
-            <motion.div initial={{ y: 100 }} animate={{ y: 0 }} exit={{ y: 100 }}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center"
+            onClick={() => setShowManageModal(false)}
+          >
+            <motion.div
+              initial={{ y: 100 }}
+              animate={{ y: 0 }}
+              exit={{ y: 100 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-2xl bg-card p-5 border border-border/50 max-h-[85vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <p className="text-sm font-semibold text-foreground">Manage Schedules & Cycles</p>
-                <button onClick={() => setShowManageModal(false)} className="text-muted-foreground hover:text-foreground">
+              className="bg-card border-border/50 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border p-5"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <p className="text-foreground text-sm font-semibold">Manage Schedules & Cycles</p>
+                <button
+                  onClick={() => setShowManageModal(false)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <X size={16} />
                 </button>
               </div>
 
               {/* Recurring Schedules */}
               <div className="mb-5">
-                <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
                   <RefreshCw size={12} className="text-primary" /> Recurring Schedules
                 </p>
 
                 {recurringSchedules.length > 0 && (
-                  <div className="space-y-1 mb-3">
+                  <div className="mb-3 space-y-1">
                     {recurringSchedules.map((s) => (
-                      <div key={s.id} className="flex items-center gap-2 rounded-xl bg-muted p-2.5">
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-foreground">{s.name || s.workoutName}</p>
-                          <p className="text-[9px] text-muted-foreground">
+                      <div key={s.id} className="bg-muted flex items-center gap-2 rounded-xl p-2.5">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-foreground text-sm font-semibold">
+                            {s.name || s.workoutName}
+                          </p>
+                          <p className="text-muted-foreground text-[9px]">
                             {s.daysOfWeek.map((d) => daysOfWeek[d]).join(', ')}
                           </p>
                         </div>
-                        <button onClick={() => removeRecurringSchedule(s.id)}
-                          className="text-muted-foreground hover:text-destructive transition-colors">
+                        <button
+                          onClick={() => removeRecurringSchedule(s.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
                           <X size={14} />
                         </button>
                       </div>
@@ -202,33 +271,51 @@ export default function CalendarPage() {
                 )}
 
                 <div className="space-y-2">
-                  <select value={newSchedule.workoutId} onChange={(e) => {
-                    const w = allWorkouts.find((w) => w.id === e.target.value);
-                    setNewSchedule({ ...newSchedule, workoutId: e.target.value, workoutName: w?.name || '', name: w?.name || '' });
-                  }}
-                    className="w-full rounded-xl border border-border/30 bg-background px-3 py-2 text-xs text-foreground">
+                  <select
+                    value={newSchedule.workoutId}
+                    onChange={(e) => {
+                      const w = allWorkouts.find((w) => w.id === e.target.value);
+                      setNewSchedule({
+                        ...newSchedule,
+                        workoutId: e.target.value,
+                        workoutName: w?.name || '',
+                        name: w?.name || '',
+                      });
+                    }}
+                    className="border-border/30 bg-background text-foreground w-full rounded-xl border px-3 py-2 text-xs"
+                  >
                     <option value="">Select workout...</option>
                     {allWorkouts.map((w) => (
-                      <option key={w.id} value={w.id}>{w.name}</option>
+                      <option key={w.id} value={w.id}>
+                        {w.name}
+                      </option>
                     ))}
                   </select>
                   <div className="flex gap-1.5">
                     {daysOfWeek.map((d, i) => (
-                      <button key={i} onClick={() => {
-                        const next = newSchedule.daysOfWeek.includes(i)
-                          ? newSchedule.daysOfWeek.filter((x) => x !== i)
-                          : [...newSchedule.daysOfWeek, i].sort();
-                        setNewSchedule({ ...newSchedule, daysOfWeek: next });
-                      }}
+                      <button
+                        key={i}
+                        onClick={() => {
+                          const next = newSchedule.daysOfWeek.includes(i)
+                            ? newSchedule.daysOfWeek.filter((x) => x !== i)
+                            : [...newSchedule.daysOfWeek, i].sort();
+                          setNewSchedule({ ...newSchedule, daysOfWeek: next });
+                        }}
                         className={`size-8 rounded-lg text-[9px] font-medium transition-colors ${
-                          newSchedule.daysOfWeek.includes(i) ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                        }`}>
+                          newSchedule.daysOfWeek.includes(i)
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
                         {d[0]}
                       </button>
                     ))}
                   </div>
-                  <button onClick={handleAddRecurring} disabled={!newSchedule.workoutId || newSchedule.daysOfWeek.length === 0}
-                    className="w-full rounded-xl bg-primary py-2 text-xs font-medium text-primary-foreground disabled:opacity-50 hover:bg-primary/90 transition-colors">
+                  <button
+                    onClick={handleAddRecurring}
+                    disabled={!newSchedule.workoutId || newSchedule.daysOfWeek.length === 0}
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] w-full rounded-xl py-2 text-xs font-medium transition-colors disabled:opacity-50"
+                  >
                     Add Recurring Schedule
                   </button>
                 </div>
@@ -236,21 +323,28 @@ export default function CalendarPage() {
 
               {/* Training Cycles */}
               <div>
-                <p className="text-xs font-medium text-foreground mb-2 flex items-center gap-1.5">
+                <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
                   <Timer size={12} className="text-purple-500" /> Training Cycles
                 </p>
 
                 {trainingCycles.length > 0 && (
-                  <div className="space-y-1 mb-3">
+                  <div className="mb-3 space-y-1">
                     {trainingCycles.map((c) => (
-                      <div key={c.id} className="flex items-center gap-2 rounded-xl bg-muted p-2.5">
-                        <div className="size-2 rounded-full shrink-0" style={{ backgroundColor: c.color }} />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-foreground">{c.name}</p>
-                          <p className="text-[9px] text-muted-foreground">{c.startDate} → {c.endDate}</p>
+                      <div key={c.id} className="bg-muted flex items-center gap-2 rounded-xl p-2.5">
+                        <div
+                          className="size-2 shrink-0 rounded-full"
+                          style={{ backgroundColor: c.color }}
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-foreground text-sm font-semibold">{c.name}</p>
+                          <p className="text-muted-foreground text-[9px]">
+                            {c.startDate} → {c.endDate}
+                          </p>
                         </div>
-                        <button onClick={() => removeTrainingCycle(c.id)}
-                          className="text-muted-foreground hover:text-destructive transition-colors">
+                        <button
+                          onClick={() => removeTrainingCycle(c.id)}
+                          className="text-muted-foreground hover:text-destructive transition-colors"
+                        >
                           <X size={14} />
                         </button>
                       </div>
@@ -259,25 +353,46 @@ export default function CalendarPage() {
                 )}
 
                 <div className="space-y-2">
-                  <input value={newCycle.name} onChange={(e) => setNewCycle({ ...newCycle, name: e.target.value })}
+                  <input
+                    value={newCycle.name}
+                    onChange={(e) => setNewCycle({ ...newCycle, name: e.target.value })}
                     placeholder="Cycle name (e.g. Strength Block)"
-                    className="w-full rounded-xl border border-border/30 bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/50" />
+                    className="border-border/30 bg-background text-foreground placeholder:text-muted-foreground/50 w-full rounded-xl border px-3 py-2 text-xs"
+                  />
                   <div className="flex gap-2">
-                    <input type="date" value={newCycle.startDate} onChange={(e) => setNewCycle({ ...newCycle, startDate: e.target.value })}
-                      className="flex-1 rounded-xl border border-border/30 bg-background px-3 py-2 text-xs text-foreground" />
-                    <span className="self-center text-xs text-muted-foreground">→</span>
-                    <input type="date" value={newCycle.endDate} onChange={(e) => setNewCycle({ ...newCycle, endDate: e.target.value })}
-                      className="flex-1 rounded-xl border border-border/30 bg-background px-3 py-2 text-xs text-foreground" />
+                    <input
+                      type="date"
+                      value={newCycle.startDate}
+                      onChange={(e) => setNewCycle({ ...newCycle, startDate: e.target.value })}
+                      className="border-border/30 bg-background text-foreground flex-1 rounded-xl border px-3 py-2 text-xs"
+                    />
+                    <span className="text-muted-foreground self-center text-xs">→</span>
+                    <input
+                      type="date"
+                      value={newCycle.endDate}
+                      onChange={(e) => setNewCycle({ ...newCycle, endDate: e.target.value })}
+                      className="border-border/30 bg-background text-foreground flex-1 rounded-xl border px-3 py-2 text-xs"
+                    />
                   </div>
                   <div className="flex gap-2">
-                    <input value={newCycle.notes} onChange={(e) => setNewCycle({ ...newCycle, notes: e.target.value })}
+                    <input
+                      value={newCycle.notes}
+                      onChange={(e) => setNewCycle({ ...newCycle, notes: e.target.value })}
                       placeholder="Notes (optional)"
-                      className="flex-1 rounded-xl border border-border/30 bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted-foreground/50" />
-                    <input type="color" value={newCycle.color} onChange={(e) => setNewCycle({ ...newCycle, color: e.target.value })}
-                      className="size-9 rounded-xl border border-border/30 bg-background cursor-pointer" />
+                      className="border-border/30 bg-background text-foreground placeholder:text-muted-foreground/50 flex-1 rounded-xl border px-3 py-2 text-xs"
+                    />
+                    <input
+                      type="color"
+                      value={newCycle.color}
+                      onChange={(e) => setNewCycle({ ...newCycle, color: e.target.value })}
+                      className="border-border/30 bg-background size-9 cursor-pointer rounded-xl border"
+                    />
                   </div>
-                  <button onClick={handleAddCycle} disabled={!newCycle.name || !newCycle.startDate || !newCycle.endDate}
-                    className="w-full rounded-xl bg-purple-500 py-2 text-xs font-medium text-white disabled:opacity-50 hover:bg-purple-600 transition-colors">
+                  <button
+                    onClick={handleAddCycle}
+                    disabled={!newCycle.name || !newCycle.startDate || !newCycle.endDate}
+                    className="min-h-[44px] w-full rounded-xl bg-purple-500 py-2 text-xs font-medium text-white transition-colors hover:bg-purple-600 disabled:opacity-50"
+                  >
                     Add Training Cycle
                   </button>
                 </div>

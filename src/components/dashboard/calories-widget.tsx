@@ -15,17 +15,19 @@ export function CaloriesWidget() {
 
   return (
     <DashboardWidget title="Calories">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <CircularProgress value={consumed} max={goal} size={72} strokeWidth={5}>
-          <span className="text-foreground text-lg font-bold">
+          <span className="text-foreground text-lg font-semibold tracking-tight">
             {goal > 0 ? `${Math.round((consumed / goal) * 100)}%` : '0%'}
           </span>
         </CircularProgress>
         <div>
-          <p className="text-foreground text-2xl font-bold">
+          <p className="text-foreground text-2xl font-bold tracking-tight">
             <AnimatedCounter value={consumed} decimals={0} />
           </p>
-          <p className="text-muted-foreground text-xs">of {goal} kcal</p>
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            of {goal} kcal
+          </p>
           <p className="text-muted-foreground/60 mt-1 text-[10px]">
             {goal > 0 ? `Remaining: ${Math.max(goal - consumed, 0)} kcal` : 'No daily goal set'}
           </p>

@@ -22,7 +22,13 @@ export function MobileLayout({
   onRefresh,
 }: MobileLayoutProps) {
   const content = (
-    <main className="mx-auto max-w-lg pb-20 pt-12 safe-bottom safe-top min-h-screen-safe">
+    <main
+      className="min-h-screen-safe mx-auto max-w-lg px-4"
+      style={{
+        paddingTop: 'calc(48px + env(safe-area-inset-top, 0px))',
+        paddingBottom: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+      }}
+    >
       {children}
     </main>
   );

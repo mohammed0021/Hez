@@ -21,28 +21,30 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="rounded-2xl border border-border/50 bg-card p-4 hover:border-primary/30 transition-colors group"
+      className="border-border/50 bg-card hover:border-primary/30 group rounded-2xl border p-4 transition-colors"
     >
       <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-semibold text-foreground truncate">{template.name}</h3>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-foreground truncate text-sm font-semibold">{template.name}</h3>
           {template.description && (
-            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{template.description}</p>
+            <p className="text-muted-foreground mt-0.5 line-clamp-2 text-xs">
+              {template.description}
+            </p>
           )}
         </div>
-        <div className="flex gap-1 shrink-0">
+        <div className="flex shrink-0 gap-1">
           <button
             onClick={() => {
               deleteTemplate(template.id);
             }}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-destructive transition-colors"
+            className="text-muted-foreground/40 hover:text-destructive flex size-7 items-center justify-center rounded-lg transition-colors"
           >
             <Trash2 size={14} />
           </button>
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-3 text-[10px] text-muted-foreground/60">
+      <div className="text-muted-foreground/60 mt-3 flex items-center gap-3 text-[10px] font-medium tracking-wider uppercase">
         <span className="flex items-center gap-1">
           <Dumbbell size={11} /> {template.blocks.length} blocks
         </span>
@@ -57,7 +59,7 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
           {template.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-muted px-2 py-0.5 text-[8px] font-medium text-muted-foreground"
+              className="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-[8px] font-medium"
             >
               {tag}
             </span>
@@ -71,7 +73,7 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
             loadTemplate(template.id);
             window.location.href = '/workouts/new';
           }}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-muted py-2 text-[10px] font-medium text-foreground"
+          className="bg-muted text-foreground flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-[10px] font-medium"
         >
           <Play size={12} /> Use
         </button>
@@ -80,7 +82,7 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
             startWorkout(template);
             window.location.href = '/workouts/active';
           }}
-          className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-primary py-2 text-[10px] font-medium text-primary-foreground"
+          className="bg-primary text-primary-foreground flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-[10px] font-medium"
         >
           <Zap size={12} /> Start
         </button>

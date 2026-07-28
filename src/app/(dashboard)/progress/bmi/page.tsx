@@ -33,35 +33,57 @@ export default function BMIPage() {
 
   const bmiPercent = Math.min((bmi / 50) * 100, 100);
 
-  const idealMin = 18.5 * ((heightCm / 100) ** 2);
-  const idealMax = 25 * ((heightCm / 100) ** 2);
+  const idealMin = 18.5 * (heightCm / 100) ** 2;
+  const idealMax = 25 * (heightCm / 100) ** 2;
 
   return (
     <>
-      <h1 className="text-2xl font-bold text-foreground">BMI Calculator</h1>
-      <p className="mt-0.5 text-sm text-muted-foreground">Body Mass Index</p>
+      <h1 className="text-foreground text-2xl font-bold">BMI Calculator</h1>
+      <p className="text-muted-foreground mt-0.5 text-sm">Body Mass Index</p>
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-5 rounded-2xl border border-border/50 bg-card p-4 space-y-4">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="border-border/50 bg-card mt-5 space-y-4 rounded-2xl border p-4"
+      >
         <div className="flex gap-3">
           <div className="flex-1">
-            <label className="block text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
               {unit === 'metric' ? 'Weight (kg)' : 'Weight (lbs)'}
             </label>
-            <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full rounded-xl border border-border/30 bg-background px-3 py-2.5 text-sm text-foreground focus:border-primary/40 focus:outline-none" inputMode="decimal" />
+            <input
+              type="number"
+              value={weight}
+              onChange={(e) => setWeight(e.target.value)}
+              className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
+              inputMode="decimal"
+            />
           </div>
           <div className="flex-1">
-            <label className="block text-[10px] font-medium text-muted-foreground mb-1">
+            <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
               {unit === 'metric' ? 'Height (cm)' : 'Height (in)'}
             </label>
-            <input type="number" value={height} onChange={(e) => setHeight(e.target.value)} className="w-full rounded-xl border border-border/30 bg-background px-3 py-2.5 text-sm text-foreground focus:border-primary/40 focus:outline-none" inputMode="decimal" />
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
+              inputMode="decimal"
+            />
           </div>
         </div>
 
         <div className="flex gap-2">
-          <button onClick={() => setUnit('metric')} className={`flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'metric' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
+          <button
+            onClick={() => setUnit('metric')}
+            className={`min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'metric' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
+          >
             Metric
           </button>
-          <button onClick={() => setUnit('imperial')} className={`flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'imperial' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}>
+          <button
+            onClick={() => setUnit('imperial')}
+            className={`min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'imperial' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
+          >
             Imperial
           </button>
         </div>
@@ -69,42 +91,78 @@ export default function BMIPage() {
 
       {bmi > 0 && (
         <>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }} className="mt-6 text-center">
-            <div className="inline-flex items-center justify-center size-28 rounded-full bg-primary/10 border-4 border-primary/20">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="mt-6 text-center"
+          >
+            <div className="bg-primary/10 border-primary/20 inline-flex size-28 items-center justify-center rounded-full border-4">
               <div>
-                <p className="text-4xl font-bold text-foreground">{bmi.toFixed(1)}</p>
+                <p className="text-foreground text-4xl font-bold">{bmi.toFixed(1)}</p>
                 <p className={`text-[10px] font-semibold ${category.color}`}>{category.label}</p>
               </div>
             </div>
           </motion.div>
 
           {/* BMI Scale Bar */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mt-6">
-            <div className="h-3 rounded-full bg-gradient-to-r from-blue-500 via-green-500 via-yellow-500 to-red-500 relative overflow-hidden">
-              <div className="absolute top-1/2 -translate-y-1/2 size-5 rounded-full bg-white border-2 border-primary shadow-lg transition-all" style={{ left: `${bmiPercent}%`, marginLeft: -10 }} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="mt-6"
+          >
+            <div className="relative h-3 overflow-hidden rounded-full bg-gradient-to-r from-blue-500 via-green-500 via-yellow-500 to-red-500">
+              <div
+                className="border-primary absolute top-1/2 size-5 -translate-y-1/2 rounded-full border-2 bg-white shadow-lg transition-all"
+                style={{ left: `${bmiPercent}%`, marginLeft: -10 }}
+              />
             </div>
-            <div className="flex justify-between mt-1 text-[8px] text-muted-foreground">
-              <span>0</span><span>18.5</span><span>25</span><span>30</span><span>40</span><span>50</span>
+            <div className="text-muted-foreground mt-1 flex justify-between text-[8px]">
+              <span>0</span>
+              <span>18.5</span>
+              <span>25</span>
+              <span>30</span>
+              <span>40</span>
+              <span>50</span>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-5 grid grid-cols-2 gap-3">
-            <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
-              <Weight size={16} className="mx-auto text-primary" />
-              <p className="mt-1 text-lg font-bold text-foreground">{weightKg.toFixed(1)} kg</p>
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Your Weight</p>
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-5 grid grid-cols-2 gap-3"
+          >
+            <div className="border-border/50 bg-card rounded-xl border p-4 text-center">
+              <Weight className="text-primary mx-auto size-4" />
+              <p className="text-foreground mt-1 text-lg font-bold">{weightKg.toFixed(1)} kg</p>
+              <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+                Your Weight
+              </p>
             </div>
-            <div className="rounded-xl border border-border/50 bg-card p-3 text-center">
-              <Ruler size={16} className="mx-auto text-primary" />
-              <p className="mt-1 text-lg font-bold text-foreground">{heightCm.toFixed(0)} cm</p>
-              <p className="text-[9px] text-muted-foreground uppercase tracking-wider">Your Height</p>
+            <div className="border-border/50 bg-card rounded-xl border p-4 text-center">
+              <Ruler className="text-primary mx-auto size-4" />
+              <p className="text-foreground mt-1 text-lg font-bold">{heightCm.toFixed(0)} cm</p>
+              <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+                Your Height
+              </p>
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="mt-3 rounded-xl border border-green-500/20 bg-green-500/5 p-3">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mt-3 rounded-xl border border-green-500/20 bg-green-500/5 p-4"
+          >
             <p className="text-xs font-medium text-green-600">Healthy Weight Range</p>
-            <p className="text-sm text-foreground mt-0.5">{idealMin.toFixed(1)} kg – {idealMax.toFixed(1)} kg</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">Based on BMI 18.5–25 for your height</p>
+            <p className="text-foreground mt-0.5 text-sm">
+              {idealMin.toFixed(1)} kg – {idealMax.toFixed(1)} kg
+            </p>
+            <p className="text-muted-foreground mt-0.5 text-[10px]">
+              Based on BMI 18.5–25 for your height
+            </p>
           </motion.div>
         </>
       )}

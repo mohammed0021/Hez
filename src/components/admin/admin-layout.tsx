@@ -77,6 +77,7 @@ function AdminSidebar({ collapsed, onToggle }: { collapsed: boolean; onToggle: (
         'border-border/50 bg-background fixed top-0 left-0 z-40 flex h-screen flex-col border-r transition-all duration-300',
         collapsed ? 'w-16' : 'w-64',
       )}
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div
         className={cn(
@@ -220,7 +221,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <div className="flex-1" />
         </header>
 
-        <main className="flex-1">
+        <main className="flex-1 overflow-auto p-4 sm:p-6">
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}

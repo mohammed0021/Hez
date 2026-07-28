@@ -19,13 +19,16 @@ export default function HomePage() {
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const totalMinutes = sessions.reduce((acc, s) => {
     if (!s.startedAt || !s.completedAt) return acc;
-    return acc + Math.round((new Date(s.completedAt).getTime() - new Date(s.startedAt).getTime()) / 60000);
+    return (
+      acc +
+      Math.round((new Date(s.completedAt).getTime() - new Date(s.startedAt).getTime()) / 60000)
+    );
   }, 0);
 
   if (isLoading) {
     return (
       <MobileLayout title="Hêz">
-        <div className="px-4 pt-4">
+        <div className="pt-4">
           <Skeleton className="mb-2 h-8 w-48" />
           <Skeleton className="mb-6 h-4 w-32" />
           <div className="grid grid-cols-2 gap-3">
@@ -50,21 +53,23 @@ export default function HomePage() {
     { label: 'Workouts', value: totalWorkouts.toString(), icon: Dumbbell, color: 'text-primary' },
     { label: 'Minutes', value: totalMinutes.toString(), icon: Activity, color: 'text-blue-500' },
     { label: 'Streak', value: `${currentStreak} days`, icon: Flame, color: 'text-orange-500' },
-    { label: 'Volume', value: `${totalVolume.toLocaleString()} kg`, icon: TrendingUp, color: 'text-green-500' },
+    {
+      label: 'Volume',
+      value: `${totalVolume.toLocaleString()} kg`,
+      icon: TrendingUp,
+      color: 'text-green-500',
+    },
   ];
 
   return (
     <MobileLayout title="Hêz">
-      <div className="px-4 pt-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          <h2 className="text-2xl font-bold text-foreground">
-            Welcome back{user.user_metadata?.name ? `, ${user.user_metadata.name.split(' ')[0]}` : ''}
+      <div className="pt-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+          <h2 className="text-foreground text-2xl font-bold">
+            Welcome back
+            {user.user_metadata?.name ? `, ${user.user_metadata.name.split(' ')[0]}` : ''}
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground">Let&apos;s crush your goals today</p>
+          <p className="text-muted-foreground mt-1 text-sm">Let&apos;s crush your goals today</p>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -76,11 +81,13 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 * index }}
-                className="rounded-2xl bg-card p-4 border border-border/50"
+                className="bg-card border-border/50 rounded-2xl border p-4"
               >
                 <Icon size={24} className={stat.color} />
-                <p className="mt-3 text-2xl font-bold text-foreground">{stat.value}</p>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
+                <p className="text-foreground mt-3 text-2xl font-bold">{stat.value}</p>
+                <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+                  {stat.label}
+                </p>
               </motion.div>
             );
           })}
@@ -92,10 +99,10 @@ export default function HomePage() {
           transition={{ delay: 0.4 }}
           className="mt-6"
         >
-          <h3 className="mb-3 text-lg font-semibold text-foreground">Quick Start</h3>
+          <h3 className="text-foreground mb-3 text-sm font-semibold">Quick Start</h3>
           <button
             onClick={() => router.push('/workouts')}
-            className="flex w-full items-center gap-4 rounded-2xl bg-primary p-4 text-primary-foreground"
+            className="bg-primary text-primary-foreground flex min-h-[44px] w-full items-center gap-4 rounded-2xl p-4"
           >
             <Dumbbell size={24} />
             <div className="text-left">

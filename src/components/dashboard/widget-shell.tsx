@@ -12,11 +12,11 @@ export function DashboardWidget({
   action?: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-2xl bg-card border border-border/50 p-4 ${className}`}>
+    <div className={`bg-card border-border/50 overflow-hidden rounded-2xl border p-4 ${className}`}>
       {(title || action) && (
-        <div className="flex items-center justify-between mb-3">
-          {title && <h3 className="text-sm font-semibold text-foreground">{title}</h3>}
-          {action && <div className="text-xs text-muted-foreground">{action}</div>}
+        <div className="mb-3 flex items-center justify-between gap-2">
+          {title && <h3 className="text-foreground text-sm font-semibold">{title}</h3>}
+          {action && <div className="text-muted-foreground shrink-0 text-xs">{action}</div>}
         </div>
       )}
       {children}
@@ -26,10 +26,10 @@ export function DashboardWidget({
 
 export function WidgetSkeleton({ className = '' }: { className?: string }) {
   return (
-    <div className={`rounded-2xl bg-card border border-border/50 p-4 animate-pulse ${className}`}>
-      <div className="mb-3 h-3 w-24 rounded bg-muted" />
-      <div className="h-8 w-16 rounded bg-muted" />
-      <div className="mt-2 h-2 w-full rounded bg-muted" />
+    <div className={`bg-card border-border/50 animate-pulse rounded-2xl border p-4 ${className}`}>
+      <div className="bg-muted mb-3 h-3 w-24 rounded" />
+      <div className="bg-muted h-8 w-16 rounded" />
+      <div className="bg-muted mt-2 h-2 w-full rounded" />
     </div>
   );
 }

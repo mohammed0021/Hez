@@ -13,7 +13,7 @@ export function FavoritesButton({ exerciseId, size = 20 }: { exerciseId: string;
     <motion.button
       whileTap={{ scale: 0.85 }}
       onClick={() => toggleFavorite(exerciseId)}
-      className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors ${
+      className={`flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-colors ${
         fav ? 'bg-red-500/10 text-red-500' : 'bg-muted text-muted-foreground hover:bg-muted/80'
       }`}
     >

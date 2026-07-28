@@ -38,7 +38,7 @@ export function PersonalRecordsWidget() {
                 })()}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-foreground text-sm font-medium">{r.exerciseName}</p>
+                <p className="text-foreground truncate text-sm font-medium">{r.exerciseName}</p>
                 <p className="text-muted-foreground/60 text-[10px]">
                   {new Date(r.date).toLocaleDateString()}
                 </p>
@@ -66,7 +66,7 @@ export function PersonalRecordsWidget() {
       )}
       <Link
         href="/progress"
-        className="bg-muted text-muted-foreground hover:bg-muted/80 mt-3 flex w-full items-center justify-center gap-1 rounded-xl py-2 text-xs transition-colors"
+        className="bg-muted text-muted-foreground hover:bg-muted/80 mt-3 flex min-h-[44px] w-full items-center justify-center gap-1 rounded-xl py-2 text-xs transition-colors"
       >
         View all records <ArrowRight size={12} />
       </Link>

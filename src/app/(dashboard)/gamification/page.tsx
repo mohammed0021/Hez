@@ -69,7 +69,7 @@ export default function GamificationPage() {
       </div>
 
       {/* Stats grid */}
-      <div className="mt-4 grid grid-cols-4 gap-2">
+      <div className="mt-4 grid grid-cols-4 gap-3">
         {[
           { icon: Dumbbell, label: 'Workouts', value: getTotalWorkouts(), color: 'text-primary' },
           { icon: Zap, label: 'Streak', value: `${getCurrentStreak()}d`, color: 'text-amber-500' },
@@ -90,7 +90,9 @@ export default function GamificationPage() {
           >
             <s.icon size={14} className={`mx-auto ${s.color}`} />
             <p className="text-foreground mt-0.5 text-sm font-bold tabular-nums">{s.value}</p>
-            <p className="text-muted-foreground text-[8px] tracking-wider uppercase">{s.label}</p>
+            <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+              {s.label}
+            </p>
           </motion.div>
         ))}
       </div>
@@ -126,7 +128,7 @@ export default function GamificationPage() {
           <>
             {/* Recent XP */}
             <div className="border-border/50 bg-card rounded-2xl border p-4">
-              <p className="text-foreground mb-3 flex items-center gap-1.5 text-xs font-semibold">
+              <p className="text-foreground mb-3 flex items-center gap-1.5 text-sm font-semibold">
                 <TrendingUp size={14} className="text-amber-500" /> Recent Activity
               </p>
               <div className="max-h-48 space-y-1.5 overflow-y-auto">
@@ -155,7 +157,7 @@ export default function GamificationPage() {
 
             {/* Level progress */}
             <div className="border-border/50 bg-card rounded-2xl border p-4">
-              <p className="text-foreground mb-2 text-xs font-semibold">Level Progress</p>
+              <p className="text-foreground mb-2 text-sm font-semibold">Level Progress</p>
               <div className="space-y-1.5">
                 {Array.from({ length: 5 }, (_, i) => {
                   const lvl = Math.max(1, level.level - 2 + i);
@@ -202,7 +204,7 @@ export default function GamificationPage() {
             {/* Unlocked achievements mini list */}
             {achievements.length > 0 && (
               <div className="border-border/50 bg-card rounded-2xl border p-4">
-                <p className="text-foreground mb-3 flex items-center gap-1.5 text-xs font-semibold">
+                <p className="text-foreground mb-3 flex items-center gap-1.5 text-sm font-semibold">
                   <Trophy size={14} className="text-amber-500" /> Recent Badges
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -236,7 +238,7 @@ export default function GamificationPage() {
               </p>
               <button
                 onClick={() => setShowAllAchievements(!showAllAchievements)}
-                className="text-primary flex items-center gap-1 text-[10px] font-medium"
+                className="text-primary flex min-h-[44px] items-center gap-1 text-[10px] font-medium"
               >
                 {showAllAchievements ? 'Hide locked' : 'Show all'}
                 {showAllAchievements ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -261,7 +263,7 @@ export default function GamificationPage() {
           <>
             {/* Daily */}
             <div>
-              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-semibold tracking-widest uppercase">
+              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
                 <Flame size={12} className="text-orange-500" /> Daily
               </p>
               <div className="space-y-1.5">
@@ -278,7 +280,7 @@ export default function GamificationPage() {
 
             {/* Weekly */}
             <div className="mt-4">
-              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-semibold tracking-widest uppercase">
+              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
                 <Calendar size={12} className="text-blue-500" /> Weekly
               </p>
               <div className="space-y-1.5">
@@ -295,7 +297,7 @@ export default function GamificationPage() {
 
             {/* Monthly */}
             <div className="mt-4">
-              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-semibold tracking-widest uppercase">
+              <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
                 <Medal size={12} className="text-purple-500" /> Monthly
               </p>
               <div className="space-y-1.5">

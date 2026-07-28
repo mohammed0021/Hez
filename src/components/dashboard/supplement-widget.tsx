@@ -32,14 +32,14 @@ export function SupplementWidget() {
           No supplements configured
         </p>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {supplements.map((s) => {
             const isTaken = todayLog[s.id] === 'taken';
             return (
               <button
                 key={s.id}
                 onClick={() => markTaken(s.id)}
-                className="flex w-full items-center gap-3 text-left"
+                className="flex min-h-[44px] w-full items-center gap-3 py-2 text-left"
               >
                 {isTaken ? (
                   <CheckCircle2 size={16} className="text-primary shrink-0" />
@@ -47,7 +47,7 @@ export function SupplementWidget() {
                   <Circle size={16} className="text-muted-foreground/40 shrink-0" />
                 )}
                 <span
-                  className={`flex-1 text-sm ${isTaken ? 'text-foreground' : 'text-muted-foreground'}`}
+                  className={`flex-1 truncate text-sm ${isTaken ? 'text-foreground' : 'text-muted-foreground'}`}
                 >
                   {s.name}
                 </span>

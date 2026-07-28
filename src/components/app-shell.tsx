@@ -8,18 +8,22 @@ import { PageTransition } from './page-transition';
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="bg-background flex min-h-screen">
       <Sidebar />
       <CommandPalette />
 
       <div className="flex flex-1 flex-col md:pl-64">
         <TopHeader />
 
-        <main className="flex-1 px-4 pb-20 pt-4 md:pb-6">
+        <main
+          className="flex-1 px-4 md:pb-6"
+          style={{
+            paddingTop: '0.75rem',
+            paddingBottom: 'calc(80px + env(safe-area-inset-bottom, 0px))',
+          }}
+        >
           <div className="mx-auto max-w-5xl">
-            <PageTransition>
-              {children}
-            </PageTransition>
+            <PageTransition>{children}</PageTransition>
           </div>
         </main>
 

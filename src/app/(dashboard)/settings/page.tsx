@@ -213,7 +213,9 @@ function ThemeSection({
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Accent Color</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Accent Color
+        </p>
         <div className="flex flex-wrap gap-3">
           {THEMES.map((t) => (
             <button
@@ -233,7 +235,9 @@ function ThemeSection({
         </div>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Mode</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Mode
+        </p>
         <div className="flex gap-2">
           {[
             { value: 'light', icon: Sun, label: 'Light' },
@@ -304,7 +308,9 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
   return (
     <div className="space-y-3">
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">System</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          System
+        </p>
         <div className="flex gap-2">
           {UNIT_SYSTEMS.map((sys) => (
             <button
@@ -322,7 +328,9 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
         </div>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Weight Unit</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Weight Unit
+        </p>
         <div className="flex gap-2">
           {(['kg', 'lbs'] as const).map((u) => (
             <button
@@ -340,7 +348,9 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
         </div>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Height Unit</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Height Unit
+        </p>
         <div className="flex gap-2">
           {(['cm', 'ft_in'] as const).map((u) => (
             <button
@@ -358,7 +368,9 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
         </div>
       </div>
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Water Unit</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Water Unit
+        </p>
         <div className="flex gap-2">
           {(['ml', 'oz'] as const).map((u) => (
             <button
@@ -384,7 +396,9 @@ function WorkoutSection({ settings }: { settings: SettingsState }) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Rest Timer Default</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Rest Timer Default
+        </p>
         <div className="flex gap-2">
           {[30, 60, 90, 120, 180].map((sec) => (
             <button
@@ -447,7 +461,9 @@ function PrivacySection({ profile }: { profile: ProfileState }) {
   return (
     <div className="space-y-4">
       <div>
-        <p className="text-muted-foreground mb-2 text-xs font-medium">Profile Visibility</p>
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+          Profile Visibility
+        </p>
         <div className="space-y-1">
           {VISIBILITY_OPTIONS.map((opt) => (
             <button
@@ -508,7 +524,7 @@ function ExportSection({ onExport, done }: { onExport: () => void; done: boolean
       </p>
       <button
         onClick={onExport}
-        className={`flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
+        className={`flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
           done
             ? 'bg-green-500/20 text-green-600'
             : 'bg-primary text-primary-foreground hover:bg-primary/90'
@@ -546,7 +562,7 @@ function DeleteSection({
       {!showConfirm ? (
         <button
           onClick={() => setShowConfirm(true)}
-          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors"
+          className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors"
         >
           <Trash2 size={16} />
           Delete Account
@@ -719,7 +735,7 @@ function ToggleRow({
       <button
         onClick={() => onChange(!enabled)}
         className={`relative h-6 w-11 rounded-full transition-colors ${
-          enabled ? 'bg-primary' : 'bg-muted-foreground/30'
+          enabled ? 'bg-primary' : 'bg-muted'
         }`}
       >
         <span

@@ -9,7 +9,14 @@ import { Label } from '@/components/ui/label';
 import { Progress, ProgressLabel, ProgressValue } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -29,11 +36,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from '@/components/ui/popover';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { EmptyState } from '@/components/ui/empty-state';
 import { ErrorState } from '@/components/ui/error-state';
 import { SuccessState } from '@/components/ui/success-state';
@@ -62,14 +65,22 @@ const section = {
   animate: { opacity: 1, y: 0 },
 };
 
-function SectionCard({ title, children, id }: { title: string; children: React.ReactNode; id?: string }) {
+function SectionCard({
+  title,
+  children,
+  id,
+}: {
+  title: string;
+  children: React.ReactNode;
+  id?: string;
+}) {
   return (
     <motion.div
       id={id}
       variants={section}
-      className="mb-8 rounded-2xl border border-border/50 bg-card p-5"
+      className="border-border/50 bg-card mb-8 rounded-2xl border p-4"
     >
-      <h2 className="mb-4 text-lg font-semibold text-foreground">{title}</h2>
+      <h2 className="text-foreground mb-4 text-sm font-semibold">{title}</h2>
       {children}
     </motion.div>
   );
@@ -78,8 +89,8 @@ function SectionCard({ title, children, id }: { title: string; children: React.R
 function ColorSwatch({ label, colorClass }: { label: string; colorClass: string }) {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <div className={`size-10 rounded-xl ring-1 ring-foreground/10 ${colorClass}`} />
-      <span className="text-[11px] text-muted-foreground">{label}</span>
+      <div className={`ring-foreground/10 size-10 rounded-xl ring-1 ${colorClass}`} />
+      <span className="text-muted-foreground text-[11px]">{label}</span>
     </div>
   );
 }
@@ -105,34 +116,37 @@ export default function DesignSystemPage() {
   ];
 
   return (
-    <MobileLayout title="Design System" rightAction={
-      <div className="flex items-center gap-1">
-        <button
-          onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground"
-        >
-          {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-      </div>
-    }>
-      <div className="px-4 pt-4 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
+    <MobileLayout
+      title="Design System"
+      rightAction={
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+            className="text-muted-foreground hover:text-foreground flex size-8 items-center justify-center rounded-lg"
+          >
+            {mode === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+        </div>
+      }
+    >
+      <div className="pt-4 pb-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
           <div className="mb-2 flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-xl bg-primary">
+            <div className="bg-primary flex size-8 items-center justify-center rounded-xl">
               <Palette size={18} className="text-primary-foreground" />
             </div>
-            <h1 className="text-2xl font-bold text-foreground">Design System</h1>
+            <h1 className="text-foreground text-2xl font-bold">Design System</h1>
           </div>
-          <p className="text-sm text-muted-foreground mb-6">
-            Complete component library for Hêz &mdash; {themes.find(t => t.id === themeId)?.emoji} {themes.find(t => t.id === themeId)?.label}
+          <p className="text-muted-foreground mb-6 text-sm">
+            Complete component library for Hêz &mdash; {themes.find((t) => t.id === themeId)?.emoji}{' '}
+            {themes.find((t) => t.id === themeId)?.label}
           </p>
         </motion.div>
 
         <SectionCard title="Theme Switcher" id="themes">
-          <p className="mb-3 text-xs text-muted-foreground">Click any theme to apply instantly without reload</p>
+          <p className="text-muted-foreground mb-3 text-xs">
+            Click any theme to apply instantly without reload
+          </p>
           <div className="grid grid-cols-4 gap-2">
             {themes.map((t) => (
               <button
@@ -140,12 +154,12 @@ export default function DesignSystemPage() {
                 onClick={() => setThemeId(t.id as ThemeId)}
                 className={`flex flex-col items-center gap-1.5 rounded-xl p-3 transition-all ${
                   themeId === t.id
-                    ? 'bg-primary/15 ring-2 ring-primary'
+                    ? 'bg-primary/15 ring-primary ring-2'
                     : 'bg-muted hover:bg-muted/80'
                 }`}
               >
                 <span className="text-xl">{t.emoji}</span>
-                <span className="text-[10px] font-medium text-foreground text-center leading-tight">
+                <span className="text-foreground text-center text-[10px] leading-tight font-medium">
                   {t.label}
                 </span>
               </button>
@@ -164,15 +178,15 @@ export default function DesignSystemPage() {
         <SectionCard title="Typography" id="typography">
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-muted-foreground mb-1">Font: Geist Sans (system)</p>
+              <p className="text-muted-foreground mb-1 text-xs">Font: Geist Sans (system)</p>
               <div className="space-y-1">
-                <p className="text-5xl font-bold text-foreground">Hêz</p>
-                <p className="text-3xl font-bold text-foreground">Hêz</p>
-                <p className="text-2xl font-semibold text-foreground">Hêz Strength</p>
-                <p className="text-xl font-medium text-foreground">Hêz Strength</p>
-                <p className="text-base text-foreground">Hêz Strength Training</p>
-                <p className="text-sm text-muted-foreground">Hêz Strength Training App</p>
-                <p className="text-xs text-muted-foreground">Hêz Strength Training App v1.0</p>
+                <p className="text-foreground text-5xl font-bold">Hêz</p>
+                <p className="text-foreground text-3xl font-bold">Hêz</p>
+                <p className="text-foreground text-2xl font-semibold">Hêz Strength</p>
+                <p className="text-foreground text-xl font-medium">Hêz Strength</p>
+                <p className="text-foreground text-base">Hêz Strength Training</p>
+                <p className="text-muted-foreground text-sm">Hêz Strength Training App</p>
+                <p className="text-muted-foreground text-xs">Hêz Strength Training App v1.0</p>
               </div>
             </div>
           </div>
@@ -181,12 +195,14 @@ export default function DesignSystemPage() {
         <SectionCard title="Spacing & Radius" id="spacing">
           <div className="space-y-3">
             <div>
-              <p className="text-xs text-muted-foreground mb-2">Border Radius Scale</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                Border Radius Scale
+              </p>
               <div className="flex flex-wrap gap-2">
                 {['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', 'full'].map((r) => (
                   <div
                     key={r}
-                    className={`flex size-10 items-center justify-center bg-primary/20 text-[10px] font-medium text-primary`}
+                    className={`bg-primary/20 text-primary flex size-10 items-center justify-center text-[10px] font-medium`}
                     style={{ borderRadius: `var(--radius-${r})` }}
                   >
                     {r}
@@ -196,7 +212,9 @@ export default function DesignSystemPage() {
             </div>
             <Separator />
             <div>
-              <p className="text-xs text-muted-foreground mb-2">Spacing Scale (p-2 through p-8)</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                Spacing Scale (p-2 through p-8)
+              </p>
               <div className="flex items-end gap-1">
                 {[2, 3, 4, 5, 6, 8].map((s) => (
                   <div
@@ -215,7 +233,7 @@ export default function DesignSystemPage() {
             {['sm', 'md', 'lg', 'xl'].map((s) => (
               <div
                 key={s}
-                className="flex h-16 items-center justify-center rounded-xl bg-card text-xs font-medium text-muted-foreground"
+                className="bg-card text-muted-foreground flex h-16 items-center justify-center rounded-xl text-xs font-medium"
                 style={{ boxShadow: `var(--shadow-${s}, 0 1px 3px 0 rgb(0 0 0 / 0.1))` }}
               >
                 {s}
@@ -227,7 +245,9 @@ export default function DesignSystemPage() {
         <SectionCard title="Buttons" id="buttons">
           <div className="space-y-4">
             <div>
-              <p className="mb-2 text-xs text-muted-foreground">Variants</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                Variants
+              </p>
               <div className="flex flex-wrap gap-2">
                 <Button variant="default">Default</Button>
                 <Button variant="secondary">Secondary</Button>
@@ -238,21 +258,35 @@ export default function DesignSystemPage() {
               </div>
             </div>
             <div>
-              <p className="mb-2 text-xs text-muted-foreground">Sizes</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                Sizes
+              </p>
               <div className="flex flex-wrap items-center gap-2">
                 <Button size="xs">XS</Button>
                 <Button size="sm">SM</Button>
                 <Button size="default">Default</Button>
                 <Button size="lg">LG</Button>
-                <Button size="icon" aria-label="Icon"><Plus size={16} /></Button>
+                <Button size="icon" aria-label="Icon">
+                  <Plus size={16} />
+                </Button>
               </div>
             </div>
             <div>
-              <p className="mb-2 text-xs text-muted-foreground">With Icons</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                With Icons
+              </p>
               <div className="flex flex-wrap gap-2">
-                <Button><Bell size={16} />Notifications</Button>
-                <Button variant="outline"><Settings size={16} />Settings</Button>
-                <Button variant="secondary" disabled>Disabled</Button>
+                <Button>
+                  <Bell size={16} />
+                  Notifications
+                </Button>
+                <Button variant="outline">
+                  <Settings size={16} />
+                  Settings
+                </Button>
+                <Button variant="secondary" disabled>
+                  Disabled
+                </Button>
               </div>
             </div>
           </div>
@@ -269,7 +303,9 @@ export default function DesignSystemPage() {
               <Input id="input-disabled" placeholder="Disabled..." disabled />
             </div>
             <div>
-              <p className="mb-2 text-xs text-muted-foreground">With Switch Toggle</p>
+              <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
+                With Switch Toggle
+              </p>
               <div className="flex items-center gap-3">
                 <Switch id="switch1" />
                 <Label htmlFor="switch1">Enable notifications</Label>
@@ -290,12 +326,14 @@ export default function DesignSystemPage() {
                 <CardDescription>Full card with all sections</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   Card content goes here. This card has a header, content, and footer section.
                 </p>
               </CardContent>
               <CardFooter className="flex justify-end gap-2">
-                <Button variant="ghost" size="sm">Cancel</Button>
+                <Button variant="ghost" size="sm">
+                  Cancel
+                </Button>
                 <Button size="sm">Save</Button>
               </CardFooter>
             </Card>
@@ -305,7 +343,7 @@ export default function DesignSystemPage() {
                 <CardDescription>Smaller spacing variant</CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground">Perfect for list items.</p>
+                <p className="text-muted-foreground text-sm">Perfect for list items.</p>
               </CardContent>
             </Card>
           </div>
@@ -319,13 +357,13 @@ export default function DesignSystemPage() {
               <TabsTrigger value="tab3">Tab Three</TabsTrigger>
             </TabsList>
             <TabsContent value="tab1" className="pt-3">
-              <p className="text-sm text-muted-foreground">Content for tab one.</p>
+              <p className="text-muted-foreground text-sm">Content for tab one.</p>
             </TabsContent>
             <TabsContent value="tab2" className="pt-3">
-              <p className="text-sm text-muted-foreground">Content for tab two.</p>
+              <p className="text-muted-foreground text-sm">Content for tab two.</p>
             </TabsContent>
             <TabsContent value="tab3" className="pt-3">
-              <p className="text-sm text-muted-foreground">Content for tab three.</p>
+              <p className="text-muted-foreground text-sm">Content for tab three.</p>
             </TabsContent>
           </Tabs>
           <div className="mt-4">
@@ -394,8 +432,16 @@ export default function DesignSystemPage() {
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={() => { setDialogOpen(false); toast.success('Action confirmed!'); }}>
+                <Button variant="ghost" onClick={() => setDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => {
+                    setDialogOpen(false);
+                    toast.success('Action confirmed!');
+                  }}
+                >
                   Confirm
                 </Button>
               </DialogFooter>
@@ -410,9 +456,11 @@ export default function DesignSystemPage() {
             </PopoverTrigger>
             <PopoverContent>
               <div className="space-y-2">
-                <p className="text-sm font-medium text-foreground">Notifications</p>
-                <p className="text-xs text-muted-foreground">You have 3 unread notifications.</p>
-                <Button size="sm" className="w-full">View all</Button>
+                <p className="text-foreground text-sm font-medium">Notifications</p>
+                <p className="text-muted-foreground text-xs">You have 3 unread notifications.</p>
+                <Button size="sm" className="w-full">
+                  View all
+                </Button>
               </div>
             </PopoverContent>
           </Popover>
@@ -454,7 +502,7 @@ export default function DesignSystemPage() {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <Skeleton className="size-10 rounded-full" />
-              <div className="space-y-2 flex-1">
+              <div className="flex-1 space-y-2">
                 <Skeleton className="h-3 w-1/3" />
                 <Skeleton className="h-2 w-1/2" />
               </div>
@@ -470,18 +518,35 @@ export default function DesignSystemPage() {
 
         <SectionCard title="Toast Notifications" id="toasts">
           <div className="space-y-3">
-            <p className="text-xs text-muted-foreground">Tap to trigger different toast variants</p>
+            <p className="text-muted-foreground text-xs">Tap to trigger different toast variants</p>
             <div className="flex flex-wrap gap-2">
-              <Button onClick={() => toast.success('Workout saved!', { description: 'Your progress has been updated' })}>
+              <Button
+                onClick={() =>
+                  toast.success('Workout saved!', { description: 'Your progress has been updated' })
+                }
+              >
                 Success Toast
               </Button>
-              <Button variant="destructive" onClick={() => toast.error('Failed to save', { description: 'Check your connection' })}>
+              <Button
+                variant="destructive"
+                onClick={() =>
+                  toast.error('Failed to save', { description: 'Check your connection' })
+                }
+              >
                 Error Toast
               </Button>
-              <Button variant="secondary" onClick={() => toast.warning('Running low', { description: 'Storage almost full' })}>
+              <Button
+                variant="secondary"
+                onClick={() => toast.warning('Running low', { description: 'Storage almost full' })}
+              >
                 Warning Toast
               </Button>
-              <Button variant="outline" onClick={() => toast.info('New update available', { description: 'v2.1.0 is ready' })}>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  toast.info('New update available', { description: 'v2.1.0 is ready' })
+                }
+              >
                 Info Toast
               </Button>
             </div>
@@ -493,7 +558,12 @@ export default function DesignSystemPage() {
             icon={<Activity size={28} className="text-muted-foreground" />}
             title="No workouts yet"
             description="Start your fitness journey by creating your first workout."
-            action={<Button size="sm"><Plus size={16} />Create Workout</Button>}
+            action={
+              <Button size="sm">
+                <Plus size={16} />
+                Create Workout
+              </Button>
+            }
           />
         </SectionCard>
 
@@ -514,16 +584,20 @@ export default function DesignSystemPage() {
         </SectionCard>
 
         <SectionCard title="Command (⌘K)" id="command">
-          <p className="mb-3 text-xs text-muted-foreground">Press to open command palette</p>
-          <Button variant="outline" onClick={() => toast.info('Cmd+K would open here in production')}>
+          <p className="text-muted-foreground mb-3 text-xs">Press to open command palette</p>
+          <Button
+            variant="outline"
+            onClick={() => toast.info('Cmd+K would open here in production')}
+          >
             <Zap size={16} />
             Open Command Palette
           </Button>
         </SectionCard>
 
         <div className="mt-6 text-center">
-          <p className="text-xs text-muted-foreground">
-            Hêz Design System v1.0 &middot; {themes.find(t => t.id === themeId)?.emoji} {themes.find(t => t.id === themeId)?.label}
+          <p className="text-muted-foreground text-xs">
+            Hêz Design System v1.0 &middot; {themes.find((t) => t.id === themeId)?.emoji}{' '}
+            {themes.find((t) => t.id === themeId)?.label}
           </p>
         </div>
       </div>

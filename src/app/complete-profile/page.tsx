@@ -70,7 +70,7 @@ export default function CompleteProfilePage() {
   };
 
   return (
-    <div className="min-h-screen-safe bg-background flex flex-col px-6 pt-16 pb-8">
+    <div className="min-h-screen-safe bg-background flex flex-col px-4 pt-4 pb-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

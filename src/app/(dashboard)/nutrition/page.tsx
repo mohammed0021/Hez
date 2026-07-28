@@ -72,9 +72,9 @@ export default function NutritionPage() {
         </div>
         <Link
           href="/nutrition/analytics"
-          className="bg-muted text-foreground hover:bg-muted/80 flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
+          className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <TrendingUp size={14} /> Analytics
+          <TrendingUp className="size-4" /> Analytics
         </Link>
       </div>
 
@@ -122,7 +122,7 @@ export default function NutritionPage() {
               <p className="text-muted-foreground text-[9px]">of {goals.calories} kcal</p>
             </div>
           </div>
-          <div className="grid flex-1 grid-cols-2 gap-2">
+          <div className="grid flex-1 grid-cols-2 gap-3">
             <MacroRing
               value={macros.protein}
               max={goals.protein}
@@ -151,32 +151,36 @@ export default function NutritionPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.04 }}
-        className="mt-4 grid grid-cols-3 gap-2"
+        className="mt-4 grid grid-cols-3 gap-3"
       >
-        <div
-          className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"
-        >
-          <Droplets size={16} className="mx-auto text-blue-500" />
-          <p className="text-foreground mt-1 text-sm font-bold">{waterMl}ml</p>
-          <p className="text-muted-foreground text-[9px]">Water</p>
+        <div className="border-border/40 bg-card hover:border-primary/30 flex min-h-[72px] flex-col items-center justify-center rounded-xl border p-4 text-center transition-colors">
+          <Droplets className="mx-auto size-4 text-blue-500" />
+          <p className="text-foreground mt-1 text-sm font-semibold">{waterMl}ml</p>
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Water
+          </p>
         </div>
         <Link
           href="/nutrition/goals"
-          className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"
+          className="border-border/40 bg-card hover:border-primary/30 flex min-h-[72px] flex-col items-center justify-center rounded-xl border p-4 text-center transition-colors"
         >
-          <Utensils size={16} className="text-primary mx-auto" />
-          <p className="text-foreground mt-1 text-sm font-bold">
+          <Utensils className="text-primary mx-auto size-4" />
+          <p className="text-foreground mt-1 text-sm font-semibold">
             {macros.calories ? Math.round(macros.calories) : '--'}
           </p>
-          <p className="text-muted-foreground text-[9px]">Calories</p>
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Calories
+          </p>
         </Link>
         <Link
           href="/nutrition/foods"
-          className="border-border/40 bg-card hover:border-primary/30 rounded-xl border p-3 text-center transition-colors"
+          className="border-border/40 bg-card hover:border-primary/30 flex min-h-[72px] flex-col items-center justify-center rounded-xl border p-4 text-center transition-colors"
         >
-          <Plus size={16} className="mx-auto text-green-500" />
-          <p className="text-foreground mt-1 text-sm font-bold">{dayMeals.length}</p>
-          <p className="text-muted-foreground text-[9px]">Meals</p>
+          <Plus className="mx-auto size-4 text-green-500" />
+          <p className="text-foreground mt-1 text-sm font-semibold">{dayMeals.length}</p>
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Meals
+          </p>
         </Link>
       </motion.div>
 
@@ -188,7 +192,9 @@ export default function NutritionPage() {
         className="mt-3"
       >
         <div className="mb-1 flex items-center justify-between">
-          <span className="text-muted-foreground text-[10px] font-medium">Hydration</span>
+          <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Hydration
+          </span>
           <span className="text-muted-foreground text-[10px]">
             {waterMl} / {waterGoal} ml
           </span>
@@ -206,7 +212,7 @@ export default function NutritionPage() {
             <button
               key={ml}
               onClick={() => addWater(today, ml)}
-              className="flex-1 rounded-lg bg-blue-500/10 py-1 text-[9px] font-medium text-blue-600 transition-colors hover:bg-blue-500/20"
+              className="min-h-[44px] flex-1 rounded-lg bg-blue-500/10 py-2 text-[9px] font-medium text-blue-600 transition-colors hover:bg-blue-500/20"
             >
               +{ml}ml
             </button>
@@ -230,14 +236,14 @@ export default function NutritionPage() {
         ))}
 
         {/* Add meal buttons */}
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-3">
           {MEAL_TYPES.map((type) => (
             <button
               key={type}
               onClick={() => setAddingMeal(type)}
-              className="border-border/50 text-muted-foreground hover:border-primary/30 hover:text-primary flex items-center justify-center gap-1.5 rounded-xl border border-dashed py-2.5 text-[10px] transition-colors"
+              className="border-border/50 text-muted-foreground hover:border-primary/30 hover:text-primary flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-dashed py-2.5 text-[10px] transition-colors"
             >
-              <Plus size={12} /> {type.charAt(0).toUpperCase() + type.slice(1)}
+              <Plus className="size-4" /> {type.charAt(0).toUpperCase() + type.slice(1)}
             </button>
           ))}
         </div>
@@ -252,7 +258,7 @@ export default function NutritionPage() {
           className="mt-5"
         >
           <div className="mb-3 flex items-center gap-2">
-            <TrendingUp size={14} className="text-primary" />
+            <TrendingUp className="text-primary size-4" />
             <h2 className="text-foreground text-sm font-semibold">This Week</h2>
           </div>
           <div className="h-32">
@@ -292,9 +298,9 @@ export default function NutritionPage() {
 
       <Link
         href="/nutrition/goals"
-        className="bg-muted text-muted-foreground hover:text-foreground mt-4 flex items-center gap-2 rounded-xl px-4 py-2.5 text-[10px] transition-colors"
+        className="bg-muted text-muted-foreground hover:text-foreground mt-4 flex min-h-[44px] items-center gap-2 rounded-xl px-4 py-2.5 text-[10px] transition-colors"
       >
-        <Utensils size={12} /> Adjust nutrition goals
+        <Utensils className="size-4" /> Adjust nutrition goals
       </Link>
 
       {/* Food Search Modal */}

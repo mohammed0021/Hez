@@ -46,7 +46,7 @@ const FoodItem = memo(function FoodItem({
 }: FoodItemProps) {
   return (
     <div className="hover:bg-muted/50 group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors">
-      <Utensils size={12} className="text-muted-foreground shrink-0" />
+      <Utensils className="text-muted-foreground size-4 shrink-0" />
       <div className="min-w-0 flex-1">
         <p className="text-foreground truncate text-xs font-medium">{name}</p>
         <p className="text-muted-foreground text-[9px]">
@@ -59,7 +59,7 @@ const FoodItem = memo(function FoodItem({
           onClick={onDelete}
           className="text-muted-foreground/40 hover:text-destructive opacity-0 group-hover:opacity-100"
         >
-          <Trash2 size={12} />
+          <Trash2 className="size-4" />
         </button>
       )}
     </div>
@@ -133,9 +133,9 @@ export default function FoodsPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
+          className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus size={14} /> Add Food
+          <Plus className="size-4" /> Add Food
         </button>
       </div>
 
@@ -148,7 +148,7 @@ export default function FoodsPage() {
             className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2 text-sm focus:outline-none"
             placeholder="Food name"
           />
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <input
               type="number"
               value={form.servingSize}
@@ -190,13 +190,13 @@ export default function FoodsPage() {
             </select>
             <button
               onClick={() => setShowForm(false)}
-              className="bg-muted text-foreground rounded-xl px-4 py-2 text-xs font-medium"
+              className="bg-muted text-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs font-medium"
             >
               Cancel
             </button>
             <button
               onClick={handleAdd}
-              className="bg-primary text-primary-foreground rounded-xl px-4 py-2 text-xs font-medium"
+              className="bg-primary text-primary-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs font-medium"
             >
               Save
             </button>
@@ -205,10 +205,7 @@ export default function FoodsPage() {
       )}
 
       <div className="relative mt-4">
-        <Search
-          size={14}
-          className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2"
-        />
+        <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
         <input
           type="text"
           value={query}

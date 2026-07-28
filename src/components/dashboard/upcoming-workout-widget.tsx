@@ -11,9 +11,9 @@ export function UpcomingWorkoutWidget() {
   if (!nextWorkout) {
     return (
       <DashboardWidget className="from-primary/5 border-dashed bg-gradient-to-br to-transparent">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3">
           <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
-            <Calendar size={18} className="text-primary" />
+            <Calendar size={20} className="text-primary" />
           </div>
           <div className="flex-1">
             <p className="text-foreground text-sm font-semibold">Next Workout</p>
@@ -33,15 +33,15 @@ export function UpcomingWorkoutWidget() {
 
   return (
     <DashboardWidget className="from-primary/5 border-dashed bg-gradient-to-br to-transparent">
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
-          <Calendar size={18} className="text-primary" />
+          <Calendar size={20} className="text-primary" />
         </div>
         <div className="flex-1">
           <p className="text-foreground text-sm font-semibold">Next: {nextWorkout.name}</p>
           <div className="text-muted-foreground mt-1 flex items-center gap-3 text-xs">
             <span className="flex items-center gap-1">
-              <Clock size={11} /> ~{nextWorkout.estimatedDuration} min
+              <Clock size={12} /> ~{nextWorkout.estimatedDuration} min
             </span>
           </div>
           {exerciseList.length > 0 && (
@@ -62,8 +62,8 @@ export function UpcomingWorkoutWidget() {
             </div>
           )}
         </div>
-        <button className="bg-primary text-primary-foreground flex size-9 items-center justify-center rounded-xl">
-          <Dumbbell size={16} />
+        <button className="bg-primary text-primary-foreground flex size-10 min-h-[44px] items-center justify-center rounded-xl">
+          <Dumbbell size={20} />
         </button>
       </div>
     </DashboardWidget>

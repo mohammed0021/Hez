@@ -57,9 +57,9 @@ export default function MeasurementsPage() {
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
-          className="bg-primary text-primary-foreground flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
+          className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus size={14} /> Log
+          <Plus className="size-4" /> Log
         </button>
       </div>
 
@@ -72,7 +72,7 @@ export default function MeasurementsPage() {
           <div className="grid grid-cols-2 gap-3">
             {MEASUREMENT_FIELDS.map((f) => (
               <div key={f.key}>
-                <label className="text-muted-foreground mb-0.5 block text-[9px] font-medium">
+                <label className="text-muted-foreground/60 mb-0.5 block text-[10px] font-medium tracking-wider uppercase">
                   {f.label} (cm)
                 </label>
                 <input
@@ -96,13 +96,13 @@ export default function MeasurementsPage() {
           <div className="flex gap-2">
             <button
               onClick={() => setShowForm(false)}
-              className="bg-muted text-foreground flex-1 rounded-xl py-2 text-xs font-medium"
+              className="bg-muted text-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
               Cancel
             </button>
             <button
               onClick={handleAdd}
-              className="bg-primary text-primary-foreground flex-1 rounded-xl py-2 text-xs font-medium"
+              className="bg-primary text-primary-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
               Save
             </button>
@@ -132,7 +132,7 @@ export default function MeasurementsPage() {
             const change = latest && prev ? latest.value - prev.value : 0;
             const trend = change > 0.5 ? 'up' : change < -0.5 ? 'down' : 'stable';
             return (
-              <div key={field.key} className="border-border/50 bg-card rounded-2xl border p-3">
+              <div key={field.key} className="border-border/50 bg-card rounded-2xl border p-4">
                 <div className="mb-2 flex items-center justify-between">
                   <span className="text-foreground text-sm font-medium">{field.label}</span>
                   <div className="flex items-center gap-2">
@@ -144,11 +144,11 @@ export default function MeasurementsPage() {
                         className={`flex items-center gap-0.5 text-[10px] ${trend === 'up' ? 'text-green-500' : trend === 'down' ? 'text-red-500' : 'text-muted-foreground'}`}
                       >
                         {trend === 'up' ? (
-                          <TrendingUp size={10} />
+                          <TrendingUp className="size-4" />
                         ) : trend === 'down' ? (
-                          <TrendingDown size={10} />
+                          <TrendingDown className="size-4" />
                         ) : (
-                          <Minus size={10} />
+                          <Minus className="size-4" />
                         )}
                         {Math.abs(change).toFixed(1)}
                       </span>
@@ -227,7 +227,7 @@ export default function MeasurementsPage() {
                 onClick={() => deleteEntry(e.id)}
                 className="text-muted-foreground/40 hover:text-destructive opacity-0 transition-all group-hover:opacity-100"
               >
-                <Trash2 size={14} />
+                <Trash2 className="size-4" />
               </button>
             </motion.div>
           );

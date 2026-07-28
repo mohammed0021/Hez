@@ -21,8 +21,8 @@ export default function TemplatesPage() {
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Template Library</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <h1 className="text-foreground text-2xl font-bold">Template Library</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">
             {starterTemplates.length + userTemplates.length} templates
           </p>
         </div>
@@ -30,7 +30,7 @@ export default function TemplatesPage() {
 
       {/* Starter templates */}
       <section>
-        <h2 className="mb-3 text-sm font-semibold text-foreground flex items-center gap-2">
+        <h2 className="text-foreground mb-3 flex items-center gap-2 text-sm font-semibold">
           <Bookmark size={16} className="text-primary" />
           Starter Templates
         </h2>
@@ -44,7 +44,7 @@ export default function TemplatesPage() {
       {/* User-created templates */}
       {userTemplates.length > 0 && (
         <section>
-          <h2 className="mb-3 text-sm font-semibold text-foreground">Your Templates</h2>
+          <h2 className="text-foreground mb-3 text-sm font-semibold">Your Templates</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {userTemplates.map((t, i) => (
               <TemplateCard key={t.id} template={t} index={i} />
@@ -54,12 +54,12 @@ export default function TemplatesPage() {
       )}
 
       {starterTemplates.length === 0 && userTemplates.length === 0 && (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-border/50 bg-card p-12">
+        <div className="border-border/50 bg-card flex flex-col items-center gap-3 rounded-2xl border p-4">
           <Bookmark size={40} className="text-muted-foreground/30" />
-          <p className="text-sm text-muted-foreground">No templates yet</p>
+          <p className="text-muted-foreground text-sm">No templates yet</p>
           <Link
             href="/workouts/new"
-            className="rounded-xl bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
+            className="bg-primary text-primary-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs font-medium"
           >
             Create your first template
           </Link>

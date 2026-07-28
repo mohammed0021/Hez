@@ -15,18 +15,18 @@ export function StreakWidget() {
 
   return (
     <DashboardWidget>
-      <div className="flex items-center gap-4">
-        <div className="flex size-12 items-center justify-center rounded-xl bg-orange-500/10">
-          <Flame size={24} className="text-orange-500" />
+      <div className="flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-orange-500/10">
+          <Flame size={20} className="text-orange-500" />
         </div>
         <div>
-          <p className="text-muted-foreground text-[10px] font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
             Current Streak
           </p>
-          <p className="text-foreground text-2xl font-bold">
+          <p className="text-foreground text-2xl font-bold tracking-tight">
             <AnimatedCounter value={streak} suffix=" days" decimals={0} />
           </p>
-          <p className="text-muted-foreground text-xs">
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
             {best > 0 ? `Personal best: ${best} days` : 'Complete a workout to start a streak'}
           </p>
         </div>

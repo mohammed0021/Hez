@@ -19,12 +19,14 @@ export function ProteinWidget() {
 
   return (
     <DashboardWidget title="Protein Goal">
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="flex items-end justify-between">
-          <span className="text-foreground text-2xl font-bold">
+          <span className="text-foreground text-2xl font-bold tracking-tight">
             <AnimatedCounter value={consumed} suffix="g" decimals={0} />
           </span>
-          <span className="text-muted-foreground text-xs">Goal: {goal}g</span>
+          <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Goal: {goal}g
+          </span>
         </div>
         <div className="bg-muted h-2.5 overflow-hidden rounded-full">
           <div
@@ -38,7 +40,7 @@ export function ProteinWidget() {
               key={f.foodId}
               className="text-muted-foreground/60 flex justify-between text-[10px]"
             >
-              <span>{f.foodName}</span>
+              <span className="truncate">{f.foodName}</span>
               <span>+{Math.round(f.protein * f.servings)}g</span>
             </div>
           ))

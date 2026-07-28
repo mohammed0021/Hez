@@ -14,7 +14,7 @@ export function TodaysWorkout() {
       <DashboardWidget className="from-primary/10 to-primary/5 border-primary/20 bg-gradient-to-br">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
+            <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
               Today&apos;s Workout
             </p>
             <p className="text-foreground text-lg font-bold">No workout yet</p>
@@ -35,7 +35,7 @@ export function TodaysWorkout() {
     <DashboardWidget className="from-primary/10 to-primary/5 border-primary/20 bg-gradient-to-br">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
-          <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
             Today&apos;s Workout
           </p>
           <p className="text-foreground text-lg font-bold">{latest.name}</p>
@@ -45,11 +45,11 @@ export function TodaysWorkout() {
             <span>~{latest.estimatedDuration} min</span>
           </div>
         </div>
-        <div className="bg-primary text-primary-foreground flex size-12 items-center justify-center rounded-full shadow-lg">
+        <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-full shadow-lg">
           <Play size={20} className="ml-0.5" />
         </div>
       </div>
-      <div className="mt-4 flex gap-2">
+      <div className="mt-3 flex gap-3">
         {exerciseNames.map((ex, i) => (
           <motion.div
             key={`${ex}-${i}`}

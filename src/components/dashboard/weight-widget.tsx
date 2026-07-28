@@ -15,10 +15,10 @@ export function WeightWidget() {
     return (
       <DashboardWidget title="Weight Progress">
         <div className="mb-3 flex items-center gap-3">
-          <Scale size={18} className="text-muted-foreground" />
+          <Scale size={20} className="text-muted-foreground" />
           <span className="text-muted-foreground text-sm">No entries yet</span>
         </div>
-        <p className="text-muted-foreground/60 text-[10px]">
+        <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
           Log your weight in Progress to start tracking
         </p>
       </DashboardWidget>
@@ -45,9 +45,13 @@ export function WeightWidget() {
       }
     >
       <div className="mb-3 flex items-center gap-3">
-        <Scale size={18} className="text-muted-foreground" />
-        <span className="text-foreground text-2xl font-bold">{latest.weightKg.toFixed(1)}</span>
-        <span className="text-muted-foreground text-xs">kg</span>
+        <Scale size={20} className="text-muted-foreground" />
+        <span className="text-foreground text-2xl font-bold tracking-tight">
+          {latest.weightKg.toFixed(1)}
+        </span>
+        <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+          kg
+        </span>
       </div>
       <div className="h-20">
         <ResponsiveContainer width="100%" height="100%">

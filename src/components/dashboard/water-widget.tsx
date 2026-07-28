@@ -4,18 +4,24 @@ import { Plus } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
 import { AnimatedCounter } from './animated-counter';
 import { useWaterStore } from '@/stores/water-store';
+import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
 
 export function WaterWidget() {
   const today = new Date().toISOString().split('T')[0] ?? '';
   const consumed = useWaterStore((s) => s.getForDate(today) / 200);
-  const goal = useWaterStore((s) => s.goalMl / 200);
   const addWater = useWaterStore((s) => s.addWater);
+  const hydration = useNutritionGoalsStore((s) => s.hydration);
+  const numberOfIntervals = Math.round(
+    (hydration.endHour - hydration.startHour) / (hydration.intervalMinutes / 60),
+  );
+  const dailyWaterGoal = hydration.amountMl * numberOfIntervals;
+  const goal = dailyWaterGoal / 200;
 
   const glasses = Array.from({ length: Math.max(Math.ceil(goal), 1) });
 
   return (
     <DashboardWidget title="Water Intake">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <div className="flex flex-col items-center">
           <div className="relative h-24 w-10 overflow-hidden rounded-2xl border-2 border-blue-300 bg-blue-500/5">
             <div
@@ -30,10 +36,12 @@ export function WaterWidget() {
           </span>
         </div>
         <div className="flex-1">
-          <p className="text-foreground text-2xl font-bold">
+          <p className="text-foreground text-2xl font-bold tracking-tight">
             <AnimatedCounter value={consumed * 200} suffix=" ml" decimals={0} />
           </p>
-          <p className="text-muted-foreground text-xs">of {goal * 200} ml goal</p>
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            of {goal * 200} ml goal
+          </p>
           <div className="mt-3 flex flex-wrap gap-1">
             {glasses.map((_, i) => (
               <div
@@ -48,9 +56,9 @@ export function WaterWidget() {
       </div>
       <button
         onClick={() => addWater(today, 200)}
-        className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-blue-500/10 py-2 text-xs font-medium text-blue-500 transition-colors hover:bg-blue-500/20"
+        className="mt-3 flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-xl bg-blue-500/10 py-2 text-xs font-medium text-blue-500 transition-colors hover:bg-blue-500/20"
       >
-        <Plus size={14} /> Log water
+        <Plus size={16} /> Log water
       </button>
     </DashboardWidget>
   );

@@ -41,74 +41,82 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen-safe flex-col bg-background px-6 pt-16 pb-8">
-      <Link href="/auth/login" className="mb-6 flex size-10 items-center justify-center rounded-xl bg-muted">
-        <ArrowLeft size={20} className="text-foreground" />
-      </Link>
+    <div className="min-h-screen-safe flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm">
+        <Link
+          href="/auth/login"
+          className="bg-muted mb-6 flex size-10 items-center justify-center rounded-xl"
+        >
+          <ArrowLeft size={20} className="text-foreground" />
+        </Link>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="flex-1"
-      >
-        <div className="mb-4 inline-flex size-10 items-center justify-center rounded-2xl bg-primary">
-          <Mail size={20} className="text-primary-foreground" />
-        </div>
-        <h1 className="text-2xl font-bold text-foreground">Reset password</h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          {sent
-            ? 'Email sent! Check your inbox for the reset link.'
-            : 'Enter your email and we\'ll send you a reset link.'}
-        </p>
-      </motion.div>
-
-      {!sent ? (
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
+          transition={{ duration: 0.4 }}
+          className="flex-1"
         >
-          <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                autoCapitalize="none"
-                autoComplete="email"
-                autoFocus
-                {...register('email')}
-              />
-              {errors.email && (
-                <p className="text-xs text-destructive">{errors.email.message}</p>
-              )}
-            </div>
+          <div className="bg-primary mb-4 inline-flex size-10 items-center justify-center rounded-2xl">
+            <Mail size={20} className="text-primary-foreground" />
+          </div>
+          <h1 className="text-foreground text-2xl font-bold">Reset password</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">
+            {sent
+              ? 'Email sent! Check your inbox for the reset link.'
+              : "Enter your email and we'll send you a reset link."}
+          </p>
+        </motion.div>
 
-            <motion.div whileTap={{ scale: 0.98 }}>
-              <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-                <Send size={18} />
-                {isLoading ? 'Sending...' : 'Send Reset Link'}
-              </Button>
-            </motion.div>
-          </form>
-        </motion.div>
-      ) : (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="mt-8"
-        >
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setSent(false)}
+        {!sent ? (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
           >
-            Send again
-          </Button>
-        </motion.div>
-      )}
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  autoCapitalize="none"
+                  autoComplete="email"
+                  autoFocus
+                  {...register('email')}
+                />
+                {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
+              </div>
+
+              <motion.div whileTap={{ scale: 0.98 }}>
+                <Button
+                  type="submit"
+                  className="min-h-[44px] w-full"
+                  size="lg"
+                  disabled={isLoading}
+                >
+                  <Send size={18} />
+                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                </Button>
+              </motion.div>
+            </form>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mt-8"
+          >
+            <Button
+              variant="outline"
+              className="min-h-[44px] w-full"
+              onClick={() => setSent(false)}
+            >
+              Send again
+            </Button>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 }

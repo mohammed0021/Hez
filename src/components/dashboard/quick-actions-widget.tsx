@@ -59,7 +59,7 @@ export function QuickActionsWidget() {
             <Link
               key={a.id}
               href={a.href}
-              className={`flex flex-col items-center gap-1.5 rounded-xl py-3 text-xs font-medium transition-all hover:scale-105 active:scale-95 ${a.color}`}
+              className={`flex min-h-[44px] flex-col items-center gap-1.5 rounded-xl py-3 text-xs font-medium transition-all hover:scale-105 active:scale-95 ${a.color}`}
             >
               <Icon size={18} />
               {a.label}

@@ -45,71 +45,68 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthLayout title="Welcome back" subtitle="Sign in to continue your journey">
-      <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            autoCapitalize="none"
-            autoComplete="email"
-            autoFocus
-            {...register('email')}
-          />
-          {errors.email && (
-            <p className="text-xs text-destructive">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
-            <Link
-              href="/auth/forgot-password"
-              className="text-xs font-medium text-primary"
-            >
-              Forgot?
-            </Link>
-          </div>
-          <div className="relative">
+    <div className="min-h-screen-safe flex flex-col items-center justify-center p-4">
+      <AuthLayout title="Welcome back" subtitle="Sign in to continue your journey">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-8 w-full max-w-sm space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
             <Input
-              id="password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Enter your password"
-              autoComplete="current-password"
-              {...register('password')}
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              autoCapitalize="none"
+              autoComplete="email"
+              autoFocus
+              {...register('email')}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            >
-              {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-            </button>
+            {errors.email && <p className="text-destructive text-xs">{errors.email.message}</p>}
           </div>
-          {errors.password && (
-            <p className="text-xs text-destructive">{errors.password.message}</p>
-          )}
-        </div>
 
-        <motion.div whileTap={{ scale: 0.98 }}>
-          <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-            <LogIn size={18} />
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </Button>
-        </motion.div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Password</Label>
+              <Link href="/auth/forgot-password" className="text-primary text-xs font-medium">
+                Forgot?
+              </Link>
+            </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                {...register('password')}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="text-muted-foreground absolute top-1/2 right-3 -translate-y-1/2"
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-destructive text-xs">{errors.password.message}</p>
+            )}
+          </div>
 
-        <SocialAuthButtons isLoading={isLoading} />
+          <motion.div whileTap={{ scale: 0.98 }}>
+            <Button type="submit" className="min-h-[44px] w-full" size="lg" disabled={isLoading}>
+              <LogIn size={18} />
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </Button>
+          </motion.div>
 
-        <p className="text-center text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/register" className="font-medium text-primary">
-            Sign up
-          </Link>
-        </p>
-      </form>
-    </AuthLayout>
+          <SocialAuthButtons isLoading={isLoading} />
+
+          <p className="text-muted-foreground text-center text-sm">
+            Don&apos;t have an account?{' '}
+            <Link href="/auth/register" className="text-primary font-medium">
+              Sign up
+            </Link>
+          </p>
+        </form>
+      </AuthLayout>
+    </div>
   );
 }

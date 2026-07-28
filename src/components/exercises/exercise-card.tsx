@@ -48,7 +48,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise }: { exercise:
               e.preventDefault();
               toggleFavorite(exercise.id);
             }}
-            className="shrink-0"
+            className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center"
           >
             <Heart
               size={16}

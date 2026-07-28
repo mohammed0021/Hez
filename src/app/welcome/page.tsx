@@ -57,7 +57,7 @@ export default function WelcomePage() {
   };
 
   return (
-    <div className="min-h-screen-safe bg-background flex flex-col px-6">
+    <div className="min-h-screen-safe bg-background flex flex-col px-4 pt-4 pb-24">
       <div className="flex items-center justify-between pt-6">
         <div className="bg-primary/10 text-primary flex size-9 items-center justify-center rounded-xl text-sm font-bold">
           H
@@ -101,7 +101,7 @@ export default function WelcomePage() {
                   <button
                     key={l}
                     onClick={() => setSelectedLocale(l)}
-                    className={`flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left transition-all ${
+                    className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left transition-all ${
                       selectedLocale === l
                         ? 'border-primary bg-primary/[0.06]'
                         : 'border-border hover:border-muted-foreground/30'
@@ -187,7 +187,7 @@ export default function WelcomePage() {
                     <button
                       key={opt.value}
                       onClick={() => setSelectedMode(opt.value as ThemeMode)}
-                      className={`flex w-full items-center gap-4 rounded-2xl border px-5 py-4 text-left transition-all ${
+                      className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all ${
                         isActive
                           ? 'border-primary bg-primary/[0.06]'
                           : 'border-border hover:border-muted-foreground/30'
@@ -223,7 +223,7 @@ export default function WelcomePage() {
       <div className="pt-4 pb-8">
         <button
           onClick={handleNext}
-          className="bg-primary text-primary-foreground hover:bg-primary/90 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold transition-colors"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold transition-colors"
         >
           {step === 'mode' ? 'Begin Your Journey' : 'Continue'}
           <ChevronRight size={20} />

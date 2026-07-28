@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { calculateAllGoals } from '@/lib/fitness-calculations';
+import { useProfileStore } from './profile-store';
 
 export interface MacroGoals {
   calories: number;
@@ -22,11 +24,12 @@ interface GoalsState {
   hydration: HydrationSettings;
   setGoals: (goals: MacroGoals) => void;
   setHydration: (settings: Partial<HydrationSettings>) => void;
+  autoCalculateFromProfile: () => void;
 }
 
 export const useNutritionGoalsStore = create<GoalsState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       goals: {
         calories: 2200,
         protein: 150,
@@ -44,8 +47,38 @@ export const useNutritionGoalsStore = create<GoalsState>()(
 
       setGoals: (goals) => set({ goals }),
 
-      setHydration: (settings) =>
-        set((s) => ({ hydration: { ...s.hydration, ...settings } })),
+      setHydration: (settings) => set((s) => ({ hydration: { ...s.hydration, ...settings } })),
+
+      autoCalculateFromProfile: () => {
+        const profile = useProfileStore.getState();
+        const age = profile.birthday
+          ? Math.floor((Date.now() - new Date(profile.birthday).getTime()) / 31557600000)
+          : 30;
+        const metrics = {
+          age,
+          gender: profile.gender || 'male',
+          heightCm: profile.heightCm || 175,
+          weightKg: profile.weightKg || 75,
+          activityLevel: profile.activityLevel || 'moderate',
+          fitnessGoal: profile.primaryGoal,
+          experienceLevel: profile.experienceLevel || 'intermediate',
+          workoutDaysPerWeek: profile.weeklyWorkoutGoal || 4,
+        };
+        const calculated = calculateAllGoals(metrics);
+        set({
+          goals: {
+            calories: calculated.recommendedCalories,
+            protein: calculated.proteinG,
+            carbs: calculated.carbsG,
+            fat: calculated.fatG,
+            fiber: calculated.fiberG,
+          },
+          hydration: {
+            ...get().hydration,
+            amountMl: Math.round(calculated.waterMl / (get().hydration.intervalMinutes || 60)),
+          },
+        });
+      },
     }),
     {
       name: 'hez-nutrition-goals',
