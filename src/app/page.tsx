@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createClient } from '@/lib/supabase-client';
 
@@ -54,7 +55,14 @@ export default function SplashScreen() {
             className="flex flex-col items-center"
           >
             <div className="bg-primary shadow-glow-lg flex size-24 items-center justify-center rounded-[2rem]">
-              <span className="text-primary-foreground text-5xl font-bold">H</span>
+              <Image
+                src="/icons/icon-192x192.png"
+                alt="Hêz"
+                width={72}
+                height={72}
+                className="size-[72px]"
+                priority
+              />
             </div>
           </motion.div>
         )}
@@ -68,7 +76,14 @@ export default function SplashScreen() {
             className="flex flex-col items-center"
           >
             <div className="bg-primary shadow-glow-lg flex size-24 items-center justify-center rounded-[2rem]">
-              <span className="text-primary-foreground text-5xl font-bold">H</span>
+              <Image
+                src="/icons/icon-192x192.png"
+                alt="Hêz"
+                width={72}
+                height={72}
+                className="size-[72px]"
+                priority
+              />
             </div>
             <motion.h1
               initial={{ opacity: 0 }}
