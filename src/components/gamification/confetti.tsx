@@ -43,12 +43,15 @@ export function Confetti({ active, onComplete }: { active: boolean; onComplete?:
   useEffect(() => {
     if (!active) return;
     const items = generateParticles();
+    requestAnimationFrame(() => setParticles(items));
     const timer = setTimeout(() => {
       setParticles([]);
       onComplete?.();
     }, 3000);
-    Promise.resolve().then(() => setParticles(items));
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      setParticles([]);
+    };
   }, [active, onComplete]);
 
   return (

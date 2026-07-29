@@ -37,14 +37,12 @@ const cspDirectives = [
 const nextConfig: NextConfig = withBA(
   withPWA({
     reactStrictMode: true,
-    output: 'standalone',
     images: {
       formats: ['image/avif', 'image/webp'],
       deviceSizes: [320, 420, 640, 768, 1024, 1280],
       imageSizes: [48, 64, 96, 128, 256],
       minimumCacheTTL: 31536000,
     },
-    turbopack: {},
     experimental: {
       optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
     },

@@ -60,10 +60,10 @@ export function CommandPalette() {
 
   useEffect(() => {
     if (!commandPaletteOpen) return;
-    Promise.resolve().then(() => {
-      setQuery('');
-      setActiveIndex(0);
-    });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuery('');
+
+    setActiveIndex(0);
     setTimeout(() => inputRef.current?.focus(), 50);
   }, [commandPaletteOpen]);
 

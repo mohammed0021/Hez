@@ -5,15 +5,8 @@ import { cookies } from 'next/headers';
 import { Providers } from '@/components/providers';
 import { LocaleInit } from '@/components/locale-init';
 import { PwaProvider } from '@/components/pwa-provider';
-import { validateEnvOnStartup } from '@/lib/security/with-security';
 import { locales, defaultLocale, getDirection } from '@/i18n/locales';
 import './globals.css';
-
-if (typeof globalThis !== 'undefined' && process.env.NODE_ENV === 'production') {
-  try {
-    validateEnvOnStartup();
-  } catch {}
-}
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -93,9 +86,7 @@ export const metadata: Metadata = {
       { url: '/icons/apple-icon-167x167.png', sizes: '167x167' },
       { url: '/icons/apple-icon-180x180.png', sizes: '180x180' },
     ],
-    other: [
-      { rel: 'apple-touch-icon-precomposed', url: '/icons/apple-icon-180x180.png' },
-    ],
+    other: [{ rel: 'apple-touch-icon-precomposed', url: '/icons/apple-icon-180x180.png' }],
   },
   other: {
     'apple-mobile-web-app-capable': 'yes',
@@ -146,7 +137,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="font-sans antialiased">
-        <Script
+        <script
           id="structured-data"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
