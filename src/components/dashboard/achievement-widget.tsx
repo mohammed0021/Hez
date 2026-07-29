@@ -1,5 +1,6 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import {
   Award,
@@ -65,6 +66,11 @@ const iconMap: Record<string, typeof Dumbbell> = {
 };
 
 export function AchievementWidget() {
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const achievements = useGamificationStore((s) => s.achievements);
   const xp = useGamificationStore((s) => s.xp);
   const getLevel = useGamificationStore((s) => s.getLevel);
@@ -74,7 +80,22 @@ export function AchievementWidget() {
 
   return (
     <DashboardWidget title="Achievements">
-      {recentAchievements.length > 0 ? (
+      {!hydrated ? (
+        <div className="space-y-3">
+          {[0, 1, 2].map((i) => (
+            <div
+              key={i}
+              className="bg-muted/50 flex animate-pulse items-center gap-3 rounded-xl p-2.5"
+            >
+              <div className="bg-muted size-10 rounded-lg" />
+              <div className="flex-1 space-y-1">
+                <div className="bg-muted h-3 w-32 rounded" />
+                <div className="bg-muted h-2 w-20 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : recentAchievements.length > 0 ? (
         <div className="space-y-3">
           {recentAchievements.map((a, i) => {
             const def = ACHIEVEMENTS.find((d) => d.id === a.id);
@@ -111,8 +132,10 @@ export function AchievementWidget() {
         </div>
       )}
       <div className="bg-muted/30 mt-3 flex items-center justify-between rounded-xl px-3 py-2">
-        <span className="text-muted-foreground text-xs">Level {level.level}</span>
-        <span className="text-foreground text-sm font-bold">{xp.toLocaleString()} XP</span>
+        <span className="text-muted-foreground text-xs">Level {hydrated ? level.level : '—'}</span>
+        <span className="text-foreground text-sm font-bold">
+          {hydrated ? `${xp.toLocaleString()} XP` : '—'}
+        </span>
       </div>
     </DashboardWidget>
   );

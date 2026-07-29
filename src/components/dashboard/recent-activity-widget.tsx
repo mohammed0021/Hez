@@ -1,5 +1,6 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { motion } from 'framer-motion';
 import { Dumbbell, Trophy, Target } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
@@ -10,8 +11,32 @@ function hoursAgo(timestamp: number) {
 }
 
 export function RecentActivityWidget() {
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const recent = sessions.slice(0, 4);
+
+  if (!hydrated) {
+    return (
+      <DashboardWidget title="Recent Activity">
+        <div className="space-y-3">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="flex animate-pulse items-start gap-3">
+              <div className="bg-muted size-8 rounded-lg" />
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="bg-muted h-3 w-32 rounded" />
+                <div className="bg-muted h-2 w-20 rounded" />
+              </div>
+              <div className="bg-muted h-2 w-10 rounded" />
+            </div>
+          ))}
+        </div>
+      </DashboardWidget>
+    );
+  }
 
   if (recent.length === 0) {
     return (
@@ -56,7 +81,7 @@ export function RecentActivityWidget() {
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-sm font-medium">{s.name}</p>
                 <p className="text-muted-foreground text-xs">
-                  {s.volume.toLocaleString()} kg volume
+                  {(s.volume ?? 0).toLocaleString()} kg volume
                 </p>
               </div>
               <span className="text-muted-foreground/60 shrink-0 text-[10px]">{timeStr}</span>
