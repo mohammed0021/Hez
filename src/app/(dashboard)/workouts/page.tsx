@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Dumbbell, Plus, Clock, Bookmark, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -8,6 +9,7 @@ import { useActiveWorkoutStore } from '@/stores/active-workout-store';
 import { starterTemplates } from '@/data/workout-templates';
 
 export default function WorkoutsPage() {
+  const router = useRouter();
   const savedWorkouts = useWorkoutStore((s) => s.savedWorkouts);
   const userTemplates = useWorkoutStore((s) => s.templates);
   const startWorkout = useActiveWorkoutStore((s) => s.startWorkout);
@@ -57,7 +59,7 @@ export default function WorkoutsPage() {
                 key={t.id}
                 onClick={() => {
                   startWorkout(t);
-                  window.location.href = '/workouts/active';
+                  router.push('/workouts/active');
                 }}
                 className="bg-card/80 border-border/50 hover:bg-card min-h-[44px] shrink-0 rounded-xl border px-4 py-3 text-left transition-colors"
               >
@@ -119,7 +121,7 @@ export default function WorkoutsPage() {
                     onClick={(e) => {
                       e.preventDefault();
                       startWorkout(w);
-                      window.location.href = '/workouts/active';
+                      router.push('/workouts/active');
                     }}
                     className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1 rounded-xl px-3 py-1.5 text-[10px] font-medium"
                   >

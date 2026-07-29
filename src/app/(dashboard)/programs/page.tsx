@@ -1,6 +1,7 @@
 'use client';
 
-import { NotebookText, Users, Clock, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { NotebookText, Users, Clock, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const programs = [
@@ -45,6 +46,8 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function ProgramsPage() {
+  const router = useRouter();
+
   return (
     <>
       <h2 className="text-foreground text-2xl font-bold">Programs</h2>
@@ -57,6 +60,7 @@ export default function ProgramsPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
+            onClick={() => router.push(`/programs/${p.id}`)}
             className="bg-card border-border/50 flex min-h-[80px] w-full items-center gap-4 rounded-2xl border p-4 text-left"
           >
             <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
@@ -81,6 +85,12 @@ export default function ProgramsPage() {
             <ChevronRight size={16} className="text-muted-foreground" />
           </motion.button>
         ))}
+        <div className="bg-muted/30 border-border/50 flex flex-col items-center gap-2 rounded-2xl border p-6 text-center">
+          <AlertCircle size={24} className="text-muted-foreground/40" />
+          <p className="text-muted-foreground text-xs">
+            Program details coming soon. Tap a program to get started.
+          </p>
+        </div>
       </div>
     </>
   );

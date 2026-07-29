@@ -36,7 +36,13 @@ export const useUiStore = create<UiState>()((set) => ({
   setCommandPaletteOpen: (commandPaletteOpen) => set({ commandPaletteOpen }),
   setNotificationOpen: (notificationOpen) => set({ notificationOpen }),
   setUserMenuOpen: (userMenuOpen) => set({ userMenuOpen }),
-  closeAll: () => set({ sidebarOpen: false, commandPaletteOpen: false, notificationOpen: false, userMenuOpen: false }),
+  closeAll: () =>
+    set({
+      sidebarOpen: false,
+      commandPaletteOpen: false,
+      notificationOpen: false,
+      userMenuOpen: false,
+    }),
 }));
 
 interface NotificationState {
@@ -48,7 +54,7 @@ interface NotificationState {
   addNotification: (notification: Notification) => void;
 }
 
-export const useNotificationStore = create<NotificationState>()((set) => ({
+export const useInAppNotificationStore = create<NotificationState>()((set) => ({
   notifications: [],
   unreadCount: 0,
   setNotifications: (notifications) =>

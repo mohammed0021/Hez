@@ -23,13 +23,3 @@ export function DashboardWidget({
     </div>
   );
 }
-
-export function WidgetSkeleton({ className = '' }: { className?: string }) {
-  return (
-    <div className={`bg-card border-border/50 animate-pulse rounded-2xl border p-4 ${className}`}>
-      <div className="bg-muted mb-3 h-3 w-24 rounded" />
-      <div className="bg-muted h-8 w-16 rounded" />
-      <div className="bg-muted mt-2 h-2 w-full rounded" />
-    </div>
-  );
-}

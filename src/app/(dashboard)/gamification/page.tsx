@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Sparkles,
@@ -20,12 +20,14 @@ import { ACHIEVEMENTS, CHALLENGES, getLevel } from '@/lib/gamification-types';
 import { XpBar } from '@/components/gamification/xp-bar';
 import { AchievementCard } from '@/components/gamification/achievement-card';
 import { ChallengeCard } from '@/components/gamification/challenge-card';
+import { LevelUpModal } from '@/components/gamification/level-up-modal';
 
 type Tab = 'overview' | 'achievements' | 'challenges';
 
 export default function GamificationPage() {
   const [tab, setTab] = useState<Tab>('overview');
   const [showAllAchievements, setShowAllAchievements] = useState(false);
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
   const xp = useGamificationStore((s) => s.xp);
   const achievements = useGamificationStore((s) => s.achievements);
@@ -34,6 +36,14 @@ export default function GamificationPage() {
   const xpHistory = useGamificationStore((s) => s.xpHistory);
 
   const level = getLevel(xp);
+  const prevLevel = useRef(level.level);
+  useEffect(() => {
+    if (level.level > prevLevel.current) {
+      setShowLevelUp(true);
+    }
+    prevLevel.current = level.level;
+  }, [level.level]);
+
   const unlockedIds = new Set(achievements.map((a) => a.id));
   const unlockedCount = unlockedIds.size;
 
@@ -314,6 +324,8 @@ export default function GamificationPage() {
           </>
         )}
       </div>
+
+      <LevelUpModal level={level.level} open={showLevelUp} onClose={() => setShowLevelUp(false)} />
 
       <div className="h-8" />
     </>

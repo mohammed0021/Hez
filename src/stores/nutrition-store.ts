@@ -149,7 +149,7 @@ export const useNutritionStore = create<NutritionState>()(
         }
       },
 
-      removeMeal: (date, mealId) => {
+      removeMeal: async (date, mealId) => {
         set((s) => ({
           logs: s.logs
             .map((l) => {
@@ -159,6 +159,12 @@ export const useNutritionStore = create<NutritionState>()(
             })
             .filter((l) => l.meals.length > 0),
         }));
+        try {
+          const supabase = createClient();
+          await supabase.from('nutrition_logs').delete().eq('id', mealId);
+        } catch (e) {
+          console.error('Failed to sync meal delete to server:', e);
+        }
       },
 
       getLog: (date) => get().logs.find((l) => l.date === date),

@@ -21,6 +21,8 @@ export function PullToRefresh({ children, onRefresh, threshold = 60 }: PullToRef
       setRefreshing(true);
       try {
         await onRefresh();
+      } catch {
+        // Refresh failed silently - caller handles its own errors
       } finally {
         setRefreshing(false);
       }

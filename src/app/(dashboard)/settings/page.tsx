@@ -29,6 +29,8 @@ import type { Locale } from '@/i18n/locales';
 import { THEMES, LANGUAGES } from '@/lib/constants';
 import { useSettingsStore, type UnitSystem, type SettingsState } from '@/stores/settings-store';
 import { useProfileStore, VISIBILITY_OPTIONS, type ProfileState } from '@/stores/profile-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { createClient } from '@/lib/supabase-client';
 import Link from 'next/link';
 
 const APP_VERSION = '1.0.0';
@@ -101,8 +103,22 @@ export default function SettingsPage() {
     setTimeout(() => setExportDone(false), 3000);
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     if (deleteText.toLowerCase() !== 'delete') return;
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.rpc('delete_user_account');
+      if (error) {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        if (session) {
+          await supabase.auth.admin.deleteUser(session.user.id);
+        }
+      }
+    } catch {
+      // Continue with local cleanup even if server delete fails
+    }
     const keys = Object.keys(localStorage);
     for (const key of keys) {
       if (key.startsWith('hez-')) {
@@ -111,7 +127,8 @@ export default function SettingsPage() {
     }
     profile.reset();
     settings.reset();
-    window.location.href = '/auth/login';
+    useAuthStore.getState().reset();
+    router.push('/auth/login');
   };
 
   return (

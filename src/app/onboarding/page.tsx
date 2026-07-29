@@ -212,7 +212,7 @@ export default function OnboardingPage() {
       });
 
       authStore.setOnboarded(true);
-      router.replace('/home');
+      router.replace('/dashboard');
     } catch {
       setSubmitting(false);
     }
