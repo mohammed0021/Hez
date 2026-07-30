@@ -1,20 +1,31 @@
 'use client';
 
+import { useMemo } from 'react';
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
-import { Scale } from 'lucide-react';
+import { Scale, TrendingDown, TrendingUp } from 'lucide-react';
 import { DashboardWidget } from './widget-shell';
 import { useWeightStore } from '@/stores/weight-store';
+import { calculateBMI } from '@/lib/bmi';
+import { useProfileStore } from '@/stores/profile-store';
+import { useRouter } from 'next/navigation';
 
 export function WeightWidget() {
+  const router = useRouter();
   const entries = useWeightStore((s) => s.entries);
+  const heightCm = useProfileStore((s) => s.heightCm);
   const recent = entries.slice(0, 7).reverse();
 
   const latest = recent[recent.length - 1];
 
+  const weeklyChange = useMemo(() => {
+    if (entries.length < 2) return null;
+    return (entries[0]?.weightKg ?? 0) - (entries[1]?.weightKg ?? 0);
+  }, [entries]);
+
   if (entries.length === 0) {
     return (
-      <DashboardWidget title="Weight Progress">
-        <div className="mb-3 flex items-center gap-3">
+      <DashboardWidget title="Weight">
+        <div className="mb-1 flex items-center gap-3">
           <Scale size={20} className="text-muted-foreground" />
           <span className="text-muted-foreground text-sm">No entries yet</span>
         </div>
@@ -25,11 +36,9 @@ export function WeightWidget() {
     );
   }
 
-  const first = recent[0];
-  if (!latest || !first) return null;
-  const change = latest.weightKg - first.weightKg;
-  const isDown = change < 0;
+  if (!latest) return null;
 
+  const bmi = calculateBMI(latest.weightKg, heightCm);
   const chartData = recent.map((e) => ({
     day: new Date(e.date).toLocaleDateString(undefined, { weekday: 'short' }),
     kg: e.weightKg,
@@ -37,22 +46,52 @@ export function WeightWidget() {
 
   return (
     <DashboardWidget
-      title="Weight Progress"
+      title="Weight"
       action={
-        <span className={isDown ? 'text-green-500' : 'text-red-500'}>
-          {isDown ? '▼' : '▲'} {Math.abs(change).toFixed(1)} kg
-        </span>
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push('/progress/weight');
+          }}
+          className="text-primary hover:text-primary/80 text-[10px] font-medium transition-colors"
+        >
+          View all
+        </button>
       }
     >
-      <div className="mb-3 flex items-center gap-3">
-        <Scale size={20} className="text-muted-foreground" />
-        <span className="text-foreground text-2xl font-bold tracking-tight">
-          {latest.weightKg.toFixed(1)}
-        </span>
-        <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-          kg
-        </span>
+      <div className="mb-1 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Scale size={20} className="text-muted-foreground" />
+          <span className="text-foreground text-2xl font-bold tracking-tight">
+            {latest.weightKg.toFixed(1)}
+          </span>
+          <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            kg
+          </span>
+        </div>
+        {weeklyChange !== null && (
+          <div className="flex items-center gap-1">
+            {weeklyChange > 0 ? (
+              <TrendingUp size={14} className="text-red-500" />
+            ) : weeklyChange < 0 ? (
+              <TrendingDown size={14} className="text-green-500" />
+            ) : null}
+            <span
+              className={`text-xs font-medium ${weeklyChange > 0 ? 'text-red-500' : weeklyChange < 0 ? 'text-green-500' : 'text-muted-foreground'}`}
+            >
+              {weeklyChange > 0 ? '+' : ''}
+              {weeklyChange.toFixed(1)} kg
+            </span>
+          </div>
+        )}
       </div>
+
+      {bmi > 0 && (
+        <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium">
+          BMI {bmi.toFixed(1)}
+        </p>
+      )}
+
       <div className="h-20">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData}>

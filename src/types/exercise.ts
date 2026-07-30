@@ -1,5 +1,13 @@
 export type Difficulty = 'beginner' | 'intermediate' | 'advanced';
-export type ExerciseCategory = 'strength' | 'cardio' | 'flexibility' | 'hiit' | 'bodyweight' | 'olympic' | 'plyometric' | 'sports';
+export type ExerciseCategory =
+  | 'strength'
+  | 'cardio'
+  | 'flexibility'
+  | 'hiit'
+  | 'bodyweight'
+  | 'olympic'
+  | 'plyometric'
+  | 'sports';
 
 export interface Exercise {
   id: string;
@@ -7,8 +15,11 @@ export interface Exercise {
   description: string;
   category: ExerciseCategory;
   muscleGroups: string[];
+  primaryMuscleGroups: string[];
+  secondaryMuscleGroups: string[];
   equipment: string[];
   difficulty: Difficulty;
+  exerciseType: string;
   instructions: string[];
   videoUrl: string | null;
   imageUrl: string | null;
@@ -70,7 +81,10 @@ export const EQUIPMENT_LIST = [
   'Box',
 ] as const;
 
-export const MUSCLE_GROUP_MAP: Record<string, { label: string; region: 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core' }> = {
+export const MUSCLE_GROUP_MAP: Record<
+  string,
+  { label: string; region: 'chest' | 'back' | 'shoulders' | 'arms' | 'legs' | 'core' }
+> = {
   Chest: { label: 'Chest', region: 'chest' },
   Shoulders: { label: 'Shoulders', region: 'shoulders' },
   Back: { label: 'Back', region: 'back' },

@@ -1,7 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Dumbbell, HelpCircle, Lightbulb, Repeat2, Play, ImageIcon, BarChart3 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Dumbbell,
+  HelpCircle,
+  Lightbulb,
+  Repeat2,
+  Play,
+  ImageOff,
+  BarChart3,
+  Heart,
+  Plus,
+  Zap,
+} from 'lucide-react';
 import Link from 'next/link';
 import type { Exercise } from '@/types/exercise';
 import { FavoritesButton } from './favorites-button';
@@ -10,154 +23,209 @@ import { useExerciseStore } from '@/stores/exercise-store';
 import exercises from '@/data/exercises';
 import { Badge } from '@/components/ui/badge';
 
-const difficultyColors: Record<string, string> = {
-  beginner: 'bg-green-500/10 text-green-500',
-  intermediate: 'bg-yellow-500/10 text-yellow-500',
-  advanced: 'bg-red-500/10 text-red-500',
+const difficultyConfig: { [key: string]: { color: string; label: string } } = {
+  beginner: { color: 'bg-green-500/10 text-green-500 border-green-500/20', label: 'Beginner' },
+  intermediate: {
+    color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
+    label: 'Intermediate',
+  },
+  advanced: { color: 'bg-red-500/10 text-red-500 border-red-500/20', label: 'Advanced' },
 };
 
 export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
-  const addRecentlyUsed = useExerciseStore((s) => s.addRecentlyUsed);
-  const openMediaViewer = useExerciseStore((s) => s.openMediaViewer);
-  const selectExercise = useExerciseStore((s) => s.selectExercise);
+  const isFavorite = useExerciseStore((s) => s.isFavorite(exercise.id));
+  const toggleFavorite = useExerciseStore((s) => s.toggleFavorite);
+  const [imgError, setImgError] = useState(false);
 
   const alternatives = exercise.alternativeIds
     .map((id) => exercises.find((e) => e.id === id))
     .filter(Boolean) as Exercise[];
 
-  const handleViewMedia = () => {
-    selectExercise(exercise.id);
-    openMediaViewer(0);
-    addRecentlyUsed(exercise.id);
-  };
+  const difficulty = difficultyConfig[exercise.difficulty]!;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       <Link
         href="/exercises"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
       >
         <ArrowLeft size={16} /> Back to library
       </Link>
 
+      {/* Hero Image */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
+        className="from-primary/10 to-primary/5 relative aspect-video overflow-hidden rounded-2xl bg-gradient-to-br"
       >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-foreground">{exercise.name}</h1>
-            <p className="mt-1 text-sm text-muted-foreground">{exercise.description}</p>
+        {exercise.imageUrl && !imgError ? (
+          <img
+            src={exercise.imageUrl}
+            alt={exercise.name}
+            className="size-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="flex size-full flex-col items-center justify-center gap-3">
+            <ImageOff size={48} className="text-muted-foreground/20" />
+            <span className="text-muted-foreground/40 text-lg font-medium">{exercise.name}</span>
           </div>
-          <FavoritesButton exerciseId={exercise.id} />
+        )}
+      </motion.div>
+
+      {/* Title & Actions */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="flex items-start justify-between gap-4"
+      >
+        <div className="min-w-0 flex-1">
+          <div className="mb-1 flex items-center gap-2">
+            <span
+              className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${difficulty.color}`}
+            >
+              {difficulty.label}
+            </span>
+            <Badge variant="secondary" className="text-[10px]">
+              {exercise.category}
+            </Badge>
+            <span className="text-muted-foreground/60 text-[10px]">{exercise.exerciseType}</span>
+          </div>
+          <h1 className="text-foreground text-2xl font-bold">{exercise.name}</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">
+            {exercise.description}
+          </p>
+        </div>
+        <FavoritesButton exerciseId={exercise.id} />
+      </motion.div>
+
+      {/* Quick action buttons */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="flex flex-wrap gap-2"
+      >
+        <button className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
+          <Play size={16} /> Start Exercise
+        </button>
+        <button className="border-border text-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors">
+          <Plus size={16} /> Add to Workout
+        </button>
+        <button
+          onClick={() => toggleFavorite(exercise.id)}
+          className={`border-border inline-flex items-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors ${
+            isFavorite
+              ? 'border-red-500/30 bg-red-500/5 text-red-500'
+              : 'text-muted-foreground hover:bg-muted'
+          }`}
+        >
+          <Heart size={16} className={isFavorite ? 'fill-red-500' : ''} />
+          {isFavorite ? 'Favorited' : 'Favorite'}
+        </button>
+      </motion.div>
+
+      {/* Equipment & Muscles Grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="grid gap-3 sm:grid-cols-2"
+      >
+        <div className="border-border/50 bg-card rounded-2xl border p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Dumbbell size={16} className="text-primary" />
+            <h2 className="text-foreground text-sm font-semibold">Equipment</h2>
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {exercise.equipment.map((eq) => (
+              <Badge key={eq} variant="outline" className="text-xs">
+                {eq}
+              </Badge>
+            ))}
+          </div>
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <span className={`rounded-full px-3 py-1 text-xs font-medium ${difficultyColors[exercise.difficulty]}`}>
-            {exercise.difficulty}
-          </span>
-          <Badge variant="secondary" className="text-xs">{exercise.category}</Badge>
-        </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {exercise.muscleGroups.map((mg) => (
-            <Badge key={mg} variant="outline" className="text-xs">{mg}</Badge>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-1.5">
-          {exercise.equipment.map((eq) => (
-            <Badge key={eq} variant="secondary" className="text-xs">{eq}</Badge>
-          ))}
+        <div className="border-border/50 bg-card rounded-2xl border p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Zap size={16} className="text-primary" />
+            <h2 className="text-foreground text-sm font-semibold">Target Muscles</h2>
+          </div>
+          <div className="space-y-1.5">
+            <div>
+              <p className="text-muted-foreground/60 mb-1 text-[10px] font-medium tracking-wider uppercase">
+                Primary
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {exercise.primaryMuscleGroups.map((mg) => (
+                  <Badge key={mg} variant="default" className="text-xs">
+                    {mg}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+            {exercise.secondaryMuscleGroups.length > 0 && (
+              <div>
+                <p className="text-muted-foreground/60 mb-1 text-[10px] font-medium tracking-wider uppercase">
+                  Secondary
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {exercise.secondaryMuscleGroups.map((mg) => (
+                    <Badge key={mg} variant="secondary" className="text-xs">
+                      {mg}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
 
+      {/* Main Content Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="space-y-4"
-        >
-          <div className="rounded-2xl border border-border/50 bg-card p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <Play size={16} className="text-primary" />
-              <h2 className="text-sm font-semibold text-foreground">Media</h2>
-            </div>
-            <button
-              onClick={handleViewMedia}
-              className="flex aspect-video w-full items-center justify-center rounded-xl bg-muted transition-colors hover:bg-muted/80"
-            >
-              {exercise.videoUrl ? (
-                <div className="flex flex-col items-center gap-2">
-                  <div className="flex size-14 items-center justify-center rounded-full bg-primary/20">
-                    <Play size={28} className="ml-1 text-primary" />
-                  </div>
-                  <span className="text-xs text-muted-foreground">Watch demonstration</span>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center gap-2">
-                  <ImageIcon size={32} className="text-muted-foreground/40" />
-                  <span className="text-xs text-muted-foreground">No media available</span>
-                </div>
-              )}
-            </button>
-            {exercise.videoUrl && (
-              <a
-                href={exercise.videoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2 flex items-center justify-center gap-1 text-xs text-primary hover:underline"
-              >
-                Open in YouTube
-              </a>
-            )}
-          </div>
-
-          <div className="rounded-2xl border border-border/50 bg-card p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <BarChart3 size={16} className="text-primary" />
-              <h2 className="text-sm font-semibold text-foreground">Muscle Anatomy</h2>
-            </div>
-            <MuscleAnatomy activeMuscles={exercise.muscleGroups} compact />
-          </div>
-        </motion.div>
-
+        {/* Instructions */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
+          className="border-border/50 bg-card rounded-2xl border p-4"
+        >
+          <div className="mb-4 flex items-center gap-2">
+            <Dumbbell size={16} className="text-primary" />
+            <h2 className="text-foreground text-sm font-semibold">Step-by-Step Instructions</h2>
+          </div>
+          <ol className="space-y-3">
+            {exercise.instructions.map((instruction, i) => (
+              <li key={i} className="flex gap-3 text-sm">
+                <span className="bg-primary/10 text-primary flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+                  {i + 1}
+                </span>
+                <span className="text-foreground pt-0.5 leading-relaxed">{instruction}</span>
+              </li>
+            ))}
+          </ol>
+        </motion.div>
+
+        {/* Tips & Mistakes */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
           className="space-y-4"
         >
-          <div className="rounded-2xl border border-border/50 bg-card p-4">
-            <div className="mb-3 flex items-center gap-2">
-              <Dumbbell size={16} className="text-primary" />
-              <h2 className="text-sm font-semibold text-foreground">Instructions</h2>
-            </div>
-            <ol className="space-y-3">
-              {exercise.instructions.map((instruction, i) => (
-                <li key={i} className="flex gap-3 text-sm">
-                  <span className="flex size-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                    {i + 1}
-                  </span>
-                  <span className="pt-0.5 text-foreground">{instruction}</span>
-                </li>
-              ))}
-            </ol>
-          </div>
-
           {exercise.commonMistakes.length > 0 && (
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
+            <div className="border-border/50 bg-card rounded-2xl border p-4">
               <div className="mb-3 flex items-center gap-2">
                 <HelpCircle size={16} className="text-red-500" />
-                <h2 className="text-sm font-semibold text-foreground">Common Mistakes</h2>
+                <h2 className="text-foreground text-sm font-semibold">Common Mistakes</h2>
               </div>
               <ul className="space-y-2">
                 {exercise.commonMistakes.map((mistake, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground">
-                    <span className="mt-1 size-1.5 shrink-0 rounded-full bg-red-500" />
-                    {mistake}
+                  <li key={i} className="text-foreground flex gap-2 text-sm">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-red-500" />
+                    <span className="leading-relaxed">{mistake}</span>
                   </li>
                 ))}
               </ul>
@@ -165,16 +233,16 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
           )}
 
           {exercise.trainingTips.length > 0 && (
-            <div className="rounded-2xl border border-border/50 bg-card p-4">
+            <div className="border-border/50 bg-card rounded-2xl border p-4">
               <div className="mb-3 flex items-center gap-2">
                 <Lightbulb size={16} className="text-yellow-500" />
-                <h2 className="text-sm font-semibold text-foreground">Training Tips</h2>
+                <h2 className="text-foreground text-sm font-semibold">Pro Tips</h2>
               </div>
               <ul className="space-y-2">
                 {exercise.trainingTips.map((tip, i) => (
-                  <li key={i} className="flex gap-2 text-sm text-foreground">
-                    <span className="mt-1 size-1.5 shrink-0 rounded-full bg-yellow-500" />
-                    {tip}
+                  <li key={i} className="text-foreground flex gap-2 text-sm">
+                    <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-yellow-500" />
+                    <span className="leading-relaxed">{tip}</span>
                   </li>
                 ))}
               </ul>
@@ -183,38 +251,58 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         </motion.div>
       </div>
 
+      {/* Muscle Anatomy */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.25 }}
+        className="border-border/50 bg-card rounded-2xl border p-4"
+      >
+        <div className="mb-3 flex items-center gap-2">
+          <BarChart3 size={16} className="text-primary" />
+          <h2 className="text-foreground text-sm font-semibold">Muscle Anatomy</h2>
+        </div>
+        <MuscleAnatomy activeMuscles={exercise.muscleGroups} compact />
+      </motion.div>
+
+      {/* Alternative Exercises */}
       {alternatives.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="rounded-2xl border border-border/50 bg-card p-4"
+          transition={{ delay: 0.3 }}
+          className="border-border/50 bg-card rounded-2xl border p-4"
         >
           <div className="mb-3 flex items-center gap-2">
             <Repeat2 size={16} className="text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">Alternative Exercises</h2>
+            <h2 className="text-foreground text-sm font-semibold">Alternative Exercises</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {alternatives.map((alt) => (
-              <Link
-                key={alt.id}
-                href={`/exercises/${alt.id}`}
-                className="flex items-center gap-3 rounded-xl bg-muted/50 p-3 transition-colors hover:bg-muted"
-              >
-                <div className="flex size-10 items-center justify-center rounded-lg bg-muted">
-                  <Dumbbell size={16} className="text-muted-foreground" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{alt.name}</p>
-                  <p className="text-[10px] text-muted-foreground/60">{alt.muscleGroups.slice(0, 2).join(', ')}</p>
-                </div>
-                <span className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-medium ${
-                  difficultyColors[alt.difficulty]
-                }`}>
-                  {alt.difficulty}
-                </span>
-              </Link>
-            ))}
+            {alternatives.map((alt) => {
+              const altDifficulty = difficultyConfig[alt.difficulty]!;
+              return (
+                <Link
+                  key={alt.id}
+                  href={`/exercises/${alt.id}`}
+                  className="bg-muted/50 hover:bg-muted flex items-center gap-3 rounded-xl p-3 transition-colors"
+                >
+                  <div className="from-primary/10 to-primary/5 flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br">
+                    <Dumbbell size={16} className="text-primary" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-foreground truncate text-sm font-medium">{alt.name}</p>
+                    <p className="text-muted-foreground/60 text-[10px]">
+                      {alt.primaryMuscleGroups.slice(0, 2).join(', ')}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-medium ${altDifficulty.color}`}
+                  >
+                    {alt.difficulty}
+                  </span>
+                </Link>
+              );
+            })}
           </div>
         </motion.div>
       )}

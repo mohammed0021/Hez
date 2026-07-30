@@ -1,105 +1,151 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Ruler, Weight } from 'lucide-react';
-
-function calculateBMI(weightKg: number, heightCm: number): number {
-  if (heightCm <= 0 || weightKg <= 0) return 0;
-  const h = heightCm / 100;
-  return weightKg / (h * h);
-}
-
-function getCategory(bmi: number): { label: string; color: string; range: string } {
-  if (bmi < 16) return { label: 'Severely Underweight', color: 'text-blue-600', range: '< 16' };
-  if (bmi < 18.5) return { label: 'Underweight', color: 'text-blue-500', range: '16 - 18.5' };
-  if (bmi < 25) return { label: 'Normal', color: 'text-green-500', range: '18.5 - 25' };
-  if (bmi < 30) return { label: 'Overweight', color: 'text-yellow-500', range: '25 - 30' };
-  if (bmi < 35) return { label: 'Obese Class I', color: 'text-orange-500', range: '30 - 35' };
-  if (bmi < 40) return { label: 'Obese Class II', color: 'text-red-500', range: '35 - 40' };
-  return { label: 'Obese Class III', color: 'text-red-700', range: '> 40' };
-}
+import { Ruler, Weight, TrendingDown, TrendingUp, Minus } from 'lucide-react';
+import { useProfileStore } from '@/stores/profile-store';
+import { useWeightStore } from '@/stores/weight-store';
+import {
+  calculateBMI,
+  getBMICategory,
+  getIdealWeightRange,
+  getHealthyWeightDifference,
+} from '@/lib/bmi';
 
 export default function BMIPage() {
-  const [weight, setWeight] = useState('70');
-  const [height, setHeight] = useState('175');
-  const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');
+  const profileHeightCm = useProfileStore((s) => s.heightCm);
+  const profileWeightKg = useProfileStore((s) => s.weightKg);
+  const birthday = useProfileStore((s) => s.birthday);
+  const weightEntries = useWeightStore((s) => s.entries);
 
-  const weightKg = unit === 'metric' ? parseFloat(weight) : parseFloat(weight) * 0.453592;
-  const heightCm = unit === 'metric' ? parseFloat(height) : parseFloat(height) * 2.54;
+  const [manualMode, setManualMode] = useState(false);
+  const [manualWeight, setManualWeight] = useState(String(profileWeightKg));
+  const [manualHeight, setManualHeight] = useState(String(profileHeightCm));
+
+  const age = useMemo(() => {
+    if (!birthday) return 25;
+    const birth = new Date(birthday);
+    const today = new Date();
+    let a = today.getFullYear() - birth.getFullYear();
+    const m = today.getMonth() - birth.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) a--;
+    return Math.max(a, 10);
+  }, [birthday]);
+
+  const weightKg = manualMode ? parseFloat(manualWeight) || 0 : profileWeightKg;
+  const heightCm = manualMode ? parseFloat(manualHeight) || 0 : profileHeightCm;
 
   const bmi = calculateBMI(weightKg, heightCm);
-  const category = getCategory(bmi);
+  const category = getBMICategory(bmi);
+  const idealRange = getIdealWeightRange(heightCm);
+  const healthyDiff = getHealthyWeightDifference(weightKg, idealRange);
 
   const bmiPercent = Math.min((bmi / 50) * 100, 100);
 
-  const idealMin = 18.5 * (heightCm / 100) ** 2;
-  const idealMax = 25 * (heightCm / 100) ** 2;
+  const latestEntry = weightEntries[0];
+  const prevEntry = weightEntries[1];
+  const weeklyChange = latestEntry && prevEntry ? latestEntry.weightKg - prevEntry.weightKg : null;
 
   return (
-    <>
-      <h1 className="text-foreground text-2xl font-bold">BMI Calculator</h1>
-      <p className="text-muted-foreground mt-0.5 text-sm">Body Mass Index</p>
+    <div className="space-y-5 pb-8">
+      <div>
+        <h1 className="text-foreground text-2xl font-bold">BMI Calculator</h1>
+        <p className="text-muted-foreground mt-0.5 text-sm">
+          Automatically calculated from your profile
+        </p>
+      </div>
 
+      {/* Auto-calculated from profile */}
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="border-border/50 bg-card mt-5 space-y-4 rounded-2xl border p-4"
+        className="border-border/50 bg-card rounded-2xl border p-4"
       >
-        <div className="flex gap-3">
-          <div className="flex-1">
-            <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-              {unit === 'metric' ? 'Weight (kg)' : 'Weight (lbs)'}
-            </label>
-            <input
-              type="number"
-              value={weight}
-              onChange={(e) => setWeight(e.target.value)}
-              className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-              inputMode="decimal"
-            />
-          </div>
-          <div className="flex-1">
-            <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-              {unit === 'metric' ? 'Height (cm)' : 'Height (in)'}
-            </label>
-            <input
-              type="number"
-              value={height}
-              onChange={(e) => setHeight(e.target.value)}
-              className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-              inputMode="decimal"
-            />
-          </div>
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+            Your Stats
+          </p>
+          <button
+            onClick={() => {
+              setManualMode(!manualMode);
+              if (!manualMode) {
+                setManualWeight(String(profileWeightKg));
+                setManualHeight(String(profileHeightCm));
+              }
+            }}
+            className="text-primary hover:text-primary/80 text-[10px] font-medium transition-colors"
+          >
+            {manualMode ? 'Use profile values' : 'Manual input'}
+          </button>
         </div>
 
-        <div className="flex gap-2">
-          <button
-            onClick={() => setUnit('metric')}
-            className={`min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'metric' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
-          >
-            Metric
-          </button>
-          <button
-            onClick={() => setUnit('imperial')}
-            className={`min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium ${unit === 'imperial' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'}`}
-          >
-            Imperial
-          </button>
-        </div>
+        {manualMode ? (
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <div className="flex-1">
+                <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
+                  Weight (kg)
+                </label>
+                <input
+                  type="number"
+                  value={manualWeight}
+                  onChange={(e) => setManualWeight(e.target.value)}
+                  className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
+                  inputMode="decimal"
+                />
+              </div>
+              <div className="flex-1">
+                <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
+                  Height (cm)
+                </label>
+                <input
+                  type="number"
+                  value={manualHeight}
+                  onChange={(e) => setManualHeight(e.target.value)}
+                  className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
+                  inputMode="decimal"
+                />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-muted/30 rounded-xl p-3 text-center">
+              <p className="text-foreground text-lg font-bold">{weightKg.toFixed(1)}</p>
+              <p className="text-muted-foreground/60 text-[9px] font-medium tracking-wider uppercase">
+                kg
+              </p>
+            </div>
+            <div className="bg-muted/30 rounded-xl p-3 text-center">
+              <p className="text-foreground text-lg font-bold">{heightCm.toFixed(0)}</p>
+              <p className="text-muted-foreground/60 text-[9px] font-medium tracking-wider uppercase">
+                cm
+              </p>
+            </div>
+            <div className="bg-muted/30 rounded-xl p-3 text-center">
+              <p className="text-foreground text-lg font-bold">{age}</p>
+              <p className="text-muted-foreground/60 text-[9px] font-medium tracking-wider uppercase">
+                Age
+              </p>
+            </div>
+          </div>
+        )}
       </motion.div>
 
+      {/* BMI Result */}
       {bmi > 0 && (
         <>
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.1 }}
-            className="mt-6 text-center"
+            className="text-center"
           >
-            <div className="bg-primary/10 border-primary/20 inline-flex size-28 items-center justify-center rounded-full border-4">
+            <div className="bg-primary/10 border-primary/20 mx-auto inline-flex size-32 items-center justify-center rounded-full border-4">
               <div>
-                <p className="text-foreground text-4xl font-bold">{bmi.toFixed(1)}</p>
+                <p className="text-foreground text-4xl font-bold tracking-tight">
+                  {bmi.toFixed(1)}
+                </p>
                 <p className={`text-[10px] font-semibold ${category.color}`}>{category.label}</p>
               </div>
             </div>
@@ -110,7 +156,6 @@ export default function BMIPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.15 }}
-            className="mt-6"
           >
             <div className="relative h-3 overflow-hidden rounded-full bg-gradient-to-r from-blue-500 via-green-500 via-yellow-500 to-red-500">
               <div
@@ -128,11 +173,12 @@ export default function BMIPage() {
             </div>
           </motion.div>
 
+          {/* Stats Grid */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-5 grid grid-cols-2 gap-3"
+            className="grid grid-cols-2 gap-3"
           >
             <div className="border-border/50 bg-card rounded-xl border p-4 text-center">
               <Weight className="text-primary mx-auto size-4" />
@@ -150,24 +196,139 @@ export default function BMIPage() {
             </div>
           </motion.div>
 
+          {/* Weekly Change */}
+          {weeklyChange !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.22 }}
+              className="border-border/50 bg-card rounded-xl border p-4"
+            >
+              <div className="flex items-center justify-between">
+                <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+                  Weekly Weight Change
+                </p>
+                <div className="flex items-center gap-1.5">
+                  {weeklyChange > 0 ? (
+                    <TrendingUp size={16} className="text-red-500" />
+                  ) : weeklyChange < 0 ? (
+                    <TrendingDown size={16} className="text-green-500" />
+                  ) : (
+                    <Minus size={16} className="text-muted-foreground" />
+                  )}
+                  <span
+                    className={`text-lg font-bold ${weeklyChange > 0 ? 'text-red-500' : weeklyChange < 0 ? 'text-green-500' : 'text-foreground'}`}
+                  >
+                    {weeklyChange > 0 ? '+' : ''}
+                    {weeklyChange.toFixed(1)} kg
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Ideal Weight Range */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="mt-3 rounded-xl border border-green-500/20 bg-green-500/5 p-4"
+            className={`rounded-xl border p-4 ${
+              healthyDiff.direction === 'maintain'
+                ? 'border-green-500/20 bg-green-500/5'
+                : healthyDiff.direction === 'lose'
+                  ? 'border-orange-500/20 bg-orange-500/5'
+                  : 'border-blue-500/20 bg-blue-500/5'
+            }`}
           >
-            <p className="text-xs font-medium text-green-600">Healthy Weight Range</p>
-            <p className="text-foreground mt-0.5 text-sm">
-              {idealMin.toFixed(1)} kg – {idealMax.toFixed(1)} kg
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-foreground text-xs font-medium">Healthy Weight Range</p>
+              <span
+                className={`text-[10px] font-semibold ${
+                  healthyDiff.direction === 'maintain' ? 'text-green-500' : 'text-muted-foreground'
+                }`}
+              >
+                BMI 18.5–25
+              </span>
+            </div>
+            <p className="text-foreground text-lg font-bold">
+              {idealRange.minKg.toFixed(1)} kg – {idealRange.maxKg.toFixed(1)} kg
             </p>
-            <p className="text-muted-foreground mt-0.5 text-[10px]">
-              Based on BMI 18.5–25 for your height
+            <p
+              className={`mt-1 text-xs ${healthyDiff.direction === 'maintain' ? 'text-green-600' : healthyDiff.direction === 'lose' ? 'text-orange-600' : 'text-blue-600'}`}
+            >
+              {healthyDiff.message}
             </p>
+          </motion.div>
+
+          {/* Category Breakdown */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="space-y-1"
+          >
+            {[
+              {
+                label: 'Severely Underweight',
+                range: '< 16',
+                color: 'bg-blue-600',
+                active: category.id === 'severely_underweight',
+              },
+              {
+                label: 'Underweight',
+                range: '16 – 18.5',
+                color: 'bg-blue-500',
+                active: category.id === 'underweight',
+              },
+              {
+                label: 'Normal',
+                range: '18.5 – 25',
+                color: 'bg-green-500',
+                active: category.id === 'normal',
+              },
+              {
+                label: 'Overweight',
+                range: '25 – 30',
+                color: 'bg-yellow-500',
+                active: category.id === 'overweight',
+              },
+              {
+                label: 'Obese Class I',
+                range: '30 – 35',
+                color: 'bg-orange-500',
+                active: category.id === 'obese_class_1',
+              },
+              {
+                label: 'Obese Class II',
+                range: '35 – 40',
+                color: 'bg-red-500',
+                active: category.id === 'obese_class_2',
+              },
+              {
+                label: 'Obese Class III',
+                range: '> 40',
+                color: 'bg-red-700',
+                active: category.id === 'obese_class_3',
+              },
+            ].map((row) => (
+              <div
+                key={row.label}
+                className={`flex items-center gap-3 rounded-xl px-4 py-2.5 transition-all ${
+                  row.active ? 'bg-muted/50 border-border border' : 'opacity-40'
+                }`}
+              >
+                <div className={`size-2.5 rounded-full ${row.color}`} />
+                <span
+                  className={`flex-1 text-xs ${row.active ? 'text-foreground font-medium' : 'text-muted-foreground'}`}
+                >
+                  {row.label}
+                </span>
+                <span className="text-muted-foreground/60 text-[10px]">{row.range}</span>
+              </div>
+            ))}
           </motion.div>
         </>
       )}
-
-      <div className="h-8" />
-    </>
+    </div>
   );
 }

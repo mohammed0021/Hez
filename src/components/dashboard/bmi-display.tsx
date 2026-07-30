@@ -1,33 +1,34 @@
 'use client';
 
-import { Calculator } from 'lucide-react';
+import { useMemo } from 'react';
+import { Calculator, TrendingDown, TrendingUp } from 'lucide-react';
 import { useProfileStore } from '@/stores/profile-store';
 import { useWeightStore } from '@/stores/weight-store';
 import { useRouter } from 'next/navigation';
-
-function calculateBMI(weightKg: number, heightCm: number): number {
-  if (heightCm <= 0) return 0;
-  const heightM = heightCm / 100;
-  return weightKg / (heightM * heightM);
-}
-
-function getBMICategory(bmi: number): { label: string; color: string } {
-  if (bmi < 18.5) return { label: 'Underweight', color: 'text-blue-500' };
-  if (bmi < 25) return { label: 'Normal', color: 'text-green-500' };
-  if (bmi < 30) return { label: 'Overweight', color: 'text-yellow-500' };
-  return { label: 'Obese', color: 'text-red-500' };
-}
+import {
+  calculateBMI,
+  getBMICategory,
+  getIdealWeightRange,
+  getHealthyWeightDifference,
+} from '@/lib/bmi';
 
 export function BMIDisplay() {
   const router = useRouter();
   const heightCm = useProfileStore((s) => s.heightCm);
   const profileWeightKg = useProfileStore((s) => s.weightKg);
   const weightEntries = useWeightStore((s) => s.entries);
+
   const latestWeight =
     weightEntries.length > 0 ? (weightEntries[0]?.weightKg ?? profileWeightKg) : profileWeightKg;
-
-  const bmi = latestWeight && heightCm ? calculateBMI(latestWeight, heightCm) : 0;
+  const bmi = calculateBMI(latestWeight, heightCm);
   const category = getBMICategory(bmi);
+  const idealRange = getIdealWeightRange(heightCm);
+  const healthyDiff = getHealthyWeightDifference(latestWeight, idealRange);
+
+  const weeklyChange = useMemo(() => {
+    if (weightEntries.length < 2) return null;
+    return (weightEntries[0]?.weightKg ?? 0) - (weightEntries[1]?.weightKg ?? 0);
+  }, [weightEntries]);
 
   return (
     <div
@@ -46,11 +47,45 @@ export function BMIDisplay() {
             <p className="text-foreground text-2xl font-bold tracking-tight">
               {bmi > 0 ? bmi.toFixed(1) : '—'}
             </p>
+            {bmi > 0 && (
+              <p className={`text-[10px] font-medium ${category.color}`}>{category.label}</p>
+            )}
           </div>
         </div>
-        {bmi > 0 && (
-          <span className={`text-[10px] font-semibold ${category.color}`}>{category.label}</span>
-        )}
+        <div className="text-right">
+          {weeklyChange !== null && (
+            <div className="flex items-center gap-1 text-[10px]">
+              {weeklyChange > 0 ? (
+                <TrendingUp size={12} className="text-red-500" />
+              ) : weeklyChange < 0 ? (
+                <TrendingDown size={12} className="text-green-500" />
+              ) : null}
+              <span
+                className={
+                  weeklyChange > 0
+                    ? 'text-red-500'
+                    : weeklyChange < 0
+                      ? 'text-green-500'
+                      : 'text-muted-foreground'
+                }
+              >
+                {weeklyChange > 0 ? '+' : ''}
+                {weeklyChange.toFixed(1)}kg
+              </span>
+            </div>
+          )}
+          {bmi > 0 && (
+            <p
+              className={`text-[10px] font-medium ${
+                healthyDiff.direction === 'maintain' ? 'text-green-500' : 'text-muted-foreground'
+              }`}
+            >
+              {healthyDiff.direction === 'maintain'
+                ? 'Healthy range'
+                : `${healthyDiff.diffKg.toFixed(1)}kg to goal`}
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
