@@ -17,7 +17,6 @@ export const SIDEBAR_ITEMS = [
   { id: 'programs', label: 'Programs', icon: 'NotebookText', href: '/programs' },
   { id: 'gamification', label: 'Gamification', icon: 'Sparkles', href: '/gamification' },
   { id: 'progress', label: 'Progress', icon: 'BarChart3', href: '/progress' },
-  { id: 'nutrition', label: 'Nutrition', icon: 'Apple', href: '/nutrition' },
   { id: 'supplements', label: 'Supplements', icon: 'Pill', href: '/supplements' },
   { id: 'calendar', label: 'Calendar', icon: 'Calendar', href: '/calendar' },
 ] as const;
@@ -77,14 +76,6 @@ export const SEARCH_RESULTS: SearchResult[] = [
     description: 'Track your improvements',
     href: '/progress',
     icon: 'BarChart3',
-    type: 'page',
-  },
-  {
-    id: 'go-nutrition',
-    label: 'Nutrition',
-    description: 'Log your meals',
-    href: '/nutrition',
-    icon: 'Apple',
     type: 'page',
   },
   {

@@ -147,13 +147,6 @@ export const ACHIEVEMENTS: AchievementDef[] = [
     xpReward: 100,
   },
   {
-    id: 'nutrition_logger',
-    title: 'Nutrition Logger',
-    description: 'Log 30 meals',
-    icon: 'Apple',
-    xpReward: 200,
-  },
-  {
     id: 'supplement_king',
     title: 'Supplement King',
     description: 'Log supplements 30 days',
@@ -240,24 +233,6 @@ export const CHALLENGES: ChallengeDef[] = [
     frequency: 'daily',
     xpReward: 20,
     icon: 'Pill',
-    target: 1,
-  },
-  {
-    id: 'ch_daily_water',
-    title: 'Hydrated',
-    description: 'Reach your water goal',
-    frequency: 'daily',
-    xpReward: 20,
-    icon: 'Droplets',
-    target: 1,
-  },
-  {
-    id: 'ch_daily_meal',
-    title: 'Fuel Up',
-    description: 'Log at least 1 meal',
-    frequency: 'daily',
-    xpReward: 15,
-    icon: 'Apple',
     target: 1,
   },
   {
@@ -350,15 +325,6 @@ export const CHALLENGES: ChallengeDef[] = [
     icon: 'Flame',
     target: 14,
   },
-  {
-    id: 'ch_monthly_meals',
-    title: 'Meal Logger',
-    description: 'Log 30 meals this month',
-    frequency: 'monthly',
-    xpReward: 300,
-    icon: 'Apple',
-    target: 30,
-  },
 ];
 
 export const XP_REWARDS = {
@@ -367,7 +333,6 @@ export const XP_REWARDS = {
   set_complete: 5,
   weight_log: 10,
   measurement_log: 15,
-  meal_log: 5,
   supplement_log: 3,
   daily_login: 10,
   pr_achieved: 50,

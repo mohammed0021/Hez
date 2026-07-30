@@ -1,16 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import {
-  Scale,
-  Camera,
-  Trophy,
-  TrendingUp,
-  ChevronRight,
-  BrainCircuit,
-  Weight,
-  Ruler,
-} from 'lucide-react';
+import { Scale, Trophy, TrendingUp, ChevronRight, BrainCircuit, Weight, Ruler } from 'lucide-react';
 import Link from 'next/link';
 
 const cards = [
@@ -34,13 +25,6 @@ const cards = [
     desc: 'Track body measurements',
     href: '/progress/measurements',
     color: 'bg-purple-500/10 text-purple-500',
-  },
-  {
-    icon: Camera,
-    label: 'Progress Photos',
-    desc: 'Before/after comparisons',
-    href: '/progress/photos',
-    color: 'bg-pink-500/10 text-pink-500',
   },
   {
     icon: BrainCircuit,

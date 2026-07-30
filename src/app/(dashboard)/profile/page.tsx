@@ -41,7 +41,6 @@ import { useWeightStore } from '@/stores/weight-store';
 import { useMeasurementStore, MEASUREMENT_FIELDS } from '@/stores/measurement-store';
 import { useGamificationStore } from '@/stores/gamification-store';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
-import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
 import { ACHIEVEMENTS } from '@/lib/gamification-types';
 import Link from 'next/link';
 
@@ -54,7 +53,6 @@ export default function ProfilePage() {
   const weightEntries = useWeightStore((s) => s.entries);
   const measurements = useMeasurementStore((s) => s.entries);
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
-  const { goals: macroGoals } = useNutritionGoalsStore();
   const gamification = useGamificationStore();
 
   const [activeTab, setActiveTab] = useState<ProfileTab>('personal');
@@ -134,7 +132,6 @@ export default function ProfilePage() {
 
   const saveEdit = () => {
     profile.updateProfile(editForm);
-    useNutritionGoalsStore.getState().autoCalculateFromProfile?.();
     setEditing(false);
   };
 
@@ -556,36 +553,6 @@ export default function ProfilePage() {
                   </div>
                 </div>
               )}
-            </SectionCard>
-
-            <SectionCard>
-              <SectionHeader icon={Target} title="Nutrition Targets" />
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-muted/30 rounded-xl px-3 py-2">
-                  <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Calories
-                  </p>
-                  <p className="text-foreground text-sm font-medium">{macroGoals.calories} kcal</p>
-                </div>
-                <div className="bg-muted/30 rounded-xl px-3 py-2">
-                  <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Protein
-                  </p>
-                  <p className="text-foreground text-sm font-medium">{macroGoals.protein}g</p>
-                </div>
-                <div className="bg-muted/30 rounded-xl px-3 py-2">
-                  <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Carbs
-                  </p>
-                  <p className="text-foreground text-sm font-medium">{macroGoals.carbs}g</p>
-                </div>
-                <div className="bg-muted/30 rounded-xl px-3 py-2">
-                  <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Fat
-                  </p>
-                  <p className="text-foreground text-sm font-medium">{macroGoals.fat}g</p>
-                </div>
-              </div>
             </SectionCard>
           </>
         )}

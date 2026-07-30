@@ -5,20 +5,15 @@ import { createServerSupabaseClient } from '@/lib/supabase-server';
 export async function getAdminStats() {
   const supabase = await createServerSupabaseClient();
 
-  const [
-    { count: totalUsers },
-    { count: totalWorkouts },
-    { count: activeToday },
-    { count: totalNutrition },
-  ] = await Promise.all([
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
-    supabase.from('workouts').select('*', { count: 'exact', head: true }),
-    supabase
-      .from('workouts')
-      .select('*', { count: 'exact', head: true })
-      .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
-    supabase.from('nutrition_logs').select('*', { count: 'exact', head: true }),
-  ]);
+  const [{ count: totalUsers }, { count: totalWorkouts }, { count: activeToday }] =
+    await Promise.all([
+      supabase.from('profiles').select('*', { count: 'exact', head: true }),
+      supabase.from('workouts').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('workouts')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
+    ]);
 
   const { data: recentUsers } = await supabase
     .from('profiles')
@@ -30,7 +25,6 @@ export async function getAdminStats() {
     totalUsers: totalUsers ?? 0,
     totalWorkouts: totalWorkouts ?? 0,
     activeToday: activeToday ?? 0,
-    totalNutrition: totalNutrition ?? 0,
     recentUsers: recentUsers ?? [],
   };
 }

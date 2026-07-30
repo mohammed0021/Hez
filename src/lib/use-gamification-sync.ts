@@ -8,15 +8,12 @@ import { useMeasurementStore } from '@/stores/measurement-store';
 import { useSupplementStore } from '@/stores/supplement-store';
 import { usePRStore } from '@/stores/pr-store';
 import { XP_REWARDS } from './gamification-types';
-import { useNutritionStore } from '@/stores/nutrition-store';
-
 export function useGamificationSync() {
   const syncedRef = useRef({
     sessions: 0,
     weights: 0,
     measurements: 0,
     supplements: '',
-    meals: 0,
     prs: 0,
   });
 
@@ -82,16 +79,6 @@ export function useGamificationSync() {
           gamification.addXp(XP_REWARDS.supplement_log, 'supplement_log');
         }
         syncedRef.current.supplements = suppKey;
-      }
-
-      // Meal logs
-      const nutritionState = useNutritionStore.getState();
-      const meals = nutritionState.logs || [];
-      const totalMeals = meals.reduce((acc, d) => acc + (d?.meals?.length || 0), 0);
-      if (totalMeals > syncedRef.current.meals) {
-        const diff = totalMeals - syncedRef.current.meals;
-        gamification.addXp(diff * XP_REWARDS.meal_log, 'meal_log');
-        syncedRef.current.meals = totalMeals;
       }
 
       // PR celebrations

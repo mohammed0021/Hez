@@ -2,8 +2,6 @@ export type NotificationTypeId =
   | 'workout_reminder'
   | 'pre_gym_reminder'
   | 'creatine_reminder'
-  | 'water_reminder'
-  | 'meal_reminder'
   | 'sleep_reminder'
   | 'rest_timer_alert'
   | 'workout_tomorrow_reminder'
@@ -63,27 +61,6 @@ export const NOTIFICATION_TYPES: NotificationTypeConfig[] = [
     defaultTime: '08:00',
   },
   {
-    id: 'water_reminder',
-    label: 'Water Reminder',
-    description: 'Hydration reminder throughout the day',
-    icon: 'Droplets',
-    hasTime: false,
-    hasDays: false,
-    hasAdvance: false,
-    defaultEnabled: true,
-  },
-  {
-    id: 'meal_reminder',
-    label: 'Meal Reminder',
-    description: 'Reminder to log your meals',
-    icon: 'Apple',
-    hasTime: true,
-    hasDays: false,
-    hasAdvance: false,
-    defaultEnabled: false,
-    defaultTime: '12:00',
-  },
-  {
     id: 'sleep_reminder',
     label: 'Sleep Reminder',
     description: 'Bedtime wind-down reminder',
@@ -107,7 +84,7 @@ export const NOTIFICATION_TYPES: NotificationTypeConfig[] = [
   {
     id: 'workout_tomorrow_reminder',
     label: 'Workout Tomorrow Reminder',
-    description: 'Evening reminder about tomorrow\'s workout',
+    description: "Evening reminder about tomorrow's workout",
     icon: 'CalendarCheck',
     hasTime: true,
     hasDays: false,

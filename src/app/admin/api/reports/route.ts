@@ -35,15 +35,13 @@ export async function GET(request: Request) {
   const format = parts.pop() || 'csv';
   const type = parts.join('-');
 
-  const [profilesRes, workoutsRes, nutritionRes] = await Promise.all([
+  const [profilesRes, workoutsRes] = await Promise.all([
     supabase.from('profiles').select('id, display_name, created_at, role, goal'),
     supabase.from('workouts').select('id, user_id, created_at, duration_minutes'),
-    supabase.from('nutrition_logs').select('id, user_id, calories, logged_at'),
   ]);
 
   const profiles = profilesRes.data || [];
   const workouts = workoutsRes.data || [];
-  const nutritionLogs = nutritionRes.data || [];
 
   const now = new Date();
   const dateFilter = (dateStr: string) => {
@@ -61,7 +59,6 @@ export async function GET(request: Request) {
   };
 
   const filteredWorkouts = workouts.filter((w) => dateFilter(w.created_at));
-  const filteredNutrition = nutritionLogs.filter((n) => dateFilter(n.logged_at));
 
   const header = 'Metric,Value';
   const rows = [
@@ -69,9 +66,7 @@ export async function GET(request: Request) {
     `Total Users,${profiles.length}`,
     `New Users (period),${profiles.filter((p) => dateFilter(p.created_at)).length}`,
     `Total Workouts (period),${filteredWorkouts.length}`,
-    `Total Nutrition Logs (period),${filteredNutrition.length}`,
     `Avg Workout Duration (min),${filteredWorkouts.length > 0 ? (filteredWorkouts.reduce((s, w) => s + (w.duration_minutes || 0), 0) / filteredWorkouts.length).toFixed(1) : 0}`,
-    `Total Calories Logged (period),${filteredNutrition.reduce((s, n) => s + (n.calories || 0), 0)}`,
     `Generated,${now.toISOString()}`,
   ];
 

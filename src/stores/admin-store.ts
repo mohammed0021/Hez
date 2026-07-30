@@ -6,7 +6,6 @@ import type {
   UserAnalytics,
   WorkoutAnalytics,
   ProgressAnalytics,
-  NutritionAnalytics,
   DeviceAnalytics,
   PwaAnalytics,
   PerformanceAnalytics,
@@ -16,7 +15,6 @@ interface AnalyticsData {
   userAnalytics: UserAnalytics;
   workoutAnalytics: WorkoutAnalytics;
   progressAnalytics: ProgressAnalytics;
-  nutritionAnalytics: NutritionAnalytics;
   deviceAnalytics: DeviceAnalytics;
   pwaAnalytics: PwaAnalytics;
   performanceAnalytics: PerformanceAnalytics;

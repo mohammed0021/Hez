@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { useNotificationStore } from '@/stores/notification-store';
 import { getMessageForType, shouldNotify, notify } from '@/lib/notification-service';
 import type { NotificationTypeId } from '@/lib/notification-types';
-import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
 import { useSupplementStore } from '@/stores/supplement-store';
 
 function getTimeMinutes(date?: Date): number {
@@ -43,7 +42,11 @@ export function useNotificationScheduler() {
         const sent = lastSentRef.current[key];
         const currentSlot = `${Math.floor(currentMinutes / 5) * 5}`;
 
-        if (currentMinutes >= scheduledMinutes && currentMinutes < scheduledMinutes + 5 && sent !== currentSlot) {
+        if (
+          currentMinutes >= scheduledMinutes &&
+          currentMinutes < scheduledMinutes + 5 &&
+          sent !== currentSlot
+        ) {
           const msg = getMessageForType(type);
           if (msg) {
             notify(msg.title, { body: msg.body, tag: type, data: { type } });
@@ -62,7 +65,12 @@ export function useNotificationScheduler() {
       };
 
       // Check each time-based type
-      for (const type of ['workout_reminder', 'creatine_reminder', 'meal_reminder', 'sleep_reminder', 'workout_tomorrow_reminder'] as NotificationTypeId[]) {
+      for (const type of [
+        'workout_reminder',
+        'creatine_reminder',
+        'sleep_reminder',
+        'workout_tomorrow_reminder',
+      ] as NotificationTypeId[]) {
         const t = typeHasTime(type);
         if (t) tryNotify(type, timeToMinutes(t));
       }
@@ -75,30 +83,6 @@ export function useNotificationScheduler() {
           const triggerAt = scheduledTime - prefs.advanceMinutes;
           if (triggerAt >= 0 && triggerAt <= 1440) {
             tryNotify('pre_gym_reminder', triggerAt);
-          }
-        }
-      }
-
-      // Water reminder (uses existing hydration config)
-      {
-        const hyd = useNutritionGoalsStore.getState().hydration;
-        const targetType = 'water_reminder';
-        if (hyd.enabled && shouldNotify(targetType)) {
-          const hour = now.getHours();
-          if (hour >= hyd.startHour && hour < hyd.endHour) {
-            if (currentMinutes % hyd.intervalMinutes === 0) {
-              const key = `${targetType}-${todayKey}`;
-              const sent = lastSentRef.current[key];
-              const currentSlot = `${Math.floor(currentMinutes / hyd.intervalMinutes)}`;
-              if (sent !== currentSlot) {
-                notify('Hydration Reminder', {
-                  body: `Time to drink ${hyd.amountMl}ml of water!`,
-                  tag: targetType,
-                  data: { type: targetType },
-                });
-                lastSentRef.current[key] = currentSlot;
-              }
-            }
           }
         }
       }

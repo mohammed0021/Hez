@@ -2,26 +2,47 @@
 
 import {
   Dumbbell,
+  Plus,
+  BookOpen,
+  History,
   Scale,
-  Apple,
-  Droplets,
-  Camera,
   Calculator,
   Calendar,
-  BookOpen,
   Pill,
-  Target,
+  User,
   Settings,
+  BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
 
 const actions = [
   {
-    id: 'workout',
+    id: 'start-workout',
     icon: Dumbbell,
     label: 'Start Workout',
     href: '/workouts',
     color: 'bg-orange-500/10 text-orange-500',
+  },
+  {
+    id: 'create-workout',
+    icon: Plus,
+    label: 'Create Workout',
+    href: '/workouts/new',
+    color: 'bg-emerald-500/10 text-emerald-500',
+  },
+  {
+    id: 'exercises',
+    icon: BookOpen,
+    label: 'Exercise Library',
+    href: '/exercises',
+    color: 'bg-indigo-500/10 text-indigo-500',
+  },
+  {
+    id: 'history',
+    icon: History,
+    label: 'Workout History',
+    href: '/workouts',
+    color: 'bg-violet-500/10 text-violet-500',
   },
   {
     id: 'weight',
@@ -31,30 +52,9 @@ const actions = [
     color: 'bg-green-500/10 text-green-500',
   },
   {
-    id: 'meal',
-    icon: Apple,
-    label: 'Log Meal',
-    href: '/nutrition/meals',
-    color: 'bg-red-500/10 text-red-500',
-  },
-  {
-    id: 'water',
-    icon: Droplets,
-    label: 'Log Water',
-    href: '/nutrition',
-    color: 'bg-blue-500/10 text-blue-500',
-  },
-  {
-    id: 'photos',
-    icon: Camera,
-    label: 'Progress Photos',
-    href: '/progress/photos',
-    color: 'bg-purple-500/10 text-purple-500',
-  },
-  {
     id: 'bmi',
     icon: Calculator,
-    label: 'BMI',
+    label: 'BMI Calculator',
     href: '/progress/bmi',
     color: 'bg-teal-500/10 text-teal-500',
   },
@@ -66,13 +66,6 @@ const actions = [
     color: 'bg-pink-500/10 text-pink-500',
   },
   {
-    id: 'exercises',
-    icon: BookOpen,
-    label: 'Exercises',
-    href: '/exercises',
-    color: 'bg-indigo-500/10 text-indigo-500',
-  },
-  {
     id: 'supplements',
     icon: Pill,
     label: 'Supplements',
@@ -80,11 +73,18 @@ const actions = [
     color: 'bg-cyan-500/10 text-cyan-500',
   },
   {
-    id: 'goals',
-    icon: Target,
-    label: 'Goals',
-    href: '/nutrition/goals',
-    color: 'bg-yellow-500/10 text-yellow-500',
+    id: 'progress',
+    icon: BarChart3,
+    label: 'Progress',
+    href: '/progress',
+    color: 'bg-blue-500/10 text-blue-500',
+  },
+  {
+    id: 'profile',
+    icon: User,
+    label: 'Profile',
+    href: '/profile',
+    color: 'bg-purple-500/10 text-purple-500',
   },
   {
     id: 'settings',
@@ -99,7 +99,7 @@ export function QuickActions() {
   return (
     <div className="border-border/50 bg-card rounded-2xl border p-4">
       <h3 className="text-foreground mb-3 text-sm font-semibold">Quick Actions</h3>
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {actions.map((a) => {
           const Icon = a.icon;
           return (

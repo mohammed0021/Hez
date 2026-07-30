@@ -65,13 +65,6 @@ export interface ProgressAnalytics {
   trendData: { date: string; weight: number; bmi: number; strength: number }[];
 }
 
-export interface NutritionAnalytics {
-  averageDailyCalories: number;
-  averageProteinIntake: number;
-  averageWaterIntake: number;
-  mostUsedSupplements: { name: string; count: number }[];
-}
-
 export interface DeviceAnalytics {
   byDevice: { device: string; count: number; percentage: number }[];
   byBrowser: { browser: string; count: number; percentage: number }[];

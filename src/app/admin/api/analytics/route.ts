@@ -39,17 +39,15 @@ export async function GET() {
 
   const supabase = await getSupabase();
 
-  const [profilesResult, workoutsResult, exercisesResult, nutritionResult] = await Promise.all([
+  const [profilesResult, workoutsResult, exercisesResult] = await Promise.all([
     supabase.from('profiles').select('id, goal, created_at, gender, role'),
     supabase.from('workouts').select('id, user_id, duration_minutes, created_at, feeling'),
     supabase.from('exercise_library').select('id, name, muscle_group, category'),
-    supabase.from('nutrition_logs').select('id, calories, protein_g, created_at'),
   ]);
 
   const profiles = profilesResult.data || [];
   const workouts = workoutsResult.data || [];
   const exercises = exercisesResult.data || [];
-  const nutritionLogs = nutritionResult.data || [];
 
   const totalUsers = profiles.length;
   const activeUsers = new Set(workouts.map((w) => w.user_id)).size;
@@ -82,23 +80,6 @@ export async function GET() {
 
   const totalDuration = workouts.reduce((s, w) => s + (w.duration_minutes || 0), 0);
   const avgDuration = workouts.length > 0 ? totalDuration / workouts.length : 0;
-
-  const totalCalories = nutritionLogs.reduce((s, l) => s + (l.calories || 0), 0);
-  const totalProtein = nutritionLogs.reduce((s, l) => s + (l.protein_g || 0), 0);
-  const avgDailyCalories =
-    nutritionLogs.length > 0
-      ? Math.round(
-          totalCalories /
-            Math.max(1, new Set(nutritionLogs.map((l) => l.created_at?.slice(0, 10))).size),
-        )
-      : 0;
-  const avgDailyProtein =
-    nutritionLogs.length > 0
-      ? Math.round(
-          totalProtein /
-            Math.max(1, new Set(nutritionLogs.map((l) => l.created_at?.slice(0, 10))).size),
-        )
-      : 0;
 
   const weeklyWorkouts = Array.from({ length: 12 }, (_, i) => {
     const d = new Date();
@@ -192,12 +173,6 @@ export async function GET() {
         .map(([goal, count]) => ({ goal, count })),
       goalCompletionRate: 0,
       trendData: [],
-    },
-    nutritionAnalytics: {
-      averageDailyCalories: avgDailyCalories,
-      averageProteinIntake: avgDailyProtein,
-      averageWaterIntake: 0,
-      mostUsedSupplements: [],
     },
     deviceAnalytics: {
       byDevice: [],

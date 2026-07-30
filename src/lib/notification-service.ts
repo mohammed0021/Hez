@@ -179,10 +179,6 @@ export function getMessageForType(
       return { title: 'Gym Prep Time', body: 'Your workout starts soon — get ready!' };
     case 'creatine_reminder':
       return { title: 'Creatine Time', body: "Don't forget to take your creatine today." };
-    case 'water_reminder':
-      return { title: 'Hydration Reminder', body: 'Time to drink some water!' };
-    case 'meal_reminder':
-      return { title: 'Meal Time', body: 'Have you logged your meal yet?' };
     case 'sleep_reminder':
       return { title: 'Wind Down', body: 'Time to start winding down and prepare for sleep.' };
     case 'rest_timer_alert':

@@ -509,12 +509,6 @@ function PrivacySection({ profile }: { profile: ProfileState }) {
           onChange={(v) => profile.updateProfile({ showWorkoutHistory: v })}
         />
         <ToggleRow
-          label="Show Progress Photos"
-          description="Display your progress photos"
-          enabled={profile.showProgressPhotos}
-          onChange={(v) => profile.updateProfile({ showProgressPhotos: v })}
-        />
-        <ToggleRow
           label="Show Achievements"
           description="Display unlocked achievements"
           enabled={profile.showAchievements}

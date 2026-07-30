@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createClient } from '@/lib/supabase-client';
-import { useNutritionGoalsStore } from './nutrition-goals-store';
 
 export type Gender = 'male' | 'female';
 export type FitnessGoal =
@@ -32,7 +31,6 @@ export interface ProfileState {
   unitSystem: UnitSystem;
   profileVisibility: ProfileVisibility;
   showWorkoutHistory: boolean;
-  showProgressPhotos: boolean;
   showAchievements: boolean;
   showBodyStats: boolean;
 
@@ -75,7 +73,6 @@ export const useProfileStore = create<ProfileState>()(
       unitSystem: 'metric' as UnitSystem,
       profileVisibility: 'private' as ProfileVisibility,
       showWorkoutHistory: true,
-      showProgressPhotos: false,
       showAchievements: true,
       showBodyStats: true,
 
@@ -108,7 +105,6 @@ export const useProfileStore = create<ProfileState>()(
           if ('unitSystem' in data) dbData.unit_system = data.unitSystem;
           if ('profileVisibility' in data) dbData.profile_visibility = data.profileVisibility;
           if ('showWorkoutHistory' in data) dbData.show_workout_history = data.showWorkoutHistory;
-          if ('showProgressPhotos' in data) dbData.show_progress_photos = data.showProgressPhotos;
           if ('showAchievements' in data) dbData.show_achievements = data.showAchievements;
           if ('showBodyStats' in data) dbData.show_body_stats = data.showBodyStats;
           if ('onboardingCompleted' in data) dbData.onboarding_completed = data.onboardingCompleted;
@@ -147,7 +143,6 @@ export const useProfileStore = create<ProfileState>()(
             unit_system: data.unitSystem ?? 'metric',
             profile_visibility: data.profileVisibility ?? 'private',
             show_workout_history: data.showWorkoutHistory ?? true,
-            show_progress_photos: data.showProgressPhotos ?? false,
             show_achievements: data.showAchievements ?? true,
             show_body_stats: data.showBodyStats ?? true,
             onboarding_completed: true,
@@ -157,8 +152,6 @@ export const useProfileStore = create<ProfileState>()(
         }
 
         localStorage.setItem('hez-onboarded', 'true');
-
-        useNutritionGoalsStore.getState().autoCalculateFromProfile();
       },
 
       reset: () =>
@@ -180,7 +173,6 @@ export const useProfileStore = create<ProfileState>()(
           unitSystem: 'metric' as UnitSystem,
           profileVisibility: 'private' as ProfileVisibility,
           showWorkoutHistory: true,
-          showProgressPhotos: false,
           showAchievements: true,
           showBodyStats: true,
           onboardingCompleted: false,
@@ -217,7 +209,6 @@ export const useProfileStore = create<ProfileState>()(
               unitSystem: profile.unit_system ?? 'metric',
               profileVisibility: profile.profile_visibility ?? 'private',
               showWorkoutHistory: profile.show_workout_history ?? true,
-              showProgressPhotos: profile.show_progress_photos ?? false,
               showAchievements: profile.show_achievements ?? true,
               showBodyStats: profile.show_body_stats ?? true,
               onboardingCompleted: profile.onboarding_completed ?? false,
@@ -248,7 +239,6 @@ export const useProfileStore = create<ProfileState>()(
         unitSystem: s.unitSystem,
         profileVisibility: s.profileVisibility,
         showWorkoutHistory: s.showWorkoutHistory,
-        showProgressPhotos: s.showProgressPhotos,
         showAchievements: s.showAchievements,
         showBodyStats: s.showBodyStats,
         onboardingCompleted: s.onboardingCompleted,

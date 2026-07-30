@@ -1,6 +1,5 @@
 'use client';
 
-import { BottomNav } from './bottom-nav';
 import { AppHeader } from './app-header';
 import { PullToRefresh } from './pull-to-refresh';
 
@@ -26,7 +25,7 @@ export function MobileLayout({
       className="min-h-screen-safe mx-auto max-w-lg px-4"
       style={{
         paddingTop: 'calc(48px + env(safe-area-inset-top, 0px))',
-        paddingBottom: 'calc(64px + env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       }}
     >
       {children}
@@ -37,7 +36,6 @@ export function MobileLayout({
     <>
       <AppHeader title={title} showBack={showBack} onBack={onBack} rightAction={rightAction} />
       {onRefresh ? <PullToRefresh onRefresh={onRefresh}>{content}</PullToRefresh> : content}
-      <BottomNav />
     </>
   );
 }

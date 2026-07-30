@@ -127,7 +127,6 @@ export const useGamificationStore = create<GamificationState>()(
         const measurementLogs = state.xpHistory.filter(
           (e) => e.reason === 'measurement_log',
         ).length;
-        const mealLogs = state.xpHistory.filter((e) => e.reason === 'meal_log').length;
         const supplementDays = new Set(
           state.xpHistory.filter((e) => e.reason === 'supplement_log').map((e) => e.date),
         ).size;
@@ -151,7 +150,6 @@ export const useGamificationStore = create<GamificationState>()(
           streak_100: currentStreak >= 100,
           weight_tracker: weightLogs >= 7,
           measurement_pro: measurementLogs >= 5,
-          nutrition_logger: mealLogs >= 30,
           supplement_king: supplementDays >= 30,
           pr_king: prCount >= 10,
           explorer: false,

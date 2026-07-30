@@ -8,8 +8,6 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useProfileStore } from '@/stores/profile-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useThemeStore } from '@/stores/theme-store';
-import { useNutritionGoalsStore } from '@/stores/nutrition-goals-store';
-import { calculateAllGoals } from '@/lib/fitness-calculations';
 import { themes } from '@/types/theme';
 import type { Gender, FitnessGoal, ExperienceLevel, ActivityLevel } from '@/stores/profile-store';
 import {
@@ -113,7 +111,6 @@ export default function OnboardingPage() {
   const profileStore = useProfileStore();
   const settingsStore = useSettingsStore();
   const themeStore = useThemeStore();
-  const nutritionStore = useNutritionGoalsStore();
 
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -192,25 +189,6 @@ export default function OnboardingPage() {
       settingsStore.setLanguage(language);
       themeStore.setThemeId(themeId as never);
 
-      const goals = calculateAllGoals({
-        age,
-        gender,
-        heightCm,
-        weightKg,
-        activityLevel,
-        fitnessGoal,
-        experienceLevel,
-        workoutDaysPerWeek: workoutDays,
-      });
-
-      nutritionStore.setGoals({
-        calories: goals.recommendedCalories,
-        protein: goals.proteinG,
-        carbs: goals.carbsG,
-        fat: goals.fatG,
-        fiber: goals.fiberG,
-      });
-
       authStore.setOnboarded(true);
       router.replace('/dashboard');
     } catch {
@@ -230,11 +208,9 @@ export default function OnboardingPage() {
     unitSystem,
     language,
     themeId,
-    age,
     profileStore,
     settingsStore,
     themeStore,
-    nutritionStore,
     authStore,
     router,
   ]);
