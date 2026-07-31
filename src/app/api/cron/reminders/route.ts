@@ -33,10 +33,10 @@ const MESSAGES: Record<NotificationTypeId, { title: string; body: string }> = {
  * Reads each user's persisted notification prefs + timezone from the settings
  * table, computes what is due in their local time, and sends via Web Push.
  */
-export async function GET() {
-  const auth = process.env.CRON_SECRET;
+export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret || (auth && auth !== secret)) {
+  const auth = request.headers.get('authorization');
+  if (!secret || auth !== `Bearer ${secret}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
