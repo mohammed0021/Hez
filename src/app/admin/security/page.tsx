@@ -42,16 +42,39 @@ export default function SecurityDashboardPage() {
   };
 
   useEffect(() => {
-    fetchHealth();
+    let cancelled = false;
+
+    const loadInitialHealth = async () => {
+      try {
+        const res = await fetch('/admin/api/health');
+        if (!res.ok) throw new Error('Failed to fetch health status');
+        const data = await res.json();
+        if (!cancelled) {
+          setHealth(data);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch health status');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    void loadInitialHealth();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
       <div className="mb-8">
         <h1 className="text-foreground text-2xl font-bold">Security Dashboard</h1>
-        <p className="text-muted-foreground mt-1 text-sm">
-          System health and service status
-        </p>
+        <p className="text-muted-foreground mt-1 text-sm">System health and service status</p>
       </div>
 
       {loading && (
@@ -89,7 +112,9 @@ export default function SecurityDashboardPage() {
                     <p className="text-muted-foreground/70 text-[11px] font-medium tracking-wider uppercase">
                       {service.replace(/([A-Z])/g, ' $1').trim()}
                     </p>
-                    <div className={`flex size-8 items-center justify-center rounded-lg ${statusColor(status)} bg-current/10`}>
+                    <div
+                      className={`flex size-8 items-center justify-center rounded-lg ${statusColor(status)} bg-current/10`}
+                    >
                       <Icon size={14} className={statusColor(status)} />
                     </div>
                   </div>
@@ -108,7 +133,8 @@ export default function SecurityDashboardPage() {
                 Security events API not yet implemented
               </p>
               <p className="text-muted-foreground/60 mt-1 text-xs">
-                The health endpoint is available above. Detailed security event logging will be added in a future update.
+                The health endpoint is available above. Detailed security event logging will be
+                added in a future update.
               </p>
             </div>
           </div>
