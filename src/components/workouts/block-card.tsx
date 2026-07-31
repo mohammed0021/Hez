@@ -3,6 +3,7 @@
 import { Plus, X, Layers, Columns3, LayoutGrid } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState, useRef, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import type { WorkoutBlock, BlockType } from '@/types/workout';
 import { ExerciseRow } from './exercise-row';
 import { AddExerciseSheet } from './add-exercise-sheet';
@@ -14,17 +15,13 @@ const blockIcons: Record<BlockType, typeof Layers> = {
   giant_set: LayoutGrid,
 };
 
-const blockLabels: Record<BlockType, string> = {
-  standard: 'Standard',
-  superset: 'Superset',
-  giant_set: 'Giant Set',
-};
-
-export function BlockCard({
-  block,
-}: {
-  block: WorkoutBlock;
-}) {
+export function BlockCard({ block }: { block: WorkoutBlock }) {
+  const t = useTranslations('workouts');
+  const blockLabels: Record<BlockType, string> = {
+    standard: t('block_standard'),
+    superset: t('block_superset'),
+    giant_set: t('block_giant_set'),
+  };
   const [showAdd, setShowAdd] = useState(false);
   const dragIndex = useRef<number>(0);
   const removeBlock = useWorkoutStore((s) => s.removeBlock);
@@ -40,11 +37,14 @@ export function BlockCard({
     setBlockType(block.id, types[(idx + 1) % types.length]!);
   };
 
-  const handleExDragStart = useCallback((e: React.DragEvent, id: string) => {
-    dragIndex.current = block.exercises.findIndex((ex) => ex.id === id);
-    e.dataTransfer.effectAllowed = 'move';
-    (e.currentTarget as HTMLElement).style.opacity = '0.4';
-  }, [block.exercises]);
+  const handleExDragStart = useCallback(
+    (e: React.DragEvent, id: string) => {
+      dragIndex.current = block.exercises.findIndex((ex) => ex.id === id);
+      e.dataTransfer.effectAllowed = 'move';
+      (e.currentTarget as HTMLElement).style.opacity = '0.4';
+    },
+    [block.exercises],
+  );
 
   const handleExDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -55,40 +55,43 @@ export function BlockCard({
     (e.currentTarget as HTMLElement).style.opacity = '1';
   }, []);
 
-  const handleExDrop = useCallback((e: React.DragEvent, targetId: string) => {
-    e.preventDefault();
-    const toIndex = block.exercises.findIndex((ex) => ex.id === targetId);
-    if (dragIndex.current !== toIndex) {
-      moveExercise(block.id, dragIndex.current, toIndex);
-    }
-    (e.currentTarget as HTMLElement).style.opacity = '1';
-  }, [block.id, block.exercises, moveExercise]);
+  const handleExDrop = useCallback(
+    (e: React.DragEvent, targetId: string) => {
+      e.preventDefault();
+      const toIndex = block.exercises.findIndex((ex) => ex.id === targetId);
+      if (dragIndex.current !== toIndex) {
+        moveExercise(block.id, dragIndex.current, toIndex);
+      }
+      (e.currentTarget as HTMLElement).style.opacity = '1';
+    },
+    [block.id, block.exercises, moveExercise],
+  );
 
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-border/50 bg-card"
+      className="border-border/50 bg-card rounded-2xl border"
     >
       {/* Block header */}
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border/30">
+      <div className="border-border/30 flex items-center gap-2 border-b px-4 py-3">
         <Icon size={16} className="text-primary" />
         <button
           onClick={cycleType}
-          className="text-sm font-semibold text-foreground hover:text-primary transition-colors"
+          className="text-foreground hover:text-primary text-sm font-semibold transition-colors"
         >
           {blockLabels[block.type]}
         </button>
-        <span className="text-[10px] text-muted-foreground/60">
-          {block.exercises.length} {block.exercises.length === 1 ? 'exercise' : 'exercises'}
+        <span className="text-muted-foreground/60 text-[10px]">
+          {t('exercises_count', { count: block.exercises.length })}
         </span>
         <div className="ml-auto flex items-center gap-1">
           <button
             onClick={() => setShowAdd(true)}
-            className="flex items-center gap-1 rounded-lg bg-primary/10 px-2.5 py-1 text-[10px] font-medium text-primary hover:bg-primary/20 transition-colors"
+            className="bg-primary/10 text-primary hover:bg-primary/20 flex items-center gap-1 rounded-lg px-2.5 py-1 text-[10px] font-medium transition-colors"
           >
-            <Plus size={12} /> Add Exercise
+            <Plus size={12} /> {t('add_exercise')}
           </button>
           <button
             onClick={() => removeBlock(block.id)}
@@ -100,18 +103,15 @@ export function BlockCard({
       </div>
 
       {/* Exercises */}
-      <div
-        className="p-3 space-y-2"
-        onDragOver={(e) => e.preventDefault()}
-      >
+      <div className="space-y-2 p-3" onDragOver={(e) => e.preventDefault()}>
         {block.exercises.length === 0 ? (
-          <div className="flex flex-col items-center gap-2 py-6 text-muted-foreground/40">
-            <p className="text-xs">No exercises yet</p>
+          <div className="text-muted-foreground/40 flex flex-col items-center gap-2 py-6">
+            <p className="text-xs">{t('no_exercises_yet')}</p>
             <button
               onClick={() => setShowAdd(true)}
-              className="rounded-lg bg-muted px-3 py-1.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors"
+              className="bg-muted text-muted-foreground hover:bg-muted/80 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-colors"
             >
-              + Add your first exercise
+              + {t('add_first_exercise')}
             </button>
           </div>
         ) : (
@@ -134,8 +134,10 @@ export function BlockCard({
       </div>
 
       {/* Block rest */}
-      <div className="flex items-center gap-2 border-t border-border/30 px-4 py-2">
-        <span className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Rest after block:</span>
+      <div className="border-border/30 flex items-center gap-2 border-t px-4 py-2">
+        <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+          {t('rest_after_block')}
+        </span>
         {[60, 90, 120, 150, 180].map((sec) => (
           <button
             key={sec}

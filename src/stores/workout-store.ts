@@ -1,16 +1,36 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Workout, WorkoutBlock, WorkoutExercise, WorkoutSet, SetType, BlockType } from '@/types/workout';
+import type {
+  Workout,
+  WorkoutBlock,
+  WorkoutExercise,
+  WorkoutSet,
+  SetType,
+  BlockType,
+} from '@/types/workout';
 
 function uid() {
   return Math.random().toString(36).substring(2, 10);
 }
 
 function makeSet(sortOrder: number): WorkoutSet {
-  return { id: uid(), type: 'normal', weightKg: 0, reps: 10, rpe: null, sortOrder, completed: false };
+  return {
+    id: uid(),
+    type: 'normal',
+    weightKg: 0,
+    reps: 10,
+    rpe: null,
+    sortOrder,
+    completed: false,
+  };
 }
 
-function makeExercise(exerciseId: string, name: string, muscleGroups: string[], sortOrder: number): WorkoutExercise {
+function makeExercise(
+  exerciseId: string,
+  name: string,
+  muscleGroups: string[],
+  sortOrder: number,
+): WorkoutExercise {
   return {
     id: uid(),
     exerciseId,
@@ -65,7 +85,12 @@ interface WorkoutState {
   setBlockRest: (blockId: string, seconds: number) => void;
   moveBlock: (fromIndex: number, toIndex: number) => void;
 
-  addExerciseToBlock: (blockId: string, exerciseId: string, name: string, muscleGroups: string[]) => void;
+  addExerciseToBlock: (
+    blockId: string,
+    exerciseId: string,
+    name: string,
+    muscleGroups: string[],
+  ) => void;
   removeExercise: (exerciseId: string) => void;
   moveExercise: (blockId: string, fromIndex: number, toIndex: number) => void;
   setExerciseNotes: (exerciseId: string, notes: string) => void;
@@ -92,7 +117,8 @@ export const useWorkoutStore = create<WorkoutState>()(
       savedWorkouts: [],
       isDirty: false,
 
-      createNew: (name) => set({ currentWorkout: makeWorkout(name || 'Untitled Workout'), isDirty: false }),
+      createNew: (name) =>
+        set({ currentWorkout: makeWorkout(name || 'Untitled Workout'), isDirty: false }),
 
       loadWorkout: (id) => {
         const w = get().savedWorkouts.find((x) => x.id === id);
@@ -114,7 +140,14 @@ export const useWorkoutStore = create<WorkoutState>()(
       setField: (key, value) =>
         set((s) =>
           s.currentWorkout
-            ? { currentWorkout: { ...s.currentWorkout, [key]: value, updatedAt: new Date().toISOString() }, isDirty: true }
+            ? {
+                currentWorkout: {
+                  ...s.currentWorkout,
+                  [key]: value,
+                  updatedAt: new Date().toISOString(),
+                },
+                isDirty: true,
+              }
             : {},
         ),
 
@@ -135,13 +168,20 @@ export const useWorkoutStore = create<WorkoutState>()(
       saveAsTemplate: () => {
         const w = get().currentWorkout;
         if (!w) return;
-        const t = { ...JSON.parse(JSON.stringify(w)), id: uid(), isTemplate: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+        const t = {
+          ...JSON.parse(JSON.stringify(w)),
+          id: uid(),
+          isTemplate: true,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
         set((s) => ({ templates: [...s.templates, t] }));
       },
 
       deleteTemplate: (id) => set((s) => ({ templates: s.templates.filter((x) => x.id !== id) })),
 
-      deleteWorkout: (id) => set((s) => ({ savedWorkouts: s.savedWorkouts.filter((x) => x.id !== id) })),
+      deleteWorkout: (id) =>
+        set((s) => ({ savedWorkouts: s.savedWorkouts.filter((x) => x.id !== id) })),
 
       duplicate: () => {
         const w = get().currentWorkout;
@@ -160,7 +200,10 @@ export const useWorkoutStore = create<WorkoutState>()(
           if (!s.currentWorkout) return {};
           const order = s.currentWorkout.blocks.length;
           const block = makeBlock(type, order);
-          return { currentWorkout: { ...s.currentWorkout, blocks: [...s.currentWorkout.blocks, block] }, isDirty: true };
+          return {
+            currentWorkout: { ...s.currentWorkout, blocks: [...s.currentWorkout.blocks, block] },
+            isDirty: true,
+          };
         }),
 
       removeBlock: (blockId) =>
@@ -175,14 +218,18 @@ export const useWorkoutStore = create<WorkoutState>()(
       setBlockType: (blockId, type) =>
         set((s) => {
           if (!s.currentWorkout) return {};
-          const blocks = s.currentWorkout.blocks.map((b) => (b.id === blockId ? { ...b, type } : b));
+          const blocks = s.currentWorkout.blocks.map((b) =>
+            b.id === blockId ? { ...b, type } : b,
+          );
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
 
       setBlockRest: (blockId, seconds) =>
         set((s) => {
           if (!s.currentWorkout) return {};
-          const blocks = s.currentWorkout.blocks.map((b) => (b.id === blockId ? { ...b, restAfterBlock: seconds } : b));
+          const blocks = s.currentWorkout.blocks.map((b) =>
+            b.id === blockId ? { ...b, restAfterBlock: seconds } : b,
+          );
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
 
@@ -194,7 +241,13 @@ export const useWorkoutStore = create<WorkoutState>()(
           if (removed[0] === undefined) return {};
           const [moved] = removed;
           blocks.splice(toIndex, 0, moved);
-          return { currentWorkout: { ...s.currentWorkout, blocks: blocks.map((b, i) => ({ ...b, sortOrder: i })) }, isDirty: true };
+          return {
+            currentWorkout: {
+              ...s.currentWorkout,
+              blocks: blocks.map((b, i) => ({ ...b, sortOrder: i })),
+            },
+            isDirty: true,
+          };
         }),
 
       addExerciseToBlock: (blockId, exerciseId, name, muscleGroups) =>
@@ -203,7 +256,10 @@ export const useWorkoutStore = create<WorkoutState>()(
           const blocks = s.currentWorkout.blocks.map((b) => {
             if (b.id !== blockId) return b;
             const order = b.exercises.length;
-            return { ...b, exercises: [...b.exercises, makeExercise(exerciseId, name, muscleGroups, order)] };
+            return {
+              ...b,
+              exercises: [...b.exercises, makeExercise(exerciseId, name, muscleGroups, order)],
+            };
           });
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
@@ -213,7 +269,9 @@ export const useWorkoutStore = create<WorkoutState>()(
           if (!s.currentWorkout) return {};
           const blocks = s.currentWorkout.blocks.map((b) => ({
             ...b,
-            exercises: b.exercises.filter((e) => e.id !== exerciseId).map((e, i) => ({ ...e, sortOrder: i })),
+            exercises: b.exercises
+              .filter((e) => e.id !== exerciseId)
+              .map((e, i) => ({ ...e, sortOrder: i })),
           }));
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
@@ -248,7 +306,9 @@ export const useWorkoutStore = create<WorkoutState>()(
           if (!s.currentWorkout) return {};
           const blocks = s.currentWorkout.blocks.map((b) => ({
             ...b,
-            exercises: b.exercises.map((e) => (e.id === exerciseId ? { ...e, restSeconds: seconds } : e)),
+            exercises: b.exercises.map((e) =>
+              e.id === exerciseId ? { ...e, restSeconds: seconds } : e,
+            ),
           }));
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
         }),
@@ -274,7 +334,12 @@ export const useWorkoutStore = create<WorkoutState>()(
             ...b,
             exercises: b.exercises.map((e) => {
               if (e.id !== exerciseId) return e;
-              return { ...e, sets: e.sets.filter((st) => st.id !== setId).map((st, i) => ({ ...st, sortOrder: i })) };
+              return {
+                ...e,
+                sets: e.sets
+                  .filter((st) => st.id !== setId)
+                  .map((st, i) => ({ ...st, sortOrder: i })),
+              };
             }),
           }));
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
@@ -287,7 +352,10 @@ export const useWorkoutStore = create<WorkoutState>()(
             ...b,
             exercises: b.exercises.map((e) => {
               if (e.id !== exerciseId) return e;
-              return { ...e, sets: e.sets.map((st) => (st.id === setId ? { ...st, ...updates } : st)) };
+              return {
+                ...e,
+                sets: e.sets.map((st) => (st.id === setId ? { ...st, ...updates } : st)),
+              };
             }),
           }));
           return { currentWorkout: { ...s.currentWorkout, blocks }, isDirty: true };
@@ -305,7 +373,11 @@ export const useWorkoutStore = create<WorkoutState>()(
       exportToJson: () => {
         const w = get().currentWorkout;
         if (!w) return '{}';
-        return JSON.stringify({ version: 1, exportedAt: new Date().toISOString(), workout: w }, null, 2);
+        return JSON.stringify(
+          { version: 1, exportedAt: new Date().toISOString(), workout: w },
+          null,
+          2,
+        );
       },
 
       importFromJson: (json) => {

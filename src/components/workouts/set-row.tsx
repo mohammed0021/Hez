@@ -1,6 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { WorkoutSet, SetType } from '@/types/workout';
 import { useWorkoutStore } from '@/stores/workout-store';
 
@@ -18,7 +19,16 @@ const setTypeColors: Record<SetType, string> = {
   failure: 'bg-red-500/10 text-red-500',
 };
 
-export function SetRow({ set, exerciseId, index }: { set: WorkoutSet; exerciseId: string; index: number }) {
+export function SetRow({
+  set,
+  exerciseId,
+  index,
+}: {
+  set: WorkoutSet;
+  exerciseId: string;
+  index: number;
+}) {
+  const t = useTranslations('workouts');
   const updateSet = useWorkoutStore((s) => s.updateSet);
   const removeSet = useWorkoutStore((s) => s.removeSet);
   const setSetType = useWorkoutStore((s) => s.setSetType);
@@ -30,46 +40,54 @@ export function SetRow({ set, exerciseId, index }: { set: WorkoutSet; exerciseId
   };
 
   return (
-    <div className="flex items-center gap-1.5 rounded-lg bg-card px-2 py-1.5">
-      <span className="w-4 text-[10px] text-muted-foreground/60 font-mono">{index + 1}</span>
+    <div className="bg-card flex items-center gap-1.5 rounded-lg px-2 py-1.5">
+      <span className="text-muted-foreground/60 w-4 font-mono text-[10px]">{index + 1}</span>
 
       <button
         onClick={cycleType}
-        className={`rounded-md px-1.5 py-0.5 text-[9px] font-bold leading-none ${setTypeColors[set.type]} ${
-          set.type === 'normal' ? 'opacity-0 pointer-events-none' : ''
+        className={`rounded-md px-1.5 py-0.5 text-[9px] leading-none font-bold ${setTypeColors[set.type]} ${
+          set.type === 'normal' ? 'pointer-events-none opacity-0' : ''
         }`}
-        title={`Type: ${set.type}`}
+        title={t('set_type_tooltip', { type: set.type })}
       >
         {setTypeLabels[set.type]}
       </button>
 
-      <div className="flex items-center flex-1 gap-1">
+      <div className="flex flex-1 items-center gap-1">
         <input
           type="number"
           value={set.weightKg || ''}
-          onChange={(e) => updateSet(exerciseId, set.id, { weightKg: parseFloat(e.target.value) || 0 })}
-          className="w-12 rounded-md border border-border/30 bg-transparent px-1.5 py-0.5 text-xs text-foreground text-center focus:border-primary/40 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          onChange={(e) =>
+            updateSet(exerciseId, set.id, { weightKg: parseFloat(e.target.value) || 0 })
+          }
+          className="border-border/30 text-foreground focus:border-primary/40 w-12 [appearance:textfield] rounded-md border bg-transparent px-1.5 py-0.5 text-center text-xs focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           placeholder="kg"
         />
-        <span className="text-[10px] text-muted-foreground/40">×</span>
+        <span className="text-muted-foreground/40 text-[10px]">×</span>
         <input
           type="number"
           value={set.reps || ''}
           onChange={(e) => updateSet(exerciseId, set.id, { reps: parseInt(e.target.value) || 0 })}
-          className="w-10 rounded-md border border-border/30 bg-transparent px-1.5 py-0.5 text-xs text-foreground text-center focus:border-primary/40 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-          placeholder="reps"
+          className="border-border/30 text-foreground focus:border-primary/40 w-10 [appearance:textfield] rounded-md border bg-transparent px-1.5 py-0.5 text-center text-xs focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          placeholder={t('reps_placeholder')}
         />
       </div>
 
       <div className="flex items-center gap-1">
-        <span className="text-[9px] text-muted-foreground/40">RPE</span>
+        <span className="text-muted-foreground/40 text-[9px]">RPE</span>
         <input
           type="number"
           min={1}
           max={10}
           value={set.rpe ?? ''}
-          onChange={(e) => updateSet(exerciseId, set.id, { rpe: e.target.value ? parseInt(e.target.value) as 1|2|3|4|5|6|7|8|9|10 : null })}
-          className="w-7 rounded-md border border-border/30 bg-transparent px-1 py-0.5 text-[10px] text-foreground text-center focus:border-primary/40 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          onChange={(e) =>
+            updateSet(exerciseId, set.id, {
+              rpe: e.target.value
+                ? (parseInt(e.target.value) as 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10)
+                : null,
+            })
+          }
+          className="border-border/30 text-foreground focus:border-primary/40 w-7 [appearance:textfield] rounded-md border bg-transparent px-1 py-0.5 text-center text-[10px] focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         />
       </div>
 

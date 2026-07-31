@@ -5,14 +5,27 @@ import { motion } from 'framer-motion';
 import { Ruler, Weight, TrendingDown, TrendingUp, Minus } from 'lucide-react';
 import { useProfileStore } from '@/stores/profile-store';
 import { useWeightStore } from '@/stores/weight-store';
+import { useTranslations } from 'next-intl';
 import {
   calculateBMI,
   getBMICategory,
   getIdealWeightRange,
   getHealthyWeightDifference,
+  type BMICategory,
 } from '@/lib/bmi';
 
+const BMI_CATEGORY_KEYS: Record<BMICategory, string> = {
+  severely_underweight: 'progress.bmi_category_severely_underweight',
+  underweight: 'progress.bmi_category_underweight',
+  normal: 'progress.bmi_category_normal',
+  overweight: 'progress.bmi_category_overweight',
+  obese_class_1: 'progress.bmi_category_obese_class_1',
+  obese_class_2: 'progress.bmi_category_obese_class_2',
+  obese_class_3: 'progress.bmi_category_obese_class_3',
+};
+
 export default function BMIPage() {
+  const t = useTranslations();
   const profileHeightCm = useProfileStore((s) => s.heightCm);
   const profileWeightKg = useProfileStore((s) => s.weightKg);
   const birthday = useProfileStore((s) => s.birthday);
@@ -49,9 +62,9 @@ export default function BMIPage() {
   return (
     <div className="space-y-5 pb-8">
       <div>
-        <h1 className="text-foreground text-2xl font-bold">BMI Calculator</h1>
+        <h1 className="text-foreground text-2xl font-bold">{t('progress.bmi')}</h1>
         <p className="text-muted-foreground mt-0.5 text-sm">
-          Automatically calculated from your profile
+          {t('progress.bmi_auto_from_profile')}
         </p>
       </div>
 
@@ -63,7 +76,7 @@ export default function BMIPage() {
       >
         <div className="mb-3 flex items-center justify-between">
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Your Stats
+            {t('progress.your_stats')}
           </p>
           <button
             onClick={() => {
@@ -75,7 +88,7 @@ export default function BMIPage() {
             }}
             className="text-primary hover:text-primary/80 text-[10px] font-medium transition-colors"
           >
-            {manualMode ? 'Use profile values' : 'Manual input'}
+            {manualMode ? t('progress.use_profile_values') : t('progress.manual_input')}
           </button>
         </div>
 
@@ -84,7 +97,7 @@ export default function BMIPage() {
             <div className="flex gap-3">
               <div className="flex-1">
                 <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-                  Weight (kg)
+                  {t('progress.weight')} (kg)
                 </label>
                 <input
                   type="number"
@@ -96,7 +109,7 @@ export default function BMIPage() {
               </div>
               <div className="flex-1">
                 <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-                  Height (cm)
+                  {t('profile.height')} (cm)
                 </label>
                 <input
                   type="number"
@@ -125,7 +138,7 @@ export default function BMIPage() {
             <div className="bg-muted/30 rounded-xl p-3 text-center">
               <p className="text-foreground text-lg font-bold">{age}</p>
               <p className="text-muted-foreground/60 text-[9px] font-medium tracking-wider uppercase">
-                Age
+                {t('progress.age')}
               </p>
             </div>
           </div>
@@ -146,7 +159,9 @@ export default function BMIPage() {
                 <p className="text-foreground text-4xl font-bold tracking-tight">
                   {bmi.toFixed(1)}
                 </p>
-                <p className={`text-[10px] font-semibold ${category.color}`}>{category.label}</p>
+                <p className={`text-[10px] font-semibold ${category.color}`}>
+                  {t(BMI_CATEGORY_KEYS[category.id])}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -184,14 +199,14 @@ export default function BMIPage() {
               <Weight className="text-primary mx-auto size-4" />
               <p className="text-foreground mt-1 text-lg font-bold">{weightKg.toFixed(1)} kg</p>
               <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-                Your Weight
+                {t('progress.your_weight')}
               </p>
             </div>
             <div className="border-border/50 bg-card rounded-xl border p-4 text-center">
               <Ruler className="text-primary mx-auto size-4" />
               <p className="text-foreground mt-1 text-lg font-bold">{heightCm.toFixed(0)} cm</p>
               <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-                Your Height
+                {t('progress.your_height')}
               </p>
             </div>
           </motion.div>
@@ -206,7 +221,7 @@ export default function BMIPage() {
             >
               <div className="flex items-center justify-between">
                 <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-                  Weekly Weight Change
+                  {t('progress.weekly_weight_change')}
                 </p>
                 <div className="flex items-center gap-1.5">
                   {weeklyChange > 0 ? (
@@ -241,7 +256,9 @@ export default function BMIPage() {
             }`}
           >
             <div className="mb-2 flex items-center justify-between">
-              <p className="text-foreground text-xs font-medium">Healthy Weight Range</p>
+              <p className="text-foreground text-xs font-medium">
+                {t('progress.healthy_weight_range')}
+              </p>
               <span
                 className={`text-[10px] font-semibold ${
                   healthyDiff.direction === 'maintain' ? 'text-green-500' : 'text-muted-foreground'
@@ -256,7 +273,11 @@ export default function BMIPage() {
             <p
               className={`mt-1 text-xs ${healthyDiff.direction === 'maintain' ? 'text-green-600' : healthyDiff.direction === 'lose' ? 'text-orange-600' : 'text-blue-600'}`}
             >
-              {healthyDiff.message}
+              {healthyDiff.direction === 'maintain'
+                ? t('progress.bmi_healthy_maintain')
+                : healthyDiff.direction === 'lose'
+                  ? t('progress.bmi_healthy_lose', { diff: healthyDiff.diffKg.toFixed(1) })
+                  : t('progress.bmi_healthy_gain', { diff: healthyDiff.diffKg.toFixed(1) })}
             </p>
           </motion.div>
 
@@ -269,50 +290,50 @@ export default function BMIPage() {
           >
             {[
               {
-                label: 'Severely Underweight',
+                id: 'severely_underweight' as const,
                 range: '< 16',
                 color: 'bg-blue-600',
                 active: category.id === 'severely_underweight',
               },
               {
-                label: 'Underweight',
+                id: 'underweight' as const,
                 range: '16 – 18.5',
                 color: 'bg-blue-500',
                 active: category.id === 'underweight',
               },
               {
-                label: 'Normal',
+                id: 'normal' as const,
                 range: '18.5 – 25',
                 color: 'bg-green-500',
                 active: category.id === 'normal',
               },
               {
-                label: 'Overweight',
+                id: 'overweight' as const,
                 range: '25 – 30',
                 color: 'bg-yellow-500',
                 active: category.id === 'overweight',
               },
               {
-                label: 'Obese Class I',
+                id: 'obese_class_1' as const,
                 range: '30 – 35',
                 color: 'bg-orange-500',
                 active: category.id === 'obese_class_1',
               },
               {
-                label: 'Obese Class II',
+                id: 'obese_class_2' as const,
                 range: '35 – 40',
                 color: 'bg-red-500',
                 active: category.id === 'obese_class_2',
               },
               {
-                label: 'Obese Class III',
+                id: 'obese_class_3' as const,
                 range: '> 40',
                 color: 'bg-red-700',
                 active: category.id === 'obese_class_3',
               },
             ].map((row) => (
               <div
-                key={row.label}
+                key={row.id}
                 className={`flex items-center gap-3 rounded-xl px-4 py-2.5 transition-all ${
                   row.active ? 'bg-muted/50 border-border border' : 'opacity-40'
                 }`}
@@ -321,7 +342,7 @@ export default function BMIPage() {
                 <span
                   className={`flex-1 text-xs ${row.active ? 'text-foreground font-medium' : 'text-muted-foreground'}`}
                 >
-                  {row.label}
+                  {t(BMI_CATEGORY_KEYS[row.id])}
                 </span>
                 <span className="text-muted-foreground/60 text-[10px]">{row.range}</span>
               </div>

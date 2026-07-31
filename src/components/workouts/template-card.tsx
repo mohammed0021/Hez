@@ -2,11 +2,14 @@
 
 import { Dumbbell, Clock, Trash2, Play, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import type { Workout } from '@/types/workout';
 import { useWorkoutStore } from '@/stores/workout-store';
 import { useActiveWorkoutStore } from '@/stores/active-workout-store';
 
 export function TemplateCard({ template, index }: { template: Workout; index: number }) {
+  const t = useTranslations('workouts');
+  const c = useTranslations('common');
   const loadTemplate = useWorkoutStore((s) => s.loadTemplate);
   const deleteTemplate = useWorkoutStore((s) => s.deleteTemplate);
   const startWorkout = useActiveWorkoutStore((s) => s.startWorkout);
@@ -46,12 +49,12 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
 
       <div className="text-muted-foreground/60 mt-3 flex items-center gap-3 text-[10px] font-medium tracking-wider uppercase">
         <span className="flex items-center gap-1">
-          <Dumbbell size={11} /> {template.blocks.length} blocks
+          <Dumbbell size={11} /> {t('blocks_count', { count: template.blocks.length })}
         </span>
         <span className="flex items-center gap-1">
-          <Clock size={11} /> ~{template.estimatedDuration} min
+          <Clock size={11} /> {t('duration_min', { minutes: template.estimatedDuration })}
         </span>
-        <span>{totalSets} sets</span>
+        <span>{t('sets_count', { count: totalSets })}</span>
       </div>
 
       {template.tags.length > 0 && (
@@ -75,7 +78,7 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
           }}
           className="bg-muted text-foreground flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-[10px] font-medium"
         >
-          <Play size={12} /> Use
+          <Play size={12} /> {t('use')}
         </button>
         <button
           onClick={() => {
@@ -84,7 +87,7 @@ export function TemplateCard({ template, index }: { template: Workout; index: nu
           }}
           className="bg-primary text-primary-foreground flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-[10px] font-medium"
         >
-          <Zap size={12} /> Start
+          <Zap size={12} /> {c('start')}
         </button>
       </div>
     </motion.div>

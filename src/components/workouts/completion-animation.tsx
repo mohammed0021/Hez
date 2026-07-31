@@ -14,7 +14,7 @@ export function CompletionAnimation({ show }: { show: boolean }) {
           transition={{ type: 'spring', stiffness: 300, damping: 20 }}
           className="flex items-center justify-center"
         >
-          <div className="flex size-20 items-center justify-center rounded-full bg-primary shadow-2xl shadow-primary/40">
+          <div className="bg-primary shadow-primary/40 flex size-20 items-center justify-center rounded-full shadow-2xl">
             <Check size={40} className="text-primary-foreground" />
           </div>
         </motion.div>

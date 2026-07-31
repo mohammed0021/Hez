@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { NotebookText, Users, Clock, ChevronRight, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 const programs = [
   {
@@ -46,12 +47,13 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function ProgramsPage() {
+  const t = useTranslations('programs');
   const router = useRouter();
 
   return (
     <>
-      <h2 className="text-foreground text-2xl font-bold">Programs</h2>
-      <p className="text-muted-foreground mt-1 text-sm">Choose a structured program to follow</p>
+      <h2 className="text-foreground text-2xl font-bold">{t('title')}</h2>
+      <p className="text-muted-foreground mt-1 text-sm">{t('subtitle')}</p>
 
       <div className="mt-6 space-y-3">
         {programs.map((p, i) => (
@@ -75,7 +77,7 @@ export default function ProgramsPage() {
                   {p.difficulty}
                 </span>
                 <span className="flex items-center gap-1">
-                  <Clock size={12} /> {p.weeks} weeks
+                  <Clock size={12} /> {t('weeks', { count: p.weeks })}
                 </span>
                 <span className="flex items-center gap-1">
                   <Users size={12} /> {p.enrolled}
@@ -87,9 +89,7 @@ export default function ProgramsPage() {
         ))}
         <div className="bg-muted/30 border-border/50 flex flex-col items-center gap-2 rounded-2xl border p-6 text-center">
           <AlertCircle size={24} className="text-muted-foreground/40" />
-          <p className="text-muted-foreground text-xs">
-            Program details coming soon. Tap a program to get started.
-          </p>
+          <p className="text-muted-foreground text-xs">{t('details_coming_soon')}</p>
         </div>
       </div>
     </>

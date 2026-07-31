@@ -193,6 +193,60 @@ export function getMessageForType(
     case 'monthly_summary':
       return { title: 'Monthly Summary', body: 'Your monthly progress report is ready.' };
     case 'achievement_unlocked':
-      return null;
+      return {
+        title: 'Achievement Unlocked',
+        body: 'You earned a new achievement! Check your progress.',
+      };
+  }
+}
+
+/**
+ * Send a notification through Web Push (server-delivered) so it reaches the
+ * user even when the tab/app is closed. Requires an active push subscription.
+ */
+export async function sendPushNotification(payload: {
+  title: string;
+  body?: string;
+  tag?: string;
+  url?: string;
+  data?: Record<string, unknown>;
+}): Promise<void> {
+  if (!isPushSupported()) return;
+  const state = useNotificationStore.getState();
+  if (!state.globalEnabled || !state.pushSubscription) return;
+
+  try {
+    await fetch('/api/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        title: payload.title,
+        body: payload.body,
+        tag: payload.tag,
+        data: { ...(payload.data || {}), url: payload.url || '/' },
+      }),
+    });
+  } catch {
+    // Push delivery is best-effort
+  }
+}
+
+export function getNotificationUrl(type: NotificationTypeId): string {
+  switch (type) {
+    case 'workout_reminder':
+    case 'pre_gym_reminder':
+    case 'workout_tomorrow_reminder':
+      return '/workouts';
+    case 'rest_timer_alert':
+      return '/workouts/active';
+    case 'creatine_reminder':
+      return '/supplements';
+    case 'sleep_reminder':
+      return '/settings';
+    case 'weekly_summary':
+    case 'monthly_summary':
+      return '/progress';
+    case 'achievement_unlocked':
+      return '/gamification';
   }
 }

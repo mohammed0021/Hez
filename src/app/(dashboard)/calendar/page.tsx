@@ -12,6 +12,7 @@ import {
   Timer,
   RefreshCw,
 } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { MonthlyView } from '@/components/calendar/monthly-view';
 import { WeeklyPlanner } from '@/components/calendar/weekly-planner';
 import { DailyAgenda } from '@/components/calendar/daily-agenda';
@@ -25,6 +26,8 @@ function getDateKey(date?: Date): string {
 }
 
 export default function CalendarPage() {
+  const t = useTranslations('calendar');
+  const tc = useTranslations('common');
   const [view, setView] = useState<ViewMode>('monthly');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [showManageModal, setShowManageModal] = useState(false);
@@ -121,18 +124,26 @@ export default function CalendarPage() {
     setNewCycle({ name: '', startDate: '', endDate: '', color: '#10b981', notes: '' });
   };
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysOfWeek = [
+    t('sunday'),
+    t('monday'),
+    t('tuesday'),
+    t('wednesday'),
+    t('thursday'),
+    t('friday'),
+    t('saturday'),
+  ];
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-foreground text-2xl font-bold">Calendar</h1>
+        <h1 className="text-foreground text-2xl font-bold">{t('title')}</h1>
         <div className="flex gap-1.5">
           <button
             onClick={() => setShowManageModal(true)}
             className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors"
           >
-            <Settings size={14} /> Manage
+            <Settings size={14} /> {t('manage')}
           </button>
           <button
             onClick={() => {
@@ -141,7 +152,7 @@ export default function CalendarPage() {
             }}
             className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors"
           >
-            <Plus size={14} /> Today
+            <Plus size={14} /> {tc('today')}
           </button>
         </div>
       </div>
@@ -149,9 +160,9 @@ export default function CalendarPage() {
       {/* View switcher */}
       <div className="bg-muted mt-4 flex gap-1 rounded-xl p-1">
         {[
-          { id: 'monthly' as const, label: 'Month', icon: CalendarDays },
-          { id: 'weekly' as const, label: 'Week', icon: CalendarRange },
-          { id: 'daily' as const, label: 'Day', icon: List },
+          { id: 'monthly' as const, label: t('monthly_view'), icon: CalendarDays },
+          { id: 'weekly' as const, label: t('weekly_view'), icon: CalendarRange },
+          { id: 'daily' as const, label: t('daily_view'), icon: List },
         ].map((v) => {
           const Icon = v.icon;
           return (
@@ -232,7 +243,9 @@ export default function CalendarPage() {
               className="bg-card border-border/50 max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border p-5"
             >
               <div className="mb-4 flex items-center justify-between">
-                <p className="text-foreground text-sm font-semibold">Manage Schedules & Cycles</p>
+                <p className="text-foreground text-sm font-semibold">
+                  {t('manage_schedules_cycles')}
+                </p>
                 <button
                   onClick={() => setShowManageModal(false)}
                   className="text-muted-foreground hover:text-foreground"
@@ -244,7 +257,7 @@ export default function CalendarPage() {
               {/* Recurring Schedules */}
               <div className="mb-5">
                 <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
-                  <RefreshCw size={12} className="text-primary" /> Recurring Schedules
+                  <RefreshCw size={12} className="text-primary" /> {t('recurring_schedules')}
                 </p>
 
                 {recurringSchedules.length > 0 && (
@@ -284,7 +297,7 @@ export default function CalendarPage() {
                     }}
                     className="border-border/30 bg-background text-foreground w-full rounded-xl border px-3 py-2 text-xs"
                   >
-                    <option value="">Select workout...</option>
+                    <option value="">{t('select_workout')}</option>
                     {allWorkouts.map((w) => (
                       <option key={w.id} value={w.id}>
                         {w.name}
@@ -316,7 +329,7 @@ export default function CalendarPage() {
                     disabled={!newSchedule.workoutId || newSchedule.daysOfWeek.length === 0}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] w-full rounded-xl py-2 text-xs font-medium transition-colors disabled:opacity-50"
                   >
-                    Add Recurring Schedule
+                    {t('add_recurring_schedule')}
                   </button>
                 </div>
               </div>
@@ -324,7 +337,7 @@ export default function CalendarPage() {
               {/* Training Cycles */}
               <div>
                 <p className="text-muted-foreground/60 mb-2 flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase">
-                  <Timer size={12} className="text-purple-500" /> Training Cycles
+                  <Timer size={12} className="text-purple-500" /> {t('training_cycles')}
                 </p>
 
                 {trainingCycles.length > 0 && (
@@ -356,7 +369,7 @@ export default function CalendarPage() {
                   <input
                     value={newCycle.name}
                     onChange={(e) => setNewCycle({ ...newCycle, name: e.target.value })}
-                    placeholder="Cycle name (e.g. Strength Block)"
+                    placeholder={t('cycle_name_placeholder')}
                     className="border-border/30 bg-background text-foreground placeholder:text-muted-foreground/50 w-full rounded-xl border px-3 py-2 text-xs"
                   />
                   <div className="flex gap-2">
@@ -378,7 +391,7 @@ export default function CalendarPage() {
                     <input
                       value={newCycle.notes}
                       onChange={(e) => setNewCycle({ ...newCycle, notes: e.target.value })}
-                      placeholder="Notes (optional)"
+                      placeholder={t('notes_placeholder')}
                       className="border-border/30 bg-background text-foreground placeholder:text-muted-foreground/50 flex-1 rounded-xl border px-3 py-2 text-xs"
                     />
                     <input
@@ -393,7 +406,7 @@ export default function CalendarPage() {
                     disabled={!newCycle.name || !newCycle.startDate || !newCycle.endDate}
                     className="min-h-[44px] w-full rounded-xl bg-purple-500 py-2 text-xs font-medium text-white transition-colors hover:bg-purple-600 disabled:opacity-50"
                   >
-                    Add Training Cycle
+                    {t('add_training_cycle')}
                   </button>
                 </div>
               </div>

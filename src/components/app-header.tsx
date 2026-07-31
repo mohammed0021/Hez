@@ -5,6 +5,7 @@ import { APP_NAME } from '@/lib/constants';
 import { useUiStore } from '@/stores/ui-store';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, ChevronLeft } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface AppHeaderProps {
   title?: string;
@@ -16,6 +17,7 @@ interface AppHeaderProps {
 export function AppHeader({ title, showBack, onBack, rightAction }: AppHeaderProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const isHeaderVisible = useUiStore((s) => s.isHeaderVisible);
+  const t = useTranslations('common');
 
   if (isDesktop) return null;
 
@@ -36,7 +38,7 @@ export function AppHeader({ title, showBack, onBack, rightAction }: AppHeaderPro
                   <button
                     onClick={() => useUiStore.getState().setSidebarOpen(true)}
                     className="-ml-1 flex min-h-[44px] min-w-[44px] items-center justify-center"
-                    aria-label="Open menu"
+                    aria-label={t('open')}
                   >
                     <Menu size={22} className="text-foreground" />
                   </button>
@@ -45,7 +47,7 @@ export function AppHeader({ title, showBack, onBack, rightAction }: AppHeaderPro
                   <button
                     onClick={onBack}
                     className="-ml-1 flex min-h-[44px] min-w-[44px] items-center justify-center"
-                    aria-label="Go back"
+                    aria-label={t('back')}
                   >
                     <ChevronLeft size={24} className="text-foreground" />
                   </button>

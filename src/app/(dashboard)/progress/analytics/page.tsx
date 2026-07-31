@@ -24,8 +24,10 @@ import { analyzeProgressiveOverload } from '@/lib/progressive-overload';
 import { VolumeHeatmap } from '@/components/progress/volume-heatmap';
 import { ConsistencyCalendar } from '@/components/progress/consistency-calendar';
 import { exportProgressReport } from '@/components/progress/export-pdf';
+import { useTranslations } from 'next-intl';
 
 export default function AnalyticsPage() {
+  const t = useTranslations();
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const analysis = useMemo(() => analyzeProgressiveOverload(sessions), [sessions]);
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null);
@@ -73,12 +75,14 @@ export default function AnalyticsPage() {
   if (!hasData) {
     return (
       <>
-        <h1 className="text-foreground text-2xl font-bold">Analytics Dashboard</h1>
-        <p className="text-muted-foreground mt-1 text-sm">Smart analysis, heatmaps & consistency</p>
+        <h1 className="text-foreground text-2xl font-bold">{t('progress.analytics_dashboard')}</h1>
+        <p className="text-muted-foreground mt-1 text-sm">
+          {t('progress.analytics_empty_subtitle')}
+        </p>
         <div className="mt-12 flex flex-col items-center gap-4">
           <BarChart3 size={48} className="text-muted-foreground/20" />
           <p className="text-muted-foreground max-w-xs text-center text-sm">
-            Complete a workout to see analytics.
+            {t('progress.analytics_empty')}
           </p>
         </div>
       </>
@@ -89,22 +93,26 @@ export default function AnalyticsPage() {
     <div id="analytics-content">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Analytics Dashboard</h1>
+          <h1 className="text-foreground text-2xl font-bold">
+            {t('progress.analytics_dashboard')}
+          </h1>
           <p className="text-muted-foreground mt-0.5 text-xs">
-            {analysis.totalSessions} sessions · {analysis.totalVolume.toLocaleString()} kg total
-            volume
+            {t('progress.analytics_summary', {
+              sessions: analysis.totalSessions,
+              volume: analysis.totalVolume.toLocaleString(),
+            })}
           </p>
         </div>
         <button
           onClick={handleExport}
           className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Download className="size-4" /> Export PDF
+          <Download className="size-4" /> {t('common.export')} PDF
         </button>
       </div>
 
       {/* Weekly Volume Chart */}
-      <Section title="Weekly Volume" icon={BarChart3} delay={0.04}>
+      <Section title={t('progress.weekly_volume')} icon={BarChart3} delay={0.04}>
         {analysis.weeklyVolumeHistory.length > 0 ? (
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
@@ -147,23 +155,25 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
           </div>
         ) : (
-          <p className="text-muted-foreground py-8 text-center text-xs">No volume data yet</p>
+          <p className="text-muted-foreground py-8 text-center text-xs">
+            {t('progress.no_volume_data')}
+          </p>
         )}
       </Section>
 
       {/* Volume Heatmap */}
-      <Section title="Volume Heatmap (90 days)" icon={CalendarDays} delay={0.08}>
+      <Section title={t('progress.volume_heatmap_90d')} icon={CalendarDays} delay={0.08}>
         <VolumeHeatmap data={heatmapData} startDate={startDate} endDate={endDate} />
       </Section>
 
       {/* Consistency Calendar */}
-      <Section title="Consistency Calendar" icon={CalendarDays} delay={0.1}>
+      <Section title={t('progress.consistency_calendar')} icon={CalendarDays} delay={0.1}>
         <ConsistencyCalendar dates={workoutDates} year={calendarYear} month={calendarMonth} />
       </Section>
 
       {/* Next Session Recommendations */}
       {analysis.nextSession.length > 0 && (
-        <Section title="Next Session Recommendations" icon={Target} delay={0.12}>
+        <Section title={t('progress.next_session_recommendations')} icon={Target} delay={0.12}>
           <div className="space-y-2">
             {analysis.nextSession.map((rec, i) => (
               <motion.div
@@ -179,8 +189,8 @@ export default function AnalyticsPage() {
                     <p className="text-foreground text-sm font-medium">{rec.exerciseName}</p>
                     <p className="text-muted-foreground mt-0.5 text-[10px]">
                       {rec.suggestedWeight > 0
-                        ? `${rec.suggestedWeight}kg × ${rec.suggestedReps} reps`
-                        : `${rec.suggestedReps} reps`}
+                        ? `${rec.suggestedWeight}kg × ${rec.suggestedReps} ${t('workouts.reps')}`
+                        : `${rec.suggestedReps} ${t('workouts.reps')}`}
                       {rec.suggestedRpe ? ` @ RPE ${rec.suggestedRpe}` : ''}
                     </p>
                   </div>
@@ -195,7 +205,7 @@ export default function AnalyticsPage() {
       )}
 
       {/* Exercise Trends */}
-      <Section title="Exercise Trends" icon={Activity} delay={0.16}>
+      <Section title={t('progress.exercise_trends')} icon={Activity} delay={0.16}>
         <div className="space-y-1">
           {analysis.exercises.slice(0, 10).map((ex, i) => {
             const isExpanded = expandedExercise === ex.exerciseName;
@@ -223,7 +233,8 @@ export default function AnalyticsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="text-foreground text-sm font-medium">{ex.exerciseName}</p>
                     <p className="text-muted-foreground text-[10px]">
-                      {ex.sessions.length} sessions · {last ? `${last.maxWeight}kg max` : 'no data'}
+                      {t('progress.sessions_count', { count: ex.sessions.length })} ·{' '}
+                      {last ? `${last.maxWeight}kg max` : t('common.no_data')}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">
@@ -254,13 +265,13 @@ export default function AnalyticsPage() {
                       <div className="flex items-center gap-2 rounded-lg bg-amber-500/10 px-2.5 py-1.5">
                         <AlertTriangle className="size-4 shrink-0 text-amber-500" />
                         <p className="text-[10px] text-amber-600">
-                          Plateau detected — no progress in {ex.plateauSessions} sessions.
+                          {t('progress.plateau_message', { count: ex.plateauSessions })}
                         </p>
                       </div>
                     )}
                     <div className="pt-1">
                       <p className="text-muted-foreground/60 mb-1.5 text-[10px] font-medium tracking-wider uppercase">
-                        Session History
+                        {t('progress.session_history')}
                       </p>
                       <div className="space-y-1">
                         {ex.sessions
@@ -275,9 +286,11 @@ export default function AnalyticsPage() {
                                 {new Date(s.date).toLocaleDateString()}
                               </span>
                               <span className="text-foreground font-medium">{s.maxWeight}kg</span>
-                              <span>×{s.totalReps} reps</span>
                               <span>
-                                {s.setsCompleted}/{s.totalSets} sets
+                                ×{s.totalReps} {t('workouts.reps')}
+                              </span>
+                              <span>
+                                {s.setsCompleted}/{s.totalSets} {t('workouts.sets')}
                               </span>
                               {s.avgRpe != null && <span>@{s.avgRpe.toFixed(1)} RPE</span>}
                             </div>
@@ -294,7 +307,7 @@ export default function AnalyticsPage() {
 
       {/* Muscle Group Volume */}
       {analysis.muscleVolumes.length > 0 && (
-        <Section title="Muscle Volume (This Week)" icon={Scale} delay={0.2}>
+        <Section title={t('progress.muscle_volume_week')} icon={Scale} delay={0.2}>
           <div className="space-y-3">
             {analysis.muscleVolumes.slice(0, 8).map((mv, i) => {
               const maxVol = Math.max(...analysis.muscleVolumes.map((m) => m.currentWeekVolume), 1);
@@ -331,7 +344,7 @@ export default function AnalyticsPage() {
 
       {/* Plateaus */}
       {analysis.plateaus.length > 0 && (
-        <Section title="Plateaus Detected" icon={AlertTriangle} delay={0.24}>
+        <Section title={t('progress.plateaus_detected')} icon={AlertTriangle} delay={0.24}>
           <div className="space-y-2">
             {analysis.plateaus.map((p, i) => (
               <motion.div
@@ -345,7 +358,8 @@ export default function AnalyticsPage() {
                 <div>
                   <p className="text-foreground text-sm font-medium">{p.exerciseName}</p>
                   <p className="text-muted-foreground text-[10px]">
-                    {p.plateauSessions} sessions without progress · {p.recommendation.reason}
+                    {t('progress.plateau_sessions', { count: p.plateauSessions })} ·{' '}
+                    {p.recommendation.reason}
                   </p>
                 </div>
               </motion.div>
@@ -356,15 +370,15 @@ export default function AnalyticsPage() {
 
       {/* Monthly Trends */}
       {analysis.monthlyTrends.length > 0 && (
-        <Section title="Monthly Strength Trends" icon={Trophy} delay={0.28}>
+        <Section title={t('progress.monthly_strength_trends')} icon={Trophy} delay={0.28}>
           <div className="scrollbar-none overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-                  <th className="pr-3 pb-2 font-medium">Exercise</th>
-                  <th className="pr-3 pb-2 font-medium">Month</th>
-                  <th className="pr-3 pb-2 font-medium">Avg Weight</th>
-                  <th className="pb-2 font-medium">Sessions</th>
+                  <th className="pr-3 pb-2 font-medium">{t('progress.table_exercise')}</th>
+                  <th className="pr-3 pb-2 font-medium">{t('progress.table_month')}</th>
+                  <th className="pr-3 pb-2 font-medium">{t('progress.table_avg_weight')}</th>
+                  <th className="pb-2 font-medium">{t('progress.table_sessions')}</th>
                 </tr>
               </thead>
               <tbody>

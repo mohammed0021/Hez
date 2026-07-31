@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Trash2, Plus, AlertTriangle } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useSupplementStore, type Supplement } from '@/stores/supplement-store';
 
 const COLOR_OPTIONS = [
@@ -21,6 +22,8 @@ const COLOR_OPTIONS = [
 ];
 
 export default function ManageSupplementsPage() {
+  const t = useTranslations('supplements');
+  const tc = useTranslations('common');
   const supplements = useSupplementStore((s) => s.supplements);
   const addSupplement = useSupplementStore((s) => s.addSupplement);
   const updateSupplement = useSupplementStore((s) => s.updateSupplement);
@@ -77,8 +80,10 @@ export default function ManageSupplementsPage() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Manage Supplements</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">{supplements.length} supplements</p>
+          <h1 className="text-foreground text-2xl font-bold">{t('manage')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">
+            {t('count', { count: supplements.length })}
+          </p>
         </div>
         <button
           onClick={() => {
@@ -95,7 +100,7 @@ export default function ManageSupplementsPage() {
           }}
           className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus size={14} /> Add
+          <Plus size={14} /> {tc('add')}
         </button>
       </div>
 
@@ -103,7 +108,7 @@ export default function ManageSupplementsPage() {
       {needsRefill.length > 0 && (
         <div className="mt-4 space-y-1">
           <p className="text-muted-foreground/60 mb-1 text-[10px] font-medium tracking-wider uppercase">
-            Needs Refill
+            {t('needs_refill')}
           </p>
           {needsRefill.map((s) => (
             <div
@@ -112,12 +117,12 @@ export default function ManageSupplementsPage() {
             >
               <AlertTriangle size={12} />
               <span className="flex-1">{s.name}</span>
-              <span>{s.stock} left</span>
+              <span>{t('stock_left', { count: s.stock })}</span>
               <button
                 onClick={() => updateSupplement(s.id, { stock: s.stock + s.refillThreshold * 2 })}
                 className="min-h-[44px] rounded-lg bg-amber-500/20 px-2 py-0.5 text-[9px] font-medium text-amber-700"
               >
-                Restock
+                {t('restock')}
               </button>
             </div>
           ))}
@@ -136,7 +141,7 @@ export default function ManageSupplementsPage() {
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-            placeholder="Supplement name"
+            placeholder={t('name_placeholder')}
           />
           <div className="grid grid-cols-2 gap-3">
             <input
@@ -144,20 +149,20 @@ export default function ManageSupplementsPage() {
               value={form.dosage}
               onChange={(e) => setForm({ ...form, dosage: e.target.value })}
               className="border-border/30 bg-background text-foreground focus:border-primary/40 rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-              placeholder="Dosage (e.g. 5g)"
+              placeholder={t('dosage_placeholder')}
             />
             <input
               type="text"
               value={form.time}
               onChange={(e) => setForm({ ...form, time: e.target.value })}
               className="border-border/30 bg-background text-foreground focus:border-primary/40 rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-              placeholder="Time (e.g. Morning)"
+              placeholder={t('time_placeholder')}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-muted-foreground mb-0.5 block text-[9px] font-medium">
-                Stock count
+                {t('stock_count')}
               </label>
               <input
                 type="number"
@@ -168,7 +173,7 @@ export default function ManageSupplementsPage() {
             </div>
             <div>
               <label className="text-muted-foreground mb-0.5 block text-[9px] font-medium">
-                Refill at
+                {t('refill_at')}
               </label>
               <input
                 type="number"
@@ -181,7 +186,9 @@ export default function ManageSupplementsPage() {
             </div>
           </div>
           <div>
-            <label className="text-muted-foreground mb-1 block text-[9px] font-medium">Color</label>
+            <label className="text-muted-foreground mb-1 block text-[9px] font-medium">
+              {t('color')}
+            </label>
             <div className="flex gap-1.5">
               {COLOR_OPTIONS.map((c) => (
                 <button
@@ -200,13 +207,13 @@ export default function ManageSupplementsPage() {
               }}
               className="bg-muted text-foreground min-h-[44px] flex-1 rounded-xl py-2.5 text-xs font-medium"
             >
-              Cancel
+              {tc('cancel')}
             </button>
             <button
               onClick={handleSave}
               className="bg-primary text-primary-foreground min-h-[44px] flex-1 rounded-xl py-2.5 text-xs font-medium"
             >
-              {editingId ? 'Update' : 'Add Supplement'}
+              {editingId ? tc('update') : t('add_supplement')}
             </button>
           </div>
         </motion.div>
@@ -215,7 +222,7 @@ export default function ManageSupplementsPage() {
       {/* Default supplements */}
       <div className="mt-6">
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Default
+          {t('default')}
         </p>
         <div className="space-y-1">
           {defaults.map((s) => (
@@ -228,7 +235,7 @@ export default function ManageSupplementsPage() {
       {custom.length > 0 && (
         <div className="mt-5">
           <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-            Custom
+            {t('custom')}
           </p>
           <div className="space-y-1">
             {custom.map((s) => (
@@ -257,6 +264,7 @@ function SupplementManageRow({
   onEdit: () => void;
   onDelete?: () => void;
 }) {
+  const t = useTranslations('supplements');
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
@@ -268,7 +276,7 @@ function SupplementManageRow({
       <div className="min-w-0 flex-1">
         <p className="text-foreground text-sm font-semibold">{s.name}</p>
         <p className="text-muted-foreground text-[9px]">
-          {s.dosage} · {s.time} · Stock: {s.stock}
+          {s.dosage} · {s.time} · {t('stock_label', { count: s.stock })}
         </p>
       </div>
       {!s.isDefault && onDelete && (

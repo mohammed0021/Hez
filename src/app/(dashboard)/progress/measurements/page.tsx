@@ -9,9 +9,26 @@ import {
   MEASUREMENT_FIELDS,
   type MeasurementEntry,
 } from '@/stores/measurement-store';
+import { useTranslations } from 'next-intl';
 
 export default function MeasurementsPage() {
+  const t = useTranslations();
   const { entries, addEntry, deleteEntry } = useMeasurementStore();
+
+  const measurementLabel = (key: string) =>
+    ({
+      chest: t('progress.measurement_chest'),
+      waist: t('progress.measurement_waist'),
+      hips: t('progress.measurement_hips'),
+      leftArm: t('progress.measurement_left_arm'),
+      rightArm: t('progress.measurement_right_arm'),
+      leftThigh: t('progress.measurement_left_thigh'),
+      rightThigh: t('progress.measurement_right_thigh'),
+      leftCalf: t('progress.measurement_left_calf'),
+      rightCalf: t('progress.measurement_right_calf'),
+      shoulders: t('progress.measurement_shoulders'),
+      neck: t('progress.measurement_neck'),
+    })[key] ?? key;
   const [showForm, setShowForm] = useState(false);
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [formNotes, setFormNotes] = useState('');
@@ -52,14 +69,16 @@ export default function MeasurementsPage() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Body Measurements</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">{entries.length} entries</p>
+          <h1 className="text-foreground text-2xl font-bold">{t('progress.body_measurements')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">
+            {t('progress.entries_count', { count: entries.length })}
+          </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus className="size-4" /> Log
+          <Plus className="size-4" /> {t('progress.log')}
         </button>
       </div>
 
@@ -73,7 +92,7 @@ export default function MeasurementsPage() {
             {MEASUREMENT_FIELDS.map((f) => (
               <div key={f.key}>
                 <label className="text-muted-foreground/60 mb-0.5 block text-[10px] font-medium tracking-wider uppercase">
-                  {f.label} (cm)
+                  {measurementLabel(f.key)} (cm)
                 </label>
                 <input
                   type="number"
@@ -91,20 +110,20 @@ export default function MeasurementsPage() {
             value={formNotes}
             onChange={(e) => setFormNotes(e.target.value)}
             className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-            placeholder="Notes (optional)"
+            placeholder={t('progress.notes_optional')}
           />
           <div className="flex gap-2">
             <button
               onClick={() => setShowForm(false)}
               className="bg-muted text-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleAdd}
               className="bg-primary text-primary-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
-              Save
+              {t('common.save')}
             </button>
           </div>
         </motion.div>
@@ -112,7 +131,7 @@ export default function MeasurementsPage() {
 
       {entries.length === 0 && (
         <div className="mt-12 text-center">
-          <p className="text-muted-foreground text-sm">No measurements yet. Log your first one!</p>
+          <p className="text-muted-foreground text-sm">{t('progress.no_measurements')}</p>
         </div>
       )}
 
@@ -134,7 +153,9 @@ export default function MeasurementsPage() {
             return (
               <div key={field.key} className="border-border/50 bg-card rounded-2xl border p-4">
                 <div className="mb-2 flex items-center justify-between">
-                  <span className="text-foreground text-sm font-medium">{field.label}</span>
+                  <span className="text-foreground text-sm font-medium">
+                    {measurementLabel(field.key)}
+                  </span>
                   <div className="flex items-center gap-2">
                     <span className="text-foreground text-sm font-bold">
                       {latest?.value ?? '--'} cm
@@ -192,8 +213,12 @@ export default function MeasurementsPage() {
                   </div>
                 )}
                 <div className="text-muted-foreground mt-1 flex gap-1 text-[8px]">
-                  <span>Latest: {latest ? new Date(latest.date).toLocaleDateString() : '--'}</span>
-                  <span>· {data.length} entries</span>
+                  <span>
+                    {t('progress.latest', {
+                      date: latest ? new Date(latest.date).toLocaleDateString() : '--',
+                    })}
+                  </span>
+                  <span>· {t('progress.entries_count', { count: data.length })}</span>
                 </div>
               </div>
             );
@@ -204,7 +229,7 @@ export default function MeasurementsPage() {
       {/* History */}
       <div className="mt-6 space-y-1">
         <p className="text-muted-foreground mb-2 text-[10px] font-semibold tracking-wider uppercase">
-          Measurement History
+          {t('progress.measurement_history')}
         </p>
         {entries.map((e, i) => {
           const filled = MEASUREMENT_FIELDS.filter((f) => e[f.key] != null).length;
@@ -221,7 +246,9 @@ export default function MeasurementsPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-xs">{new Date(e.date).toLocaleDateString()}</p>
-                <p className="text-muted-foreground text-[10px]">{filled} measurements logged</p>
+                <p className="text-muted-foreground text-[10px]">
+                  {t('progress.measurements_logged', { count: filled })}
+                </p>
               </div>
               <button
                 onClick={() => deleteEntry(e.id)}

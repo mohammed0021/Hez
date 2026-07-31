@@ -3,6 +3,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/stores/auth-store';
 import { useProfileStore } from '@/stores/profile-store';
@@ -38,14 +39,6 @@ const WORKOUT_DURATIONS = [30, 45, 60, 90];
 const WORKOUT_DAYS = [1, 2, 3, 4, 5, 6, 7];
 
 const STEP_ICONS = [User, Ruler, Dumbbell, Activity, ClipboardList];
-
-const STEP_LABELS = [
-  'Personal Info',
-  'Body Metrics',
-  'Fitness Profile',
-  'Activity & Preferences',
-  'Summary',
-];
 
 function calculateAge(birthday: string): number {
   const birth = new Date(birthday);
@@ -104,8 +97,29 @@ const slideVariants = {
   exit: (dir: number) => ({ x: dir > 0 ? -400 : 400, opacity: 0 }),
 };
 
+const ACTIVITY_LABEL_KEYS: Record<ActivityLevel, string> = {
+  sedentary: 'sedentary',
+  light: 'lightly_active',
+  moderate: 'moderately_active',
+  active: 'very_active',
+  very_active: 'extremely_active',
+};
+
 export default function OnboardingPage() {
+  const t = useTranslations('onboarding');
+  const tc = useTranslations('common');
+  const ta = useTranslations('auth');
+  const tp = useTranslations('profile');
+  const ts = useTranslations('settings');
   const router = useRouter();
+
+  const stepLabels = [
+    t('step_personal_info'),
+    t('step_body_metrics'),
+    t('step_fitness_profile'),
+    t('step_activity_preferences'),
+    t('step_summary'),
+  ];
 
   const authStore = useAuthStore();
   const profileStore = useProfileStore();
@@ -266,22 +280,12 @@ export default function OnboardingPage() {
                 })()}
               </div>
               <div>
-                <h2 className="text-foreground text-xl font-bold">{STEP_LABELS[step]}</h2>
-                {step === 0 && (
-                  <p className="text-muted-foreground text-sm">Tell us about yourself</p>
-                )}
-                {step === 1 && (
-                  <p className="text-muted-foreground text-sm">Your body measurements</p>
-                )}
-                {step === 2 && (
-                  <p className="text-muted-foreground text-sm">Define your fitness path</p>
-                )}
-                {step === 3 && (
-                  <p className="text-muted-foreground text-sm">Customize your experience</p>
-                )}
-                {step === 4 && (
-                  <p className="text-muted-foreground text-sm">Review before starting</p>
-                )}
+                <h2 className="text-foreground text-xl font-bold">{stepLabels[step]}</h2>
+                {step === 0 && <p className="text-muted-foreground text-sm">{t('step0_hint')}</p>}
+                {step === 1 && <p className="text-muted-foreground text-sm">{t('step1_hint')}</p>}
+                {step === 2 && <p className="text-muted-foreground text-sm">{t('step2_hint')}</p>}
+                {step === 3 && <p className="text-muted-foreground text-sm">{t('step3_hint')}</p>}
+                {step === 4 && <p className="text-muted-foreground text-sm">{t('step4_hint')}</p>}
               </div>
             </div>
 
@@ -290,18 +294,18 @@ export default function OnboardingPage() {
               {step === 0 && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Full Name</label>
+                    <label className="text-foreground text-sm font-medium">{ta('full_name')}</label>
                     <input
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Enter your full name"
+                      placeholder={ta('full_name_placeholder')}
                       className="border-border bg-card text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:ring-primary/20 w-full rounded-xl border-2 px-4 py-3 text-base transition-all outline-none focus:ring-2"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Gender</label>
+                    <label className="text-foreground text-sm font-medium">{tp('gender')}</label>
                     <div className="flex gap-2">
                       {GENDER_OPTIONS.map((opt) => (
                         <button
@@ -314,14 +318,16 @@ export default function OnboardingPage() {
                               : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                           }`}
                         >
-                          {opt.label}
+                          {tp(opt.value)}
                         </button>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Date of Birth</label>
+                    <label className="text-foreground text-sm font-medium">
+                      {t('date_of_birth')}
+                    </label>
                     <input
                       type="date"
                       value={birthday}
@@ -330,10 +336,7 @@ export default function OnboardingPage() {
                       className="border-border bg-card text-foreground focus:border-primary focus:ring-primary/20 w-full rounded-xl border-2 px-4 py-3 text-base transition-all outline-none focus:ring-2"
                     />
                     {birthday && age > 0 && (
-                      <p className="text-muted-foreground text-sm">
-                        You are <span className="text-foreground font-semibold">{age}</span> years
-                        old
-                      </p>
+                      <p className="text-muted-foreground text-sm">{t('age_display', { age })}</p>
                     )}
                   </div>
                 </div>
@@ -343,33 +346,33 @@ export default function OnboardingPage() {
               {step === 1 && (
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <label className="text-foreground text-sm font-medium">Height</label>
+                    <label className="text-foreground text-sm font-medium">{tp('height')}</label>
                     <div className="flex justify-center">
                       <NumberStepper
                         value={heightCm}
                         onChange={setHeightCm}
                         min={50}
                         max={300}
-                        suffix="cm"
+                        suffix={tc('units_cm')}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-foreground text-sm font-medium">Weight</label>
+                    <label className="text-foreground text-sm font-medium">{tp('weight')}</label>
                     <div className="flex justify-center">
                       <NumberStepper
                         value={weightKg}
                         onChange={setWeightKg}
                         min={10}
                         max={500}
-                        suffix="kg"
+                        suffix={tc('units_kg')}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Units</label>
+                    <label className="text-foreground text-sm font-medium">{ts('units')}</label>
                     <div className="flex gap-2">
                       <button
                         type="button"
@@ -380,7 +383,7 @@ export default function OnboardingPage() {
                             : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                         }`}
                       >
-                        Metric (kg/cm)
+                        {t('units_metric')}
                       </button>
                       <button
                         type="button"
@@ -391,7 +394,7 @@ export default function OnboardingPage() {
                             : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                         }`}
                       >
-                        Imperial (lbs/ft)
+                        {t('units_imperial')}
                       </button>
                     </div>
                   </div>
@@ -402,7 +405,9 @@ export default function OnboardingPage() {
               {step === 2 && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Fitness Goal</label>
+                    <label className="text-foreground text-sm font-medium">
+                      {tp('fitness_goal')}
+                    </label>
                     <div className="flex flex-wrap gap-2">
                       {FITNESS_GOALS.map((opt) => (
                         <button
@@ -415,14 +420,16 @@ export default function OnboardingPage() {
                               : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                           }`}
                         >
-                          {opt.label}
+                          {tp(opt.value)}
                         </button>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Experience Level</label>
+                    <label className="text-foreground text-sm font-medium">
+                      {tp('experience_level')}
+                    </label>
                     <div className="flex gap-2">
                       {EXPERIENCE_LEVELS.map((opt) => (
                         <button
@@ -435,7 +442,7 @@ export default function OnboardingPage() {
                               : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                           }`}
                         >
-                          {opt.label}
+                          {tp(opt.value)}
                         </button>
                       ))}
                     </div>
@@ -447,7 +454,9 @@ export default function OnboardingPage() {
               {step === 3 && (
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Activity Level</label>
+                    <label className="text-foreground text-sm font-medium">
+                      {tp('activity_level')}
+                    </label>
                     <div className="flex flex-wrap gap-2">
                       {ACTIVITY_LEVELS.map((opt) => (
                         <button
@@ -460,7 +469,7 @@ export default function OnboardingPage() {
                               : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                           }`}
                         >
-                          {opt.label}
+                          {tp(ACTIVITY_LABEL_KEYS[opt.value])}
                         </button>
                       ))}
                     </div>
@@ -468,7 +477,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-2">
                     <label className="text-foreground text-sm font-medium">
-                      Workout Days Per Week:{' '}
+                      {t('workout_days_per_week')}:{' '}
                       <span className="text-primary font-bold">{workoutDays}</span>
                     </label>
                     <div className="flex gap-1.5">
@@ -491,7 +500,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-2">
                     <label className="text-foreground text-sm font-medium">
-                      Preferred Workout Duration
+                      {t('preferred_workout_duration')}
                     </label>
                     <div className="flex gap-2">
                       {WORKOUT_DURATIONS.map((d) => (
@@ -505,7 +514,7 @@ export default function OnboardingPage() {
                               : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                           }`}
                         >
-                          {d} min
+                          {d} {tc('minute_short')}
                         </button>
                       ))}
                     </div>
@@ -513,7 +522,7 @@ export default function OnboardingPage() {
 
                   <div className="space-y-2">
                     <label className="text-foreground text-sm font-medium">
-                      Preferred Language
+                      {t('preferred_language')}
                     </label>
                     <div className="flex gap-2">
                       {LANGUAGES.map((lang) => (
@@ -534,40 +543,42 @@ export default function OnboardingPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-foreground text-sm font-medium">Theme Color</label>
+                    <label className="text-foreground text-sm font-medium">
+                      {t('theme_color')}
+                    </label>
                     <div className="flex flex-wrap gap-3">
-                      {themes.map((t) => (
+                      {themes.map((th) => (
                         <button
-                          key={t.id}
+                          key={th.id}
                           type="button"
-                          onClick={() => setThemeId(t.id)}
+                          onClick={() => setThemeId(th.id)}
                           className={`flex flex-col items-center gap-1.5 rounded-xl border-2 p-3 transition-all duration-200 ${
-                            themeId === t.id
+                            themeId === th.id
                               ? 'border-primary bg-primary/5 shadow-sm'
                               : 'border-border bg-card hover:border-muted-foreground/30'
                           }`}
                         >
                           <div
                             className={`size-8 rounded-full ${
-                              t.id === 'hez-green'
+                              th.id === 'hez-green'
                                 ? 'bg-emerald-500'
-                                : t.id === 'blossom-pink'
+                                : th.id === 'blossom-pink'
                                   ? 'bg-pink-400'
-                                  : t.id === 'ocean-blue'
+                                  : th.id === 'ocean-blue'
                                     ? 'bg-blue-500'
-                                    : t.id === 'purple'
+                                    : th.id === 'purple'
                                       ? 'bg-purple-500'
-                                      : t.id === 'orange'
+                                      : th.id === 'orange'
                                         ? 'bg-orange-500'
-                                        : t.id === 'crimson'
+                                        : th.id === 'crimson'
                                           ? 'bg-red-500'
-                                          : t.id === 'midnight'
+                                          : th.id === 'midnight'
                                             ? 'bg-gray-900'
                                             : 'border border-gray-200 bg-gray-100'
                             }`}
                           />
                           <span className="text-muted-foreground text-[10px] font-medium">
-                            {t.label}
+                            {th.label}
                           </span>
                         </button>
                       ))}
@@ -584,65 +595,79 @@ export default function OnboardingPage() {
                       <User className="text-primary size-7" />
                     </div>
                     <h3 className="text-foreground text-xl font-bold">
-                      Welcome, {fullName.split(' ')[0]}!
+                      {t('welcome_user', { name: fullName.split(' ')[0] ?? fullName })}
                     </h3>
-                    <p className="text-muted-foreground mt-1 text-sm">
-                      Here&apos;s a summary of your profile
-                    </p>
+                    <p className="text-muted-foreground mt-1 text-sm">{t('summary_hint')}</p>
                   </div>
 
                   <div className="space-y-3">
-                    <SummarySection title="Personal Info">
-                      <SummaryRow label="Name" value={fullName} />
-                      <SummaryRow label="Gender" value={gender === 'male' ? 'Male' : 'Female'} />
+                    <SummarySection title={t('step_personal_info')}>
+                      <SummaryRow label={t('name')} value={fullName} />
                       <SummaryRow
-                        label="Age"
-                        value={`${age} years (${new Date(birthday).toLocaleDateString()})`}
+                        label={tp('gender')}
+                        value={gender === 'male' ? tp('male') : tp('female')}
+                      />
+                      <SummaryRow
+                        label={t('age')}
+                        value={t('age_value', {
+                          age,
+                          date: new Date(birthday).toLocaleDateString(),
+                        })}
                       />
                     </SummarySection>
 
-                    <SummarySection title="Body Metrics">
-                      <SummaryRow label="Height" value={`${heightCm} cm`} />
-                      <SummaryRow label="Weight" value={`${weightKg} kg`} />
+                    <SummarySection title={t('step_body_metrics')}>
+                      <SummaryRow label={tp('height')} value={`${heightCm} ${tc('units_cm')}`} />
+                      <SummaryRow label={tp('weight')} value={`${weightKg} ${tc('units_kg')}`} />
                       <SummaryRow
-                        label="Units"
-                        value={unitSystem === 'metric' ? 'Metric' : 'Imperial'}
+                        label={ts('units')}
+                        value={unitSystem === 'metric' ? t('units_metric') : t('units_imperial')}
                       />
                     </SummarySection>
 
-                    <SummarySection title="Fitness Profile">
+                    <SummarySection title={t('step_fitness_profile')}>
                       <SummaryRow
-                        label="Goal"
+                        label={t('goal')}
                         value={
-                          FITNESS_GOALS.find((g) => g.value === fitnessGoal)?.label ?? fitnessGoal
+                          FITNESS_GOALS.find((g) => g.value === fitnessGoal)
+                            ? tp(fitnessGoal)
+                            : fitnessGoal
                         }
                       />
                       <SummaryRow
-                        label="Experience"
+                        label={t('experience')}
                         value={
-                          EXPERIENCE_LEVELS.find((e) => e.value === experienceLevel)?.label ??
-                          experienceLevel
+                          EXPERIENCE_LEVELS.find((e) => e.value === experienceLevel)
+                            ? tp(experienceLevel)
+                            : experienceLevel
                         }
                       />
                     </SummarySection>
 
-                    <SummarySection title="Activity & Preferences">
+                    <SummarySection title={t('step_activity_preferences')}>
                       <SummaryRow
-                        label="Activity Level"
+                        label={tp('activity_level')}
                         value={
-                          ACTIVITY_LEVELS.find((a) => a.value === activityLevel)?.label ??
-                          activityLevel
+                          ACTIVITY_LEVELS.find((a) => a.value === activityLevel)
+                            ? tp(ACTIVITY_LABEL_KEYS[activityLevel])
+                            : activityLevel
                         }
                       />
-                      <SummaryRow label="Workout Days" value={`${workoutDays} days/week`} />
-                      <SummaryRow label="Duration" value={`${workoutDuration} min`} />
                       <SummaryRow
-                        label="Language"
+                        label={t('workout_days')}
+                        value={t('workout_days_value', { days: workoutDays })}
+                      />
+                      <SummaryRow
+                        label={t('duration')}
+                        value={`${workoutDuration} ${tc('minute_short')}`}
+                      />
+                      <SummaryRow
+                        label={ts('language')}
                         value={LANGUAGES.find((l) => l.value === language)?.label ?? language}
                       />
                       <SummaryRow
-                        label="Theme"
-                        value={themes.find((t) => t.id === themeId)?.label ?? themeId}
+                        label={ts('theme')}
+                        value={themes.find((th) => th.id === themeId)?.label ?? themeId}
                       />
                     </SummarySection>
                   </div>
@@ -656,12 +681,12 @@ export default function OnboardingPage() {
       <div className="space-y-2 px-2 pt-4">
         {step < 4 ? (
           <Button size="lg" className="w-full" onClick={goNext} disabled={!isStepValid}>
-            Continue
+            {tc('continue')}
             <ChevronRight className="ml-1 size-4" />
           </Button>
         ) : (
           <Button size="lg" className="w-full" onClick={handleComplete} disabled={submitting}>
-            {submitting ? 'Setting up...' : 'Complete Setup'}
+            {submitting ? t('setting_up') : t('complete_setup')}
           </Button>
         )}
         {step > 0 && (
@@ -673,7 +698,7 @@ export default function OnboardingPage() {
             disabled={submitting}
           >
             <ChevronLeft className="mr-1 size-4" />
-            Back
+            {tc('back')}
           </Button>
         )}
       </div>

@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import type { AchievementDef } from '@/lib/gamification-types';
 import type { UnlockedAchievement } from '@/stores/gamification-store';
+import { useTranslations } from 'next-intl';
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Dumbbell,
@@ -63,6 +64,7 @@ export function AchievementCard({
   unlocked?: UnlockedAchievement;
   index: number;
 }) {
+  const t = useTranslations('gamification');
   const Icon = ICON_MAP[def.icon] || Sparkles;
   const isUnlocked = !!unlocked;
 
@@ -97,11 +99,13 @@ export function AchievementCard({
           <p className="text-muted-foreground mt-0.5 text-[10px]">{def.description}</p>
           {isUnlocked && unlocked?.unlockedAt && (
             <p className="mt-1 text-[9px] text-amber-600/60">
-              Unlocked {new Date(unlocked.unlockedAt).toLocaleDateString()}
+              {t('unlocked')} {new Date(unlocked.unlockedAt).toLocaleDateString()}
             </p>
           )}
           {!isUnlocked && (
-            <p className="text-muted-foreground/50 mt-1 text-[9px]">+{def.xpReward} XP</p>
+            <p className="text-muted-foreground/50 mt-1 text-[9px]">
+              +{def.xpReward} {t('xp')}
+            </p>
           )}
         </div>
       </div>

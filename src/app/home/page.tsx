@@ -2,6 +2,7 @@
 
 import { useRequireAuth } from '@/hooks/use-auth';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { MobileLayout } from '@/components/mobile-layout';
 import { motion } from 'framer-motion';
 import { Dumbbell, Activity, TrendingUp, Flame } from 'lucide-react';
@@ -11,6 +12,9 @@ import { useGamificationStore } from '@/stores/gamification-store';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 
 export default function HomePage() {
+  const t = useTranslations('dashboard');
+  const tc = useTranslations('common');
+  const ta = useTranslations('auth');
   const router = useRouter();
   const { user, isLoading } = useRequireAuth();
   const totalWorkouts = useGamificationStore((s) => s.getTotalWorkouts());
@@ -50,12 +54,27 @@ export default function HomePage() {
   }
 
   const stats = [
-    { label: 'Workouts', value: totalWorkouts.toString(), icon: Dumbbell, color: 'text-primary' },
-    { label: 'Minutes', value: totalMinutes.toString(), icon: Activity, color: 'text-blue-500' },
-    { label: 'Streak', value: `${currentStreak} days`, icon: Flame, color: 'text-orange-500' },
     {
-      label: 'Volume',
-      value: `${totalVolume.toLocaleString()} kg`,
+      label: t('stat_workouts'),
+      value: totalWorkouts.toString(),
+      icon: Dumbbell,
+      color: 'text-primary',
+    },
+    {
+      label: t('stat_minutes'),
+      value: totalMinutes.toString(),
+      icon: Activity,
+      color: 'text-blue-500',
+    },
+    {
+      label: t('stat_streak'),
+      value: t('stat_streak_value', { count: currentStreak }),
+      icon: Flame,
+      color: 'text-orange-500',
+    },
+    {
+      label: t('stat_volume'),
+      value: `${totalVolume.toLocaleString()} ${tc('units_kg')}`,
       icon: TrendingUp,
       color: 'text-green-500',
     },
@@ -66,10 +85,12 @@ export default function HomePage() {
       <div className="pt-4">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
           <h2 className="text-foreground text-2xl font-bold">
-            Welcome back
-            {user.user_metadata?.name ? `, ${user.user_metadata.name.split(' ')[0]}` : ''}
+            {ta('login_title')}
+            {user.user_metadata?.name
+              ? t('greeting_suffix', { name: user.user_metadata.name.split(' ')[0] })
+              : ''}
           </h2>
-          <p className="text-muted-foreground mt-1 text-sm">Let&apos;s crush your goals today</p>
+          <p className="text-muted-foreground mt-1 text-sm">{t('motivation')}</p>
         </motion.div>
 
         <div className="grid grid-cols-2 gap-3">
@@ -99,15 +120,15 @@ export default function HomePage() {
           transition={{ delay: 0.4 }}
           className="mt-6"
         >
-          <h3 className="text-foreground mb-3 text-sm font-semibold">Quick Start</h3>
+          <h3 className="text-foreground mb-3 text-sm font-semibold">{t('quick_start')}</h3>
           <button
             onClick={() => router.push('/workouts')}
             className="bg-primary text-primary-foreground flex min-h-[44px] w-full items-center gap-4 rounded-2xl p-4"
           >
             <Dumbbell size={24} />
             <div className="text-left">
-              <p className="font-semibold">Start a Workout</p>
-              <p className="text-sm opacity-80">Begin a new training session</p>
+              <p className="font-semibold">{t('start_workout')}</p>
+              <p className="text-sm opacity-80">{t('begin_session')}</p>
             </div>
           </button>
         </motion.div>

@@ -13,8 +13,10 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
+import { useTranslations } from 'next-intl';
 
 export default function StrengthTrendsPage() {
+  const t = useTranslations();
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const [selectedExercise, setSelectedExercise] = useState<string | null>(null);
 
@@ -68,9 +70,9 @@ export default function StrengthTrendsPage() {
   return (
     <>
       <div>
-        <h1 className="text-foreground text-2xl font-bold">Strength Trends</h1>
+        <h1 className="text-foreground text-2xl font-bold">{t('progress.strength_trends')}</h1>
         <p className="text-muted-foreground mt-0.5 text-sm">
-          {exerciseData.length} exercises tracked
+          {t('progress.exercises_tracked', { count: exerciseData.length })}
         </p>
       </div>
 
@@ -78,7 +80,7 @@ export default function StrengthTrendsPage() {
         <div className="mt-12 flex flex-col items-center gap-4">
           <Dumbbell size={48} className="text-muted-foreground/20" />
           <p className="text-muted-foreground max-w-xs text-center text-sm">
-            Complete workouts to see your strength trends.
+            {t('progress.strength_empty')}
           </p>
         </div>
       )}
@@ -96,7 +98,7 @@ export default function StrengthTrendsPage() {
               onClick={() => setSelectedExercise(null)}
               className="text-muted-foreground hover:text-foreground text-[10px]"
             >
-              Close
+              {t('common.close')}
             </button>
           </div>
           {selected.data.length > 1 && (
@@ -158,8 +160,8 @@ export default function StrengthTrendsPage() {
             </div>
           )}
           <div className="text-muted-foreground mt-2 flex gap-3 text-[10px]">
-            <span>Start: {selected.first.maxWeight}kg</span>
-            <span>Current: {selected.latest.maxWeight}kg</span>
+            <span>{t('progress.start_label', { value: selected.first.maxWeight })}</span>
+            <span>{t('progress.current_value', { value: selected.latest.maxWeight })}</span>
             <span className={selected.change > 0 ? 'text-green-500' : 'text-red-500'}>
               {selected.change > 0 ? '+' : ''}
               {selected.change.toFixed(1)}%
@@ -193,7 +195,8 @@ export default function StrengthTrendsPage() {
               <div className="min-w-0 flex-1">
                 <p className="text-foreground text-sm font-medium">{ex.name}</p>
                 <p className="text-muted-foreground text-[10px]">
-                  {ex.first.maxWeight}kg → {ex.latest.maxWeight}kg · {ex.data.length} sessions
+                  {ex.first.maxWeight}kg → {ex.latest.maxWeight}kg ·{' '}
+                  {t('progress.sessions_count', { count: ex.data.length })}
                 </p>
               </div>
               <span

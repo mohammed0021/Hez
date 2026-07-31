@@ -1,8 +1,18 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
-export function ConsistencyCalendar({ dates, year, month }: { dates: string[]; year: number; month: number }) {
+export function ConsistencyCalendar({
+  dates,
+  year,
+  month,
+}: {
+  dates: string[];
+  year: number;
+  month: number;
+}) {
+  const t = useTranslations('calendar');
   const grid = useMemo(() => {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
@@ -23,23 +33,43 @@ export function ConsistencyCalendar({ dates, year, month }: { dates: string[]; y
     return days;
   }, [dates, year, month]);
 
-  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthKeys = [
+    'january',
+    'february',
+    'march',
+    'april',
+    'may',
+    'june',
+    'july',
+    'august',
+    'september',
+    'october',
+    'november',
+    'december',
+  ];
 
   return (
     <div>
-      <p className="text-xs font-medium text-foreground mb-2">{monthNames[month]} {year}</p>
+      <p className="text-foreground mb-2 text-xs font-medium">
+        {t(monthKeys[month]!)} {year}
+      </p>
       <div className="grid grid-cols-7 gap-1">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d) => (
-          <div key={d} className="text-center text-[8px] text-muted-foreground font-medium">{d}</div>
+          <div key={d} className="text-muted-foreground text-center text-[8px] font-medium">
+            {d}
+          </div>
         ))}
         {grid.map((day, i) => (
           <div
             key={i}
-            className={`aspect-square rounded-sm text-[9px] flex items-center justify-center ${
-              !day.date ? '' :
-              day.active ? 'bg-primary text-primary-foreground font-medium' :
-              day.isToday ? 'border border-border bg-muted/50 text-muted-foreground' :
-              'bg-muted/20 text-muted-foreground'
+            className={`flex aspect-square items-center justify-center rounded-sm text-[9px] ${
+              !day.date
+                ? ''
+                : day.active
+                  ? 'bg-primary text-primary-foreground font-medium'
+                  : day.isToday
+                    ? 'border-border bg-muted/50 text-muted-foreground border'
+                    : 'bg-muted/20 text-muted-foreground'
             }`}
           >
             {day.date ? new Date(day.date).getDate() : ''}

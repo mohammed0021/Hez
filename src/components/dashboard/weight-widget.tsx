@@ -3,6 +3,7 @@
 import { useMemo } from 'react';
 import { LineChart, Line, ResponsiveContainer, XAxis, Tooltip } from 'recharts';
 import { Scale, TrendingDown, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DashboardWidget } from './widget-shell';
 import { useWeightStore } from '@/stores/weight-store';
 import { calculateBMI } from '@/lib/bmi';
@@ -11,6 +12,9 @@ import { useRouter } from 'next/navigation';
 
 export function WeightWidget() {
   const router = useRouter();
+  const t = useTranslations('progress');
+  const tDash = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
   const entries = useWeightStore((s) => s.entries);
   const heightCm = useProfileStore((s) => s.heightCm);
   const recent = entries.slice(0, 7).reverse();
@@ -24,7 +28,7 @@ export function WeightWidget() {
 
   if (entries.length === 0) {
     return (
-      <DashboardWidget title="Weight">
+      <DashboardWidget title={t('weight')}>
         <div className="mb-1 flex items-center gap-3">
           <Scale size={20} className="text-muted-foreground" />
           <span className="text-muted-foreground text-sm">No entries yet</span>
@@ -46,7 +50,7 @@ export function WeightWidget() {
 
   return (
     <DashboardWidget
-      title="Weight"
+      title={t('weight')}
       action={
         <button
           onClick={(e) => {
@@ -55,7 +59,7 @@ export function WeightWidget() {
           }}
           className="text-primary hover:text-primary/80 text-[10px] font-medium transition-colors"
         >
-          View all
+          {tCommon('view_all')}
         </button>
       }
     >
@@ -66,7 +70,7 @@ export function WeightWidget() {
             {latest.weightKg.toFixed(1)}
           </span>
           <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            kg
+            {tCommon('units_kg')}
           </span>
         </div>
         {weeklyChange !== null && (
@@ -80,7 +84,7 @@ export function WeightWidget() {
               className={`text-xs font-medium ${weeklyChange > 0 ? 'text-red-500' : weeklyChange < 0 ? 'text-green-500' : 'text-muted-foreground'}`}
             >
               {weeklyChange > 0 ? '+' : ''}
-              {weeklyChange.toFixed(1)} kg
+              {weeklyChange.toFixed(1)} {tCommon('units_kg')}
             </span>
           </div>
         )}
@@ -88,7 +92,7 @@ export function WeightWidget() {
 
       {bmi > 0 && (
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium">
-          BMI {bmi.toFixed(1)}
+          {tDash('bmi')} {bmi.toFixed(1)}
         </p>
       )}
 

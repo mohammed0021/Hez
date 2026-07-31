@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Mail, RefreshCw, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -11,6 +12,7 @@ import { useToastStore } from '@/stores/toast-store';
 import { createClient } from '@/lib/supabase-client';
 
 export default function VerifyEmailPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const toast = useToastStore();
   const [email, setEmail] = useState('');
@@ -25,7 +27,7 @@ export default function VerifyEmailPage() {
 
   const handleResend = async () => {
     if (!email) {
-      toast.error('Unable to determine your email address. Please try logging in again.');
+      toast.error(t('no_email_found'));
       return;
     }
     setIsResending(true);
@@ -38,10 +40,10 @@ export default function VerifyEmailPage() {
       if (error) {
         toast.error(error.message);
       } else {
-        toast.success('Verification email sent!');
+        toast.success(t('verification_sent'));
       }
     } catch {
-      toast.error('Failed to resend verification email');
+      toast.error(t('resend_failed'));
     } finally {
       setIsResending(false);
     }
@@ -53,10 +55,10 @@ export default function VerifyEmailPage() {
       data: { user },
     } = await supabase.auth.getUser();
     if (user?.email_confirmed_at) {
-      toast.success('Email verified! Welcome to Hêz.');
+      toast.success(t('email_verified'));
       router.replace('/onboarding');
     } else {
-      toast.error('Email not yet verified. Check your inbox or resend.');
+      toast.error(t('not_verified_yet'));
     }
   };
 
@@ -84,14 +86,14 @@ export default function VerifyEmailPage() {
               <Mail size={36} className="text-primary" />
             </motion.div>
           </div>
-          <h1 className="text-foreground text-2xl font-bold">Check your email</h1>
+          <h1 className="text-foreground text-2xl font-bold">{t('verify_email_title')}</h1>
           <p className="text-muted-foreground mt-2 max-w-xs text-sm leading-relaxed">
-            We sent a verification link to your email. Click the link to activate your account.
+            {t('verify_email_subtitle')}
           </p>
 
           <div className="mt-8 w-full max-w-xs space-y-3">
             <Button className="min-h-[44px] w-full" onClick={handleCheck}>
-              I&apos;ve verified my email
+              {t('i_verified_email')}
             </Button>
             <Button
               variant="outline"
@@ -100,13 +102,11 @@ export default function VerifyEmailPage() {
               disabled={isResending}
             >
               <RefreshCw size={16} className={isResending ? 'animate-spin' : ''} />
-              {isResending ? 'Sending...' : 'Resend email'}
+              {isResending ? t('sending') : t('resend_email')}
             </Button>
           </div>
 
-          <p className="text-muted-foreground mt-6 text-xs">
-            Didn&apos;t receive it? Check your spam folder or try a different email address.
-          </p>
+          <p className="text-muted-foreground mt-6 text-xs">{t('spam_hint')}</p>
         </motion.div>
       </div>
     </div>

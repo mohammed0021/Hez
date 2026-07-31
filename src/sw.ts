@@ -92,11 +92,16 @@ self.addEventListener('notificationclick', (event) => {
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       const focusedClient = clientList.find((c) => c.focused);
-      if (focusedClient) return;
-      const matchingClient = clientList.find((c) => c.url.includes(url));
-      if (matchingClient) {
-        return matchingClient.focus();
-      }
+      if (focusedClient) return focusedClient.focus();
+      const matchingClient = clientList.find((c) => {
+        try {
+          const target = new URL(url, self.location.origin).pathname;
+          return new URL(c.url).pathname === target;
+        } catch {
+          return false;
+        }
+      });
+      if (matchingClient) return matchingClient.focus();
       if (clientList.length > 0) {
         return clientList[0].focus();
       }

@@ -45,8 +45,8 @@ describe('getLevel', () => {
 });
 
 describe('ACHIEVEMENTS', () => {
-  it('has 25 achievements', () => {
-    expect(ACHIEVEMENTS).toHaveLength(25);
+  it('has 24 achievements', () => {
+    expect(ACHIEVEMENTS).toHaveLength(24);
   });
 
   it('every achievement has required fields', () => {
@@ -66,14 +66,14 @@ describe('ACHIEVEMENTS', () => {
 });
 
 describe('CHALLENGES', () => {
-  it('has 17 challenges', () => {
-    expect(CHALLENGES).toHaveLength(17);
+  it('has 14 challenges', () => {
+    expect(CHALLENGES).toHaveLength(14);
   });
 
-  it('has 7 daily, 5 weekly, 5 monthly challenges', () => {
-    expect(CHALLENGES.filter((c) => c.frequency === 'daily')).toHaveLength(7);
+  it('has 5 daily, 5 weekly, 4 monthly challenges', () => {
+    expect(CHALLENGES.filter((c) => c.frequency === 'daily')).toHaveLength(5);
     expect(CHALLENGES.filter((c) => c.frequency === 'weekly')).toHaveLength(5);
-    expect(CHALLENGES.filter((c) => c.frequency === 'monthly')).toHaveLength(5);
+    expect(CHALLENGES.filter((c) => c.frequency === 'monthly')).toHaveLength(4);
   });
 
   it('every challenge has required fields', () => {

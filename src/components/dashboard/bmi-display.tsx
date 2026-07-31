@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { Calculator, TrendingDown, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useProfileStore } from '@/stores/profile-store';
 import { useWeightStore } from '@/stores/weight-store';
 import { useRouter } from 'next/navigation';
@@ -14,6 +15,8 @@ import {
 
 export function BMIDisplay() {
   const router = useRouter();
+  const t = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
   const heightCm = useProfileStore((s) => s.heightCm);
   const profileWeightKg = useProfileStore((s) => s.weightKg);
   const weightEntries = useWeightStore((s) => s.entries);
@@ -42,7 +45,7 @@ export function BMIDisplay() {
           </div>
           <div>
             <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-              BMI
+              {t('bmi')}
             </p>
             <p className="text-foreground text-2xl font-bold tracking-tight">
               {bmi > 0 ? bmi.toFixed(1) : '—'}
@@ -70,7 +73,8 @@ export function BMIDisplay() {
                 }
               >
                 {weeklyChange > 0 ? '+' : ''}
-                {weeklyChange.toFixed(1)}kg
+                {weeklyChange.toFixed(1)}
+                {tCommon('units_kg')}
               </span>
             </div>
           )}

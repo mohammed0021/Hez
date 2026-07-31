@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useProfileStore } from '@/stores/profile-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { QuickActions } from '@/components/dashboard/quick-actions';
@@ -14,13 +15,15 @@ import { RecentWorkouts } from '@/components/dashboard/recent-workouts';
 const stagger = 0.04;
 
 export default function DashboardPage() {
+  const t = useTranslations('dashboard');
   const displayName = useProfileStore((s) => s.displayName);
   const user = useAuthStore((s) => s.user);
   const name = displayName || user?.user_metadata?.full_name || 'there';
 
   const now = new Date();
   const hour = now.getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  const greetingKey = hour < 12 ? 'good_morning' : hour < 18 ? 'good_afternoon' : 'good_evening';
+  const greeting = t(greetingKey);
   const dateStr = now.toLocaleDateString(undefined, {
     weekday: 'long',
     month: 'long',
@@ -42,7 +45,8 @@ export default function DashboardPage() {
       {section(
         <div className="bg-card border-border/50 rounded-2xl border p-5">
           <h1 className="text-foreground text-2xl font-bold tracking-tight">
-            {greeting}, {name}
+            {greeting}
+            {t('greeting_suffix', { name })}
           </h1>
           <p className="text-muted-foreground mt-1 text-sm">{dateStr}</p>
         </div>,

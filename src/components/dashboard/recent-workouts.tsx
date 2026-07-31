@@ -2,10 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { Clock, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 
 export function RecentWorkouts() {
   const router = useRouter();
+  const t = useTranslations('dashboard');
+  const tCommon = useTranslations('common');
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const recent = sessions.slice(0, 5);
 
@@ -14,7 +17,7 @@ export function RecentWorkouts() {
       <div className="border-border/50 bg-card rounded-2xl border p-4">
         <p className="text-muted-foreground/60 mb-2 flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase">
           <Clock size={12} />
-          Recent Workouts
+          {t('recent_workouts')}
         </p>
         <p className="text-muted-foreground text-sm">No workouts yet</p>
       </div>
@@ -26,13 +29,13 @@ export function RecentWorkouts() {
       <div className="mb-3 flex items-center justify-between">
         <p className="text-muted-foreground/60 flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase">
           <Clock size={12} />
-          Recent Workouts
+          {t('recent_workouts')}
         </p>
         <button
           onClick={() => router.push('/workouts')}
           className="text-primary hover:text-primary/80 text-[10px] font-medium transition-colors"
         >
-          View all
+          {tCommon('view_all')}
         </button>
       </div>
 

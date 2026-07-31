@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, ArrowUp, X } from 'lucide-react';
 import { Confetti } from './confetti';
+import { useTranslations } from 'next-intl';
 
 export function LevelUpModal({
   level,
@@ -13,6 +14,7 @@ export function LevelUpModal({
   open: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations('gamification');
   return (
     <AnimatePresence>
       {open && (
@@ -55,7 +57,7 @@ export function LevelUpModal({
                 transition={{ delay: 0.4 }}
                 className="mt-4 text-xs font-medium tracking-wider text-amber-600 uppercase"
               >
-                Level Up!
+                {t('level_up')}
               </motion.p>
 
               <motion.p
@@ -74,7 +76,7 @@ export function LevelUpModal({
                 className="text-muted-foreground mt-4 flex items-center justify-center gap-1.5 text-xs"
               >
                 <Sparkles size={12} className="text-amber-500" />
-                <span>Keep going! New rewards await.</span>
+                <span>{t('level_up_message', { level })}</span>
               </motion.div>
 
               <motion.button

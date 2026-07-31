@@ -30,6 +30,7 @@ import {
   isPushSupported,
   requestPermission,
 } from '@/lib/notification-service';
+import { useTranslations } from 'next-intl';
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Dumbbell,
@@ -47,6 +48,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: 
 
 export default function NotificationsSettingsPage() {
   const store = useNotificationStore();
+  const t = useTranslations('notifications');
+  const c = useTranslations('common');
   const [pushStatus, setPushStatus] = useState<'idle' | 'subscribing' | 'subscribed' | 'error'>(
     'idle',
   );
@@ -74,7 +77,7 @@ export default function NotificationsSettingsPage() {
   const handleSendTest = () => {
     if ('Notification' in window && Notification.permission === 'granted') {
       new Notification('Hêz Test Notification', {
-        body: 'This is a test notification from your notification settings.',
+        body: t('test_body'),
         icon: '/icons/icon-192x192.png',
       });
       setTestSent(true);
@@ -82,16 +85,22 @@ export default function NotificationsSettingsPage() {
     }
   };
 
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysOfWeek = [
+    t('days_sun'),
+    t('days_mon'),
+    t('days_tue'),
+    t('days_wed'),
+    t('days_thu'),
+    t('days_fri'),
+    t('days_sat'),
+  ];
 
   return (
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Notifications</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">
-            Manage all notification preferences
-          </p>
+          <h1 className="text-foreground text-2xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">{t('subtitle')}</p>
         </div>
         <button
           onClick={() => {
@@ -100,7 +109,7 @@ export default function NotificationsSettingsPage() {
           }}
           className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <RotateCcw size={14} /> Reset
+          <RotateCcw size={14} /> {c('reset')}
         </button>
       </div>
 
@@ -117,8 +126,8 @@ export default function NotificationsSettingsPage() {
             <BellOff size={20} className="text-muted-foreground" />
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-foreground text-sm font-medium">Push Notifications</p>
-            <p className="text-muted-foreground text-[10px]">Master toggle for all notifications</p>
+            <p className="text-foreground text-sm font-medium">{t('push_notifications')}</p>
+            <p className="text-muted-foreground text-[10px]">{t('master_toggle')}</p>
           </div>
           <button
             onClick={() => store.setGlobalEnabled(!store.globalEnabled)}
@@ -140,7 +149,7 @@ export default function NotificationsSettingsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Info size={16} className="text-muted-foreground" />
-              <span className="text-foreground text-sm">Browser Permission</span>
+              <span className="text-foreground text-sm">{t('browser_permission')}</span>
             </div>
             <span
               className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
@@ -152,10 +161,10 @@ export default function NotificationsSettingsPage() {
               }`}
             >
               {browserPerm === 'granted'
-                ? 'Granted'
+                ? t('granted')
                 : browserPerm === 'denied'
-                  ? 'Denied'
-                  : 'Not Requested'}
+                  ? t('denied')
+                  : t('not_requested')}
             </span>
           </div>
           {browserPerm !== 'granted' && (
@@ -163,9 +172,7 @@ export default function NotificationsSettingsPage() {
               onClick={handleRequestPermission}
               className="bg-primary text-primary-foreground mt-3 min-h-[44px] w-full rounded-xl py-2.5 text-xs font-medium transition-transform active:scale-[0.98]"
             >
-              {browserPerm === 'denied'
-                ? 'Open Browser Settings to Enable'
-                : 'Enable Notifications'}
+              {browserPerm === 'denied' ? t('open_browser_settings') : t('enable_notifications')}
             </button>
           )}
         </motion.div>
@@ -180,15 +187,15 @@ export default function NotificationsSettingsPage() {
           >
             <Bell size={18} className="text-muted-foreground" />
             <div className="flex-1">
-              <p className="text-foreground text-sm font-medium">Web Push</p>
+              <p className="text-foreground text-sm font-medium">{t('web_push')}</p>
               <p className="text-muted-foreground text-[10px]">
                 {pushStatus === 'subscribed'
-                  ? 'Subscribed to push notifications'
+                  ? t('subscribed_to_push')
                   : pushStatus === 'subscribing'
-                    ? 'Subscribing...'
+                    ? t('subscribing')
                     : pushStatus === 'error'
-                      ? 'Subscription failed'
-                      : 'Receive notifications even when the tab is closed'}
+                      ? t('subscription_failed')
+                      : t('receive_when_closed')}
               </p>
             </div>
             <button
@@ -203,8 +210,8 @@ export default function NotificationsSettingsPage() {
               {pushStatus === 'subscribing'
                 ? '...'
                 : pushStatus === 'subscribed'
-                  ? 'Unsubscribe'
-                  : 'Subscribe'}
+                  ? t('unsubscribe')
+                  : t('subscribe')}
             </button>
           </motion.div>
         )}
@@ -219,8 +226,8 @@ export default function NotificationsSettingsPage() {
           >
             <Volume2 size={18} className="text-muted-foreground" />
             <div className="flex-1">
-              <p className="text-foreground text-sm font-medium">Sound</p>
-              <p className="text-muted-foreground text-[10px]">Play sound with notifications</p>
+              <p className="text-foreground text-sm font-medium">{t('sound')}</p>
+              <p className="text-muted-foreground text-[10px]">{t('sound_desc')}</p>
             </div>
             <button
               onClick={() => store.setSoundEnabled(!store.soundEnabled)}
@@ -241,7 +248,7 @@ export default function NotificationsSettingsPage() {
             <Vibrate size={18} className="text-muted-foreground" />
             <div className="flex-1">
               <p className="text-foreground text-sm font-medium">Vibration</p>
-              <p className="text-muted-foreground text-[10px]">Vibrate device with notifications</p>
+              <p className="text-muted-foreground text-[10px]">{t('vibration_desc')}</p>
             </div>
             <button
               onClick={() => store.setVibrationEnabled(!store.vibrationEnabled)}
@@ -264,10 +271,8 @@ export default function NotificationsSettingsPage() {
           <div className="flex items-center gap-4">
             <MoonStar size={18} className="text-muted-foreground" />
             <div className="flex-1">
-              <p className="text-foreground text-sm font-medium">Quiet Hours</p>
-              <p className="text-muted-foreground text-[10px]">
-                Suppress notifications during selected hours
-              </p>
+              <p className="text-foreground text-sm font-medium">{t('quiet_hours')}</p>
+              <p className="text-muted-foreground text-[10px]">{t('quiet_hours_desc')}</p>
             </div>
             <button
               onClick={() => store.setQuietHours({ enabled: !store.quietHours.enabled })}
@@ -294,7 +299,7 @@ export default function NotificationsSettingsPage() {
                   );
                 })}
               </select>
-              <span className="text-muted-foreground text-xs">to</span>
+              <span className="text-muted-foreground text-xs">{t('to')}</span>
               <select
                 value={store.quietHours.end}
                 onChange={(e) => store.setQuietHours({ end: e.target.value })}
@@ -316,7 +321,7 @@ export default function NotificationsSettingsPage() {
         {/* Per-type settings */}
         <div className="mt-2">
           <p className="text-muted-foreground/60 mb-2 px-1 text-[10px] font-medium tracking-wider uppercase">
-            Notification Types
+            {t('notification_types')}
           </p>
           <div className="space-y-1.5">
             {NOTIFICATION_TYPES.map((nt, i) => {
@@ -341,8 +346,8 @@ export default function NotificationsSettingsPage() {
                         <Icon size={16} />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-foreground text-sm font-medium">{nt.label}</p>
-                        <p className="text-muted-foreground text-[10px]">{nt.description}</p>
+                        <p className="text-foreground text-sm font-medium">{t(nt.id)}</p>
+                        <p className="text-muted-foreground text-[10px]">{t(`${nt.id}_desc`)}</p>
                       </div>
                       <button
                         onClick={() => store.updateType(nt.id, { enabled: !prefs?.enabled })}
@@ -364,7 +369,7 @@ export default function NotificationsSettingsPage() {
                         {nt.hasTime && (
                           <div className="flex items-center gap-2">
                             <Clock size={12} className="text-muted-foreground" />
-                            <span className="text-foreground flex-1 text-[10px]">Time</span>
+                            <span className="text-foreground flex-1 text-[10px]">{t('time')}</span>
                             <select
                               value={prefs?.time || nt.defaultTime || '07:00'}
                               onChange={(e) => store.updateType(nt.id, { time: e.target.value })}
@@ -384,7 +389,7 @@ export default function NotificationsSettingsPage() {
                         )}
                         {nt.hasDays && (
                           <div>
-                            <span className="text-foreground text-[10px]">Days of Week</span>
+                            <span className="text-foreground text-[10px]">{t('days_of_week')}</span>
                             <div className="mt-1 flex gap-1.5">
                               {daysOfWeek.map((d, di) => (
                                 <button
@@ -412,7 +417,7 @@ export default function NotificationsSettingsPage() {
                           <div className="flex items-center gap-2">
                             <Timer size={12} className="text-muted-foreground" />
                             <span className="text-foreground flex-1 text-[10px]">
-                              Remind before
+                              {t('remind_before')}
                             </span>
                             <select
                               value={prefs?.advanceMinutes || nt.defaultAdvanceMinutes || 30}
@@ -434,7 +439,7 @@ export default function NotificationsSettingsPage() {
                           onClick={() => store.resetType(nt.id)}
                           className="text-muted-foreground hover:text-foreground text-[9px] transition-colors"
                         >
-                          Reset to defaults
+                          {t('reset_to_defaults')}
                         </button>
                       </motion.div>
                     )}
@@ -457,7 +462,7 @@ export default function NotificationsSettingsPage() {
             className="border-border/60 text-muted-foreground hover:bg-muted/50 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-dashed py-3 text-xs transition-colors"
           >
             <Bell size={14} />
-            {testSent ? 'Test notification sent!' : 'Send Test Notification'}
+            {testSent ? t('test_sent') : t('send_test')}
           </button>
         </motion.div>
 

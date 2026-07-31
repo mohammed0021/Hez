@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Pause, Play, X, Dumbbell } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import {
   useActiveWorkoutStore,
   getCurrentExercise,
@@ -17,6 +18,8 @@ import { CompletionAnimation } from './completion-animation';
 import { WorkoutSummary } from './workout-summary';
 
 export function ActiveWorkout() {
+  const t = useTranslations('workouts');
+  const c = useTranslations('common');
   const data = useActiveWorkoutStore((s) => s.data);
   const startSession = useActiveWorkoutStore((s) => s.startSession);
   const completeSet = useActiveWorkoutStore((s) => s.completeSet);
@@ -70,12 +73,12 @@ export function ActiveWorkout() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4">
         <Dumbbell size={48} className="text-muted-foreground/30" />
-        <p className="text-muted-foreground text-sm">No active workout</p>
+        <p className="text-muted-foreground text-sm">{t('no_active_workout')}</p>
         <Link
           href="/workouts"
           className="bg-primary text-primary-foreground rounded-xl px-4 py-2 text-xs font-medium"
         >
-          Browse Workouts
+          {t('browse_workouts')}
         </Link>
       </div>
     );
@@ -115,7 +118,10 @@ export function ActiveWorkout() {
           <div className="min-w-0 flex-1">
             <p className="text-foreground truncate text-xs font-semibold">{data.name}</p>
             <p className="text-muted-foreground/60 text-[10px]">
-              {completedBlocks}/{data.blocks.length} blocks
+              {t('blocks_progress', {
+                completed: completedBlocks,
+                total: data.blocks.length,
+              })}
             </p>
           </div>
         </div>
@@ -131,18 +137,18 @@ export function ActiveWorkout() {
             className="bg-background/90 absolute inset-0 z-40 flex flex-col items-center justify-center backdrop-blur-sm"
           >
             <Pause size={48} className="text-primary mb-4" />
-            <p className="text-foreground text-xl font-bold">Workout Paused</p>
+            <p className="text-foreground text-xl font-bold">{t('workout_paused')}</p>
             <button
               onClick={togglePause}
               className="bg-primary text-primary-foreground mt-6 rounded-2xl px-8 py-3 text-sm font-medium"
             >
-              <Play size={18} className="mr-2 inline" /> Resume
+              <Play size={18} className="mr-2 inline" /> {c('resume')}
             </button>
             <button
               onClick={cancelWorkout}
               className="text-muted-foreground hover:text-foreground mt-3 text-xs"
             >
-              End Workout
+              {t('end_workout')}
             </button>
           </motion.div>
         )}
@@ -158,7 +164,7 @@ export function ActiveWorkout() {
           >
             <div className="text-center">
               <p className="text-muted-foreground mb-2 text-xs tracking-widest uppercase">
-                First Up
+                {t('first_up')}
               </p>
               <h2 className="text-foreground text-2xl font-bold">{exercise.exerciseName}</h2>
               <p className="text-muted-foreground mt-1 text-sm">
@@ -169,13 +175,17 @@ export function ActiveWorkout() {
             <div className="flex gap-3">
               <div className="bg-card border-border/50 rounded-2xl border px-6 py-3 text-center">
                 <p className="text-foreground text-lg font-bold">{exercise.sets.length}</p>
-                <p className="text-muted-foreground text-[10px] tracking-wider uppercase">Sets</p>
+                <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
+                  {t('sets')}
+                </p>
               </div>
               <div className="bg-card border-border/50 rounded-2xl border px-6 py-3 text-center">
                 <p className="text-foreground text-lg font-bold">
                   {exercise.sets[0]?.targetReps || 0}
                 </p>
-                <p className="text-muted-foreground text-[10px] tracking-wider uppercase">Reps</p>
+                <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
+                  {t('reps')}
+                </p>
               </div>
               {exercise.sets[0] && exercise.sets[0].targetWeightKg > 0 && (
                 <div className="bg-card border-border/50 rounded-2xl border px-6 py-3 text-center">
@@ -183,7 +193,7 @@ export function ActiveWorkout() {
                     {exercise.sets[0].targetWeightKg}
                   </p>
                   <p className="text-muted-foreground text-[10px] tracking-wider uppercase">
-                    Weight
+                    {t('weight')}
                   </p>
                 </div>
               )}
@@ -197,7 +207,7 @@ export function ActiveWorkout() {
               onClick={startSession}
               className="bg-primary text-primary-foreground shadow-primary/30 rounded-2xl px-10 py-4 text-base font-bold shadow-xl transition-transform active:scale-95"
             >
-              Start Workout
+              {t('start_workout')}
             </button>
           </motion.div>
         )}
@@ -208,10 +218,10 @@ export function ActiveWorkout() {
             <div className="text-center">
               <p className="text-muted-foreground mb-1 text-[10px] tracking-widest uppercase">
                 {block?.type === 'superset'
-                  ? 'Superset'
+                  ? t('block_superset')
                   : block?.type === 'giant_set'
-                    ? 'Giant Set'
-                    : 'Exercise'}{' '}
+                    ? t('block_giant_set')
+                    : t('block_exercise')}{' '}
                 {data.currentExerciseIndex + 1} of {block?.exercises.length || 0}
               </p>
               <h2 className="text-foreground text-xl font-bold">{exercise.exerciseName}</h2>
@@ -263,7 +273,7 @@ export function ActiveWorkout() {
 
             {/* Live stats */}
             <div className="text-muted-foreground/60 flex justify-center gap-4 text-[10px]">
-              <span>Volume: {calculateVolume(data).toLocaleString()} kg</span>
+              <span>{t('volume_value', { volume: calculateVolume(data).toLocaleString() })}</span>
             </div>
           </motion.div>
         )}

@@ -13,7 +13,7 @@ async function sendHandler(request: Request) {
   webpush.setVapidDetails(subject, publicKey, privateKey);
 
   const { title, body, icon, tag, data } = await request.json();
-  const subscriptions = getAllSubscriptions();
+  const subscriptions = await getAllSubscriptions();
 
   if (subscriptions.length === 0) {
     return NextResponse.json({ ok: true, sent: 0 });

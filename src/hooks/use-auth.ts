@@ -5,14 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth-store';
 
 export function useAuth() {
-  const {
-    user,
-    session,
-    isLoading,
-    isOnboarded,
-    initialize,
-    setOnboarded,
-  } = useAuthStore();
+  const { user, session, isLoading, isOnboarded, initialize, setOnboarded } = useAuthStore();
 
   useEffect(() => {
     initialize();

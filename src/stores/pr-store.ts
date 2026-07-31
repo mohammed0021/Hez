@@ -28,7 +28,15 @@ function computeEstimated1RM(weight: number, reps: number): number {
 }
 
 export function derivePRsFromHistory(sessions: ArchivedSession[]): PersonalRecord[] {
-  const bestByExercise = new Map<string, { maxWeight: PersonalRecord; maxReps: PersonalRecord; maxVolume: PersonalRecord; est1rm: PersonalRecord }>();
+  const bestByExercise = new Map<
+    string,
+    {
+      maxWeight: PersonalRecord;
+      maxReps: PersonalRecord;
+      maxVolume: PersonalRecord;
+      est1rm: PersonalRecord;
+    }
+  >();
 
   for (const session of sessions) {
     for (const block of session.blocks) {
@@ -55,23 +63,79 @@ export function derivePRsFromHistory(sessions: ArchivedSession[]): PersonalRecor
         if (maxWeight === 0) continue;
 
         const existing = bestByExercise.get(ex.exerciseName) || {
-          maxWeight: { id: '', exerciseName: ex.exerciseName, type: 'max_weight' as const, value: 0, date: '', source: 'auto' as const },
-          maxReps: { id: '', exerciseName: ex.exerciseName, type: 'max_reps' as const, value: 0, date: '', source: 'auto' as const },
-          maxVolume: { id: '', exerciseName: ex.exerciseName, type: 'max_volume' as const, value: 0, date: '', source: 'auto' as const },
-          est1rm: { id: '', exerciseName: ex.exerciseName, type: 'estimated_1rm' as const, value: 0, date: '', source: 'auto' as const },
+          maxWeight: {
+            id: '',
+            exerciseName: ex.exerciseName,
+            type: 'max_weight' as const,
+            value: 0,
+            date: '',
+            source: 'auto' as const,
+          },
+          maxReps: {
+            id: '',
+            exerciseName: ex.exerciseName,
+            type: 'max_reps' as const,
+            value: 0,
+            date: '',
+            source: 'auto' as const,
+          },
+          maxVolume: {
+            id: '',
+            exerciseName: ex.exerciseName,
+            type: 'max_volume' as const,
+            value: 0,
+            date: '',
+            source: 'auto' as const,
+          },
+          est1rm: {
+            id: '',
+            exerciseName: ex.exerciseName,
+            type: 'estimated_1rm' as const,
+            value: 0,
+            date: '',
+            source: 'auto' as const,
+          },
         };
 
         if (maxWeight > existing.maxWeight.value) {
-          existing.maxWeight = { id: uid(), exerciseName: ex.exerciseName, type: 'max_weight', value: maxWeight, date: session.completedAt, source: 'auto' };
+          existing.maxWeight = {
+            id: uid(),
+            exerciseName: ex.exerciseName,
+            type: 'max_weight',
+            value: maxWeight,
+            date: session.completedAt,
+            source: 'auto',
+          };
         }
         if (maxReps > existing.maxReps.value) {
-          existing.maxReps = { id: uid(), exerciseName: ex.exerciseName, type: 'max_reps', value: maxReps, date: session.completedAt, source: 'auto' };
+          existing.maxReps = {
+            id: uid(),
+            exerciseName: ex.exerciseName,
+            type: 'max_reps',
+            value: maxReps,
+            date: session.completedAt,
+            source: 'auto',
+          };
         }
         if (maxVolume > existing.maxVolume.value) {
-          existing.maxVolume = { id: uid(), exerciseName: ex.exerciseName, type: 'max_volume', value: maxVolume, date: session.completedAt, source: 'auto' };
+          existing.maxVolume = {
+            id: uid(),
+            exerciseName: ex.exerciseName,
+            type: 'max_volume',
+            value: maxVolume,
+            date: session.completedAt,
+            source: 'auto',
+          };
         }
         if (bestEst1rm > existing.est1rm.value) {
-          existing.est1rm = { id: uid(), exerciseName: ex.exerciseName, type: 'estimated_1rm', value: bestEst1rm, date: session.completedAt, source: 'auto' };
+          existing.est1rm = {
+            id: uid(),
+            exerciseName: ex.exerciseName,
+            type: 'estimated_1rm',
+            value: bestEst1rm,
+            date: session.completedAt,
+            source: 'auto',
+          };
         }
 
         bestByExercise.set(ex.exerciseName, existing);

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Eye, EyeOff, Lock, CheckCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { updatePassword } from '@/services/auth';
 import { useToastStore } from '@/stores/toast-store';
 
 export default function ResetPasswordPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const toast = useToastStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -32,10 +34,10 @@ export default function ResetPasswordPage() {
     setIsLoading(true);
     try {
       await updatePassword(data.password);
-      toast.success('Password updated successfully!');
+      toast.success(t('password_updated'));
       router.replace('/');
     } catch {
-      toast.error('Failed to update password. Try again.');
+      toast.error(t('password_update_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -52,10 +54,8 @@ export default function ResetPasswordPage() {
           <div className="bg-primary mb-4 inline-flex size-10 items-center justify-center rounded-2xl">
             <Lock size={20} className="text-primary-foreground" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold">Set new password</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">
-            Choose a strong password you haven&apos;t used before.
-          </p>
+          <h1 className="text-foreground text-2xl font-bold">{t('reset_password_title')}</h1>
+          <p className="text-muted-foreground mt-1.5 text-sm">{t('reset_password_subtitle')}</p>
         </motion.div>
 
         <motion.div
@@ -65,12 +65,12 @@ export default function ResetPasswordPage() {
         >
           <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('new_password')}</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Min. 8 characters"
+                  placeholder={t('password_min_hint')}
                   autoComplete="new-password"
                   autoFocus
                   {...register('password')}
@@ -89,11 +89,11 @@ export default function ResetPasswordPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword">{t('confirm_password')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Repeat your password"
+                placeholder={t('confirm_password_placeholder')}
                 autoComplete="new-password"
                 {...register('confirmPassword')}
               />
@@ -105,7 +105,7 @@ export default function ResetPasswordPage() {
             <motion.div whileTap={{ scale: 0.98 }}>
               <Button type="submit" className="min-h-[44px] w-full" size="lg" disabled={isLoading}>
                 <CheckCircle size={18} />
-                {isLoading ? 'Updating...' : 'Update Password'}
+                {isLoading ? t('updating') : t('update_password')}
               </Button>
             </motion.div>
           </form>

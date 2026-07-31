@@ -125,7 +125,10 @@ function extractExerciseSnapshots(sessions: ArchivedSession[]): Map<string, Exer
           totalSets: ex.sets.length,
           allSetsCompleted: setsCompleted === ex.sets.length,
           allTargetRepsAchieved,
-          maxRpe: rpeCount > 0 ? Math.max(...ex.sets.filter((s) => s.completed && s.rpe != null).map((s) => s.rpe!)) : null,
+          maxRpe:
+            rpeCount > 0
+              ? Math.max(...ex.sets.filter((s) => s.completed && s.rpe != null).map((s) => s.rpe!))
+              : null,
         });
         map.set(ex.exerciseName, existing);
       }
@@ -169,22 +172,39 @@ function generateRecommendation(sessions: ExerciseSnapshot[]): OverloadRecommend
     const weights = recent.map((s) => s.maxWeight);
     const firstW = weights[0] || 0;
     const lastW = weights[weights.length - 1] || 0;
-    if (firstW > 0 && lastW < firstW && recent.every((s, i) => i === 0 || s.maxWeight <= (recent[i - 1]?.maxWeight || 0))) {
-      return { type: 'deload', reason: 'Weight has declined for 4+ consecutive sessions. Take a deload week to recover.' };
+    if (
+      firstW > 0 &&
+      lastW < firstW &&
+      recent.every((s, i) => i === 0 || s.maxWeight <= (recent[i - 1]?.maxWeight || 0))
+    ) {
+      return {
+        type: 'deload',
+        reason: 'Weight has declined for 4+ consecutive sessions. Take a deload week to recover.',
+      };
     }
   }
 
   // Check for decline over 2-3 sessions -> maintain
   if (recent.length >= 3) {
     const lastThree = recent.slice(-3);
-    const declining = lastThree.every((s, i) => i === 0 || s.maxWeight <= (lastThree[i - 1]?.maxWeight || 0));
+    const declining = lastThree.every(
+      (s, i) => i === 0 || s.maxWeight <= (lastThree[i - 1]?.maxWeight || 0),
+    );
     if (declining && last.maxWeight < (lastThree[0]?.maxWeight || 0)) {
-      return { type: 'maintain', reason: 'Performance declining over last 3 sessions. Maintain current weight.' };
+      return {
+        type: 'maintain',
+        reason: 'Performance declining over last 3 sessions. Maintain current weight.',
+      };
     }
   }
 
   // Check for weight increase condition
-  if (last.allSetsCompleted && last.allTargetRepsAchieved && last.maxRpe != null && last.maxRpe <= 8) {
+  if (
+    last.allSetsCompleted &&
+    last.allTargetRepsAchieved &&
+    last.maxRpe != null &&
+    last.maxRpe <= 8
+  ) {
     const suggestedWeight = Math.round((last.maxWeight * 1.025) / 2.5) * 2.5;
     return {
       type: 'increase_weight',
@@ -194,7 +214,12 @@ function generateRecommendation(sessions: ExerciseSnapshot[]): OverloadRecommend
   }
 
   // Check for rep progression
-  if (last.allSetsCompleted && last.totalReps > (prev.totalReps || 0) && last.maxRpe != null && last.maxRpe <= 8) {
+  if (
+    last.allSetsCompleted &&
+    last.totalReps > (prev.totalReps || 0) &&
+    last.maxRpe != null &&
+    last.maxRpe <= 8
+  ) {
     const suggestedReps = Math.min(last.totalReps + 1, 15);
     return {
       type: 'increase_reps',
@@ -203,7 +228,10 @@ function generateRecommendation(sessions: ExerciseSnapshot[]): OverloadRecommend
     };
   }
 
-  return { type: 'maintain', reason: 'Performance is stable. Continue with current weight and reps.' };
+  return {
+    type: 'maintain',
+    reason: 'Performance is stable. Continue with current weight and reps.',
+  };
 }
 
 function computeMuscleVolume(sessions: ArchivedSession[]): MuscleVolumeData[] {
@@ -223,7 +251,8 @@ function computeMuscleVolume(sessions: ArchivedSession[]): MuscleVolumeData[] {
 
           let volume = 0;
           for (const s of ex.sets) {
-            if (s.completed) volume += (s.actualWeightKg || s.targetWeightKg) * (s.actualReps || s.targetReps);
+            if (s.completed)
+              volume += (s.actualWeightKg || s.targetWeightKg) * (s.actualReps || s.targetReps);
           }
 
           weekMap.set(week, (weekMap.get(week) || 0) + volume);
@@ -249,9 +278,14 @@ function computeMuscleVolume(sessions: ArchivedSession[]): MuscleVolumeData[] {
     const prevWeek = sortedWeeks[sortedWeeks.length - 2] || '';
     const currentWeekVolume = weekMap.get(currentWeek) || 0;
     const prevWeekVolume = weekMap.get(prevWeek) || 0;
-    const trend: 'up' | 'down' | 'stable' = prevWeekVolume > 0
-      ? (currentWeekVolume > prevWeekVolume * 1.05 ? 'up' : currentWeekVolume < prevWeekVolume * 0.95 ? 'down' : 'stable')
-      : 'stable';
+    const trend: 'up' | 'down' | 'stable' =
+      prevWeekVolume > 0
+        ? currentWeekVolume > prevWeekVolume * 1.05
+          ? 'up'
+          : currentWeekVolume < prevWeekVolume * 0.95
+            ? 'down'
+            : 'stable'
+        : 'stable';
     result.push({
       muscleGroup: mg,
       region: muscleRegions.get(mg) || 'other',
@@ -266,7 +300,10 @@ function computeMuscleVolume(sessions: ArchivedSession[]): MuscleVolumeData[] {
 }
 
 function computeMonthlyTrends(sessions: ArchivedSession[]): MonthlyTrend[] {
-  const byExerciseAndMonth = new Map<string, Map<string, { weights: number[]; volumes: number[]; count: number }>>();
+  const byExerciseAndMonth = new Map<
+    string,
+    Map<string, { weights: number[]; volumes: number[]; count: number }>
+  >();
 
   for (const session of sessions) {
     const month = getMonthKey(session.completedAt);
@@ -283,7 +320,8 @@ function computeMonthlyTrends(sessions: ArchivedSession[]): MonthlyTrend[] {
           totalVolume += w * r;
         }
 
-        if (!byExerciseAndMonth.has(ex.exerciseName)) byExerciseAndMonth.set(ex.exerciseName, new Map());
+        if (!byExerciseAndMonth.has(ex.exerciseName))
+          byExerciseAndMonth.set(ex.exerciseName, new Map());
         const monthMap = byExerciseAndMonth.get(ex.exerciseName)!;
         if (!monthMap.has(month)) monthMap.set(month, { weights: [], volumes: [], count: 0 });
         const entry = monthMap.get(month)!;
@@ -299,14 +337,24 @@ function computeMonthlyTrends(sessions: ArchivedSession[]): MonthlyTrend[] {
     for (const [month, data] of monthMap) {
       const avgMaxWeight = data.weights.reduce((s, v) => s + v, 0) / data.weights.length;
       const avgVolume = data.volumes.reduce((s, v) => s + v, 0) / data.volumes.length;
-      result.push({ exerciseName, month, avgMaxWeight: Math.round(avgMaxWeight * 10) / 10, avgVolume: Math.round(avgVolume), sessions: data.count });
+      result.push({
+        exerciseName,
+        month,
+        avgMaxWeight: Math.round(avgMaxWeight * 10) / 10,
+        avgVolume: Math.round(avgVolume),
+        sessions: data.count,
+      });
     }
   }
-  result.sort((a, b) => a.month.localeCompare(b.month) || a.exerciseName.localeCompare(b.exerciseName));
+  result.sort(
+    (a, b) => a.month.localeCompare(b.month) || a.exerciseName.localeCompare(b.exerciseName),
+  );
   return result;
 }
 
-function computeWeeklyVolumeHistory(sessions: ArchivedSession[]): { week: string; volume: number }[] {
+function computeWeeklyVolumeHistory(
+  sessions: ArchivedSession[],
+): { week: string; volume: number }[] {
   const byWeek = new Map<string, number>();
   for (const session of sessions) {
     const week = getWeekKey(session.completedAt);
@@ -317,20 +365,19 @@ function computeWeeklyVolumeHistory(sessions: ArchivedSession[]): { week: string
     .sort((a, b) => a.week.localeCompare(b.week));
 }
 
-function generateNextSessionSuggestions(
-  exercises: ExerciseAnalysis[],
-): NextSessionSuggestion[] {
+function generateNextSessionSuggestions(exercises: ExerciseAnalysis[]): NextSessionSuggestion[] {
   return exercises
     .filter((ex) => ex.sessions.length >= 2)
     .map((ex) => {
       const rec = ex.recommendation;
       const last = ex.sessions[ex.sessions.length - 1];
-      const weight = rec.type === 'increase_weight'
-        ? rec.suggestedWeight
-        : last?.maxWeight || 0;
-      const reps = rec.type === 'increase_reps'
-        ? rec.suggestedReps
-        : last ? Math.round(last.totalReps / Math.max(1, last.setsCompleted)) : 10;
+      const weight = rec.type === 'increase_weight' ? rec.suggestedWeight : last?.maxWeight || 0;
+      const reps =
+        rec.type === 'increase_reps'
+          ? rec.suggestedReps
+          : last
+            ? Math.round(last.totalReps / Math.max(1, last.setsCompleted))
+            : 10;
 
       let notes = rec.reason;
       if (ex.plateauDetected) {
@@ -360,9 +407,14 @@ export function analyzeProgressiveOverload(sessions: ArchivedSession[]): Overloa
 
     // Plateau detection: 4+ sessions without any weight/reps progress
     const recentSessions = exSessions.slice(-4);
-    const plateauDetected = recentSessions.length >= 4 && recentSessions.every(
-      (s, i) => i === 0 || (s.maxWeight <= (recentSessions[i - 1]?.maxWeight || 0) && s.totalReps <= (recentSessions[i - 1]?.totalReps || 0)),
-    );
+    const plateauDetected =
+      recentSessions.length >= 4 &&
+      recentSessions.every(
+        (s, i) =>
+          i === 0 ||
+          (s.maxWeight <= (recentSessions[i - 1]?.maxWeight || 0) &&
+            s.totalReps <= (recentSessions[i - 1]?.totalReps || 0)),
+      );
 
     const recommendation = generateRecommendation(exSessions);
 

@@ -1,11 +1,13 @@
 'use client';
 
 import { Flame } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DashboardWidget } from './widget-shell';
 import { AnimatedCounter } from './animated-counter';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 
 export function StreakWidget() {
+  const t = useTranslations('gamification');
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
   const streak = computeStreak(sessions);
   const best = computeBestStreak(sessions);
@@ -21,7 +23,7 @@ export function StreakWidget() {
         </div>
         <div>
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Current Streak
+            {t('current_streak')}
           </p>
           <p className="text-foreground text-2xl font-bold tracking-tight">
             <AnimatedCounter value={streak} suffix=" days" decimals={0} />

@@ -3,6 +3,7 @@
 import { GripVertical, X, ChevronDown } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { WorkoutExercise } from '@/types/workout';
 import { SetRow } from './set-row';
 import { useWorkoutStore } from '@/stores/workout-store';
@@ -21,6 +22,7 @@ export function ExerciseRow({
   onDragEnd: (e: React.DragEvent) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
+  const t = useTranslations('workouts');
   const removeExercise = useWorkoutStore((s) => s.removeExercise);
   const addSet = useWorkoutStore((s) => s.addSet);
   const setExerciseRest = useWorkoutStore((s) => s.setExerciseRest);
@@ -31,7 +33,7 @@ export function ExerciseRow({
       layout
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-border/30 bg-muted/30"
+      className="border-border/30 bg-muted/30 rounded-xl border"
     >
       <div
         className="flex items-center gap-2 px-3 py-2.5"
@@ -40,16 +42,24 @@ export function ExerciseRow({
         onDragOver={(e) => onDragOver(e, exercise.id)}
         onDragEnd={onDragEnd}
       >
-        <div className="cursor-grab active:cursor-grabbing text-muted-foreground/40 hover:text-muted-foreground">
+        <div className="text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing">
           <GripVertical size={14} />
         </div>
-        <button onClick={() => setExpanded(!expanded)} className="text-muted-foreground/40 hover:text-foreground">
-          <ChevronDown size={14} className={`transition-transform ${expanded ? 'rotate-0' : '-rotate-90'}`} />
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="text-muted-foreground/40 hover:text-foreground"
+        >
+          <ChevronDown
+            size={14}
+            className={`transition-transform ${expanded ? 'rotate-0' : '-rotate-90'}`}
+          />
         </button>
-        <span className="text-xs text-muted-foreground/60 font-mono">{index + 1}</span>
-        <span className="flex-1 text-sm font-medium text-foreground truncate">{exercise.exerciseName}</span>
-        <div className="flex items-center gap-1 text-[10px] text-muted-foreground/60">
-          <span>{exercise.sets.length} sets</span>
+        <span className="text-muted-foreground/60 font-mono text-xs">{index + 1}</span>
+        <span className="text-foreground flex-1 truncate text-sm font-medium">
+          {exercise.exerciseName}
+        </span>
+        <div className="text-muted-foreground/60 flex items-center gap-1 text-[10px]">
+          <span>{t('sets_count', { count: exercise.sets.length })}</span>
         </div>
         <button
           onClick={() => removeExercise(exercise.id)}
@@ -67,7 +77,9 @@ export function ExerciseRow({
         >
           {/* Rest time selector */}
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-muted-foreground/60 font-medium uppercase tracking-wider">Rest:</span>
+            <span className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
+              {t('rest')}:
+            </span>
             {[30, 60, 90, 120, 150].map((sec) => (
               <button
                 key={sec}
@@ -93,9 +105,9 @@ export function ExerciseRow({
           <div className="flex gap-2">
             <button
               onClick={() => addSet(exercise.id)}
-              className="rounded-lg bg-muted px-3 py-1 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors"
+              className="bg-muted text-muted-foreground hover:bg-muted/80 rounded-lg px-3 py-1 text-[10px] font-medium transition-colors"
             >
-              + Add set
+              + {t('add_set')}
             </button>
           </div>
 
@@ -103,8 +115,8 @@ export function ExerciseRow({
           <textarea
             value={exercise.notes}
             onChange={(e) => setExerciseNotes(exercise.id, e.target.value)}
-            placeholder="Exercise notes..."
-            className="w-full rounded-lg border border-border/30 bg-card p-2 text-xs text-foreground placeholder:text-muted-foreground/40 resize-none h-16 focus:border-primary/40 focus:outline-none"
+            placeholder={t('exercise_notes_placeholder')}
+            className="border-border/30 bg-card text-foreground placeholder:text-muted-foreground/40 focus:border-primary/40 h-16 w-full resize-none rounded-lg border p-2 text-xs focus:outline-none"
           />
         </motion.div>
       )}

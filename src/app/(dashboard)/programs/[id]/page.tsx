@@ -3,6 +3,7 @@
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { NotebookText, ArrowLeft, Users, Clock, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 
 const PROGRAMS = [
@@ -54,6 +55,8 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function ProgramDetailPage() {
+  const t = useTranslations('programs');
+  const tc = useTranslations('common');
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const program = PROGRAMS.find((p) => p.id === id);
@@ -62,9 +65,9 @@ export default function ProgramDetailPage() {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <NotebookText size={48} className="text-muted-foreground/30" />
-        <p className="text-muted-foreground text-sm">Program not found</p>
+        <p className="text-muted-foreground text-sm">{t('not_found')}</p>
         <Button variant="outline" onClick={() => router.push('/programs')}>
-          Back to Programs
+          {t('back_to_programs')}
         </Button>
       </div>
     );
@@ -77,7 +80,7 @@ export default function ProgramDetailPage() {
         className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1.5 text-sm transition-colors"
       >
         <ArrowLeft size={16} />
-        Back
+        {tc('back')}
       </button>
 
       <motion.div
@@ -98,10 +101,10 @@ export default function ProgramDetailPage() {
                 {program.difficulty}
               </span>
               <span className="flex items-center gap-1">
-                <Clock size={12} /> {program.weeks} weeks
+                <Clock size={12} /> {t('weeks', { count: program.weeks })}
               </span>
               <span className="flex items-center gap-1">
-                <Users size={12} /> {program.enrolled} enrolled
+                <Users size={12} /> {t('enrolled', { count: program.enrolled })}
               </span>
             </div>
           </div>
@@ -113,14 +116,14 @@ export default function ProgramDetailPage() {
 
         <div className="bg-card border-border/50 rounded-2xl border p-5">
           <p className="text-muted-foreground/60 mb-3 text-[10px] font-medium tracking-wider uppercase">
-            Program Details
+            {t('details')}
           </p>
           <div className="space-y-3">
             {[
-              { label: 'Duration', value: `${program.weeks} weeks` },
-              { label: 'Days per Week', value: `${program.daysPerWeek}` },
-              { label: 'Difficulty', value: program.difficulty },
-              { label: 'Total Workouts', value: `${program.weeks * program.daysPerWeek}` },
+              { label: t('duration'), value: t('weeks', { count: program.weeks }) },
+              { label: t('days_per_week'), value: `${program.daysPerWeek}` },
+              { label: t('difficulty'), value: program.difficulty },
+              { label: t('total_workouts'), value: `${program.weeks * program.daysPerWeek}` },
             ].map((d) => (
               <div key={d.label} className="flex items-center justify-between">
                 <span className="text-muted-foreground text-sm">{d.label}</span>
@@ -131,7 +134,7 @@ export default function ProgramDetailPage() {
         </div>
 
         <Button size="lg" className="w-full" onClick={() => router.push('/programs')}>
-          Enroll in Program
+          {t('enroll_in_program')}
           <ChevronRight className="ml-1 size-4" />
         </Button>
       </motion.div>

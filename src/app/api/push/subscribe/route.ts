@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { addSubscription, removeSubscription } from '@/lib/push-store';
 import { withSecurity } from '@/lib/security/with-security';
 import { sanitizePushSubscription } from '@/lib/security/sanitize';
+import { verifySession } from '@/lib/security/csrf';
 
 async function subscribeHandler(request: Request) {
   const body = await request.json();
@@ -9,7 +10,8 @@ async function subscribeHandler(request: Request) {
   if (!sanitized) {
     return NextResponse.json({ error: 'Invalid subscription format' }, { status: 400 });
   }
-  addSubscription(sanitized);
+  const session = await verifySession();
+  await addSubscription(sanitized, session.userId || undefined);
   return NextResponse.json({ ok: true });
 }
 
@@ -17,7 +19,7 @@ async function unsubscribeHandler(request: Request) {
   const body = await request.json().catch(() => null);
   if (body) {
     const sanitized = sanitizePushSubscription(body);
-    if (sanitized) removeSubscription(sanitized);
+    if (sanitized) await removeSubscription(sanitized);
   }
   return NextResponse.json({ ok: true });
 }

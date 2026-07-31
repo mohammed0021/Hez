@@ -2,59 +2,61 @@
 
 import { motion } from 'framer-motion';
 import { Scale, Trophy, TrendingUp, ChevronRight, BrainCircuit, Weight, Ruler } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-const cards = [
-  {
-    icon: Weight,
-    label: 'Weight Tracker',
-    desc: 'Log and chart body weight',
-    href: '/progress/weight',
-    color: 'bg-blue-500/10 text-blue-500',
-  },
-  {
-    icon: Scale,
-    label: 'BMI Calculator',
-    desc: 'Calculate your BMI',
-    href: '/progress/bmi',
-    color: 'bg-green-500/10 text-green-500',
-  },
-  {
-    icon: Ruler,
-    label: 'Measurements',
-    desc: 'Track body measurements',
-    href: '/progress/measurements',
-    color: 'bg-purple-500/10 text-purple-500',
-  },
-  {
-    icon: BrainCircuit,
-    label: 'Analytics',
-    desc: 'Smart analysis & heatmaps',
-    href: '/progress/analytics',
-    color: 'bg-primary/10 text-primary',
-  },
-  {
-    icon: Trophy,
-    label: 'Personal Records',
-    desc: 'Your best lifts',
-    href: '/progress/records',
-    color: 'bg-amber-500/10 text-amber-500',
-  },
-  {
-    icon: TrendingUp,
-    label: 'Strength Trends',
-    desc: 'Strength progression',
-    href: '/progress/strength',
-    color: 'bg-rose-500/10 text-rose-500',
-  },
-];
-
 export default function ProgressHubPage() {
+  const t = useTranslations();
+
+  const cards = [
+    {
+      icon: Weight,
+      label: t('progress.weight'),
+      desc: t('progress.weight_subtitle'),
+      href: '/progress/weight',
+      color: 'bg-blue-500/10 text-blue-500',
+    },
+    {
+      icon: Scale,
+      label: t('progress.bmi'),
+      desc: t('progress.bmi_subtitle'),
+      href: '/progress/bmi',
+      color: 'bg-green-500/10 text-green-500',
+    },
+    {
+      icon: Ruler,
+      label: t('progress.measurements'),
+      desc: t('progress.measurements_subtitle'),
+      href: '/progress/measurements',
+      color: 'bg-purple-500/10 text-purple-500',
+    },
+    {
+      icon: BrainCircuit,
+      label: t('progress.analytics'),
+      desc: t('progress.analytics_heatmap_desc'),
+      href: '/progress/analytics',
+      color: 'bg-primary/10 text-primary',
+    },
+    {
+      icon: Trophy,
+      label: t('progress.records'),
+      desc: t('progress.records_subtitle'),
+      href: '/progress/records',
+      color: 'bg-amber-500/10 text-amber-500',
+    },
+    {
+      icon: TrendingUp,
+      label: t('progress.strength_trends'),
+      desc: t('progress.strength_subtitle'),
+      href: '/progress/strength',
+      color: 'bg-rose-500/10 text-rose-500',
+    },
+  ];
   return (
     <>
       <div>
-        <h1 className="text-foreground text-2xl font-bold">Progress</h1>
-        <p className="text-muted-foreground mt-0.5 text-sm">Track your fitness journey</p>
+        <h1 className="text-foreground text-2xl font-bold">{t('progress.title')}</h1>
+        <p className="text-muted-foreground mt-0.5 text-sm">{t('progress.subtitle')}</p>
       </div>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">

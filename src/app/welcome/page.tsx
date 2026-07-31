@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Check, ChevronRight, Sun, Moon, Monitor } from 'lucide-react';
 import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
@@ -15,6 +16,9 @@ type Step = 'language' | 'theme' | 'mode' | 'done';
 const STEP_ORDER: Step[] = ['language', 'theme', 'mode'];
 
 export default function WelcomePage() {
+  const t = useTranslations('welcome');
+  const tc = useTranslations('common');
+  const ts = useTranslations('settings');
   const router = useRouter();
   const { setThemeId, setMode, mode, themeId } = useThemeStore();
   const { setLocale, locale } = useLocaleStore();
@@ -66,7 +70,7 @@ export default function WelcomePage() {
           onClick={handleSkip}
           className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
         >
-          Skip
+          {tc('skip')}
         </button>
       </div>
 
@@ -91,10 +95,8 @@ export default function WelcomePage() {
               exit={{ opacity: 0, x: -40 }}
               className="w-full"
             >
-              <h1 className="text-foreground text-center text-2xl font-bold">Welcome to Hêz</h1>
-              <p className="text-muted-foreground mt-1 text-center text-sm">
-                Choose your language to get started
-              </p>
+              <h1 className="text-foreground text-center text-2xl font-bold">{t('title')}</h1>
+              <p className="text-muted-foreground mt-1 text-center text-sm">{t('subtitle')}</p>
 
               <div className="mt-8 space-y-2">
                 {locales.map((l) => (
@@ -127,10 +129,10 @@ export default function WelcomePage() {
               exit={{ opacity: 0, x: -40 }}
               className="w-full"
             >
-              <h1 className="text-foreground text-center text-2xl font-bold">Choose your accent</h1>
-              <p className="text-muted-foreground mt-1 text-center text-sm">
-                Pick a color theme that motivates you
-              </p>
+              <h1 className="text-foreground text-center text-2xl font-bold">
+                {t('choose_accent')}
+              </h1>
+              <p className="text-muted-foreground mt-1 text-center text-sm">{t('theme_hint')}</p>
 
               <div className="mt-8 grid grid-cols-4 gap-3">
                 {THEMES.map((t) => (
@@ -165,20 +167,23 @@ export default function WelcomePage() {
               exit={{ opacity: 0, x: -40 }}
               className="w-full"
             >
-              <h1 className="text-foreground text-center text-2xl font-bold">Light or dark?</h1>
-              <p className="text-muted-foreground mt-1 text-center text-sm">
-                Choose your preferred appearance
-              </p>
+              <h1 className="text-foreground text-center text-2xl font-bold">{t('mode_title')}</h1>
+              <p className="text-muted-foreground mt-1 text-center text-sm">{t('mode_hint')}</p>
 
               <div className="mt-8 space-y-3">
                 {[
-                  { value: 'light', icon: Sun, label: 'Light', desc: 'Bright and clean' },
-                  { value: 'dark', icon: Moon, label: 'Dark', desc: 'Easy on the eyes' },
+                  {
+                    value: 'light',
+                    icon: Sun,
+                    label: ts('light'),
+                    desc: t('mode_light_desc'),
+                  },
+                  { value: 'dark', icon: Moon, label: ts('dark'), desc: t('mode_dark_desc') },
                   {
                     value: 'system',
                     icon: Monitor,
-                    label: 'System',
-                    desc: 'Follow device setting',
+                    label: ts('system'),
+                    desc: t('mode_system_desc'),
                   },
                 ].map((opt) => {
                   const Icon = opt.icon;
@@ -225,7 +230,7 @@ export default function WelcomePage() {
           onClick={handleNext}
           className="bg-primary text-primary-foreground hover:bg-primary/90 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-semibold transition-colors"
         >
-          {step === 'mode' ? 'Begin Your Journey' : 'Continue'}
+          {step === 'mode' ? t('start') : tc('continue')}
           <ChevronRight size={20} />
         </button>
       </div>

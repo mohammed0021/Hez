@@ -7,7 +7,8 @@ import { useWeightStore } from '@/stores/weight-store';
 import { useMeasurementStore } from '@/stores/measurement-store';
 import { useSupplementStore } from '@/stores/supplement-store';
 import { usePRStore } from '@/stores/pr-store';
-import { XP_REWARDS } from './gamification-types';
+import { XP_REWARDS, ACHIEVEMENTS } from './gamification-types';
+import { notify } from '@/lib/notification-service';
 export function useGamificationSync() {
   const syncedRef = useRef({
     sessions: 0,
@@ -94,7 +95,19 @@ export function useGamificationSync() {
       }
 
       // Check achievements and challenges
-      gamification.checkAchievements(true);
+      const unlocked = gamification.checkAchievements(true);
+      if (unlocked.length > 0) {
+        for (const ach of unlocked) {
+          const def = ACHIEVEMENTS.find((a) => a.id === ach.id);
+          if (def) {
+            notify(`Achievement Unlocked: ${def.title}`, {
+              body: def.description,
+              tag: `achievement_${ach.id}`,
+              data: { type: 'achievement_unlocked', url: '/gamification' },
+            });
+          }
+        }
+      }
       gamification.checkChallenges();
     };
 

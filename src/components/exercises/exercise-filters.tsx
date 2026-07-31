@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SlidersHorizontal, X, ChevronDown } from 'lucide-react';
 import { useExerciseStore } from '@/stores/exercise-store';
@@ -9,7 +10,24 @@ import type { Difficulty } from '@/types/exercise';
 
 const DIFFICULTIES: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
 
+const DIFFICULTY_LABELS: Record<string, string> = {
+  beginner: 'beginner',
+  intermediate: 'intermediate',
+  advanced: 'advanced',
+};
+
+const EQUIPMENT_LABELS: Record<string, string> = {
+  Barbell: 'barbell',
+  Dumbbell: 'dumbbell',
+  Machine: 'machine',
+  Cable: 'cable',
+  Kettlebell: 'kettlebell',
+  'Resistance Band': 'band',
+  Bodyweight: 'bodyweight',
+};
+
 export function ExerciseFilters() {
+  const t = useTranslations('exercises');
   const [open, setOpen] = useState(false);
   const filters = useExerciseStore((s) => s.activeFilters);
   const setMuscleFilter = useExerciseStore((s) => s.setMuscleGroupFilter);
@@ -17,28 +35,35 @@ export function ExerciseFilters() {
   const setDifficultyFilter = useExerciseStore((s) => s.setDifficultyFilter);
   const clearFilters = useExerciseStore((s) => s.clearFilters);
 
-  const hasFilters = filters.muscleGroups.length > 0 || filters.equipment.length > 0 || filters.difficulties.length > 0;
+  const hasFilters =
+    filters.muscleGroups.length > 0 ||
+    filters.equipment.length > 0 ||
+    filters.difficulties.length > 0;
 
   const toggleArray = (arr: string[], item: string, setter: (v: string[]) => void) => {
     setter(arr.includes(item) ? arr.filter((x) => x !== item) : [...arr, item]);
   };
 
-  const activeCount = filters.muscleGroups.length + filters.equipment.length + filters.difficulties.length;
+  const activeCount =
+    filters.muscleGroups.length + filters.equipment.length + filters.difficulties.length;
 
   return (
     <div>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-11 items-center gap-2 rounded-2xl border border-border/50 bg-card px-4 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="border-border/50 bg-card text-muted-foreground hover:text-foreground flex h-11 items-center gap-2 rounded-2xl border px-4 text-sm transition-colors"
       >
         <SlidersHorizontal size={16} />
-        Filters
+        {t('filters')}
         {activeCount > 0 && (
-          <span className="flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+          <span className="bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[10px] font-semibold">
             {activeCount}
           </span>
         )}
-        <ChevronDown size={14} className={`ml-auto transition-transform ${open ? 'rotate-180' : ''}`} />
+        <ChevronDown
+          size={14}
+          className={`ml-auto transition-transform ${open ? 'rotate-180' : ''}`}
+        />
       </button>
 
       <AnimatePresence>
@@ -49,17 +74,17 @@ export function ExerciseFilters() {
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 space-y-5 rounded-2xl border border-border/50 bg-card p-4">
+            <div className="border-border/50 bg-card mt-3 space-y-5 rounded-2xl border p-4">
               {hasFilters && (
                 <button
                   onClick={clearFilters}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs"
                 >
-                  <X size={12} /> Clear all filters
+                  <X size={12} /> {t('clear_filters')}
                 </button>
               )}
 
-              <Section title="Muscle Group" count={filters.muscleGroups.length}>
+              <Section title={t('muscle_group')} count={filters.muscleGroups.length}>
                 <div className="flex flex-wrap gap-1.5">
                   {MUSCLE_GROUPS.map((mg) => (
                     <Chip
@@ -72,12 +97,12 @@ export function ExerciseFilters() {
                 </div>
               </Section>
 
-              <Section title="Equipment" count={filters.equipment.length}>
+              <Section title={t('equipment')} count={filters.equipment.length}>
                 <div className="flex flex-wrap gap-1.5">
                   {EQUIPMENT_LIST.map((eq) => (
                     <Chip
                       key={eq}
-                      label={eq}
+                      label={t(EQUIPMENT_LABELS[eq] ?? 'other')}
                       active={filters.equipment.includes(eq)}
                       onClick={() => toggleArray(filters.equipment, eq, setEquipmentFilter)}
                     />
@@ -85,12 +110,12 @@ export function ExerciseFilters() {
                 </div>
               </Section>
 
-              <Section title="Difficulty" count={filters.difficulties.length}>
+              <Section title={t('difficulty')} count={filters.difficulties.length}>
                 <div className="flex gap-2">
                   {DIFFICULTIES.map((d) => (
                     <Chip
                       key={d}
-                      label={d.charAt(0).toUpperCase() + d.slice(1)}
+                      label={t(DIFFICULTY_LABELS[d] ?? 'beginner')}
                       active={filters.difficulties.includes(d)}
                       onClick={() =>
                         setDifficultyFilter(
@@ -111,12 +136,23 @@ export function ExerciseFilters() {
   );
 }
 
-function Section({ title, count, children }: { title: string; count: number; children: React.ReactNode }) {
+function Section({
+  title,
+  count,
+  children,
+}: {
+  title: string;
+  count: number;
+  children: React.ReactNode;
+}) {
+  const t = useTranslations('exercises');
   return (
     <div>
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-foreground">{title}</span>
-        {count > 0 && <span className="text-[10px] text-primary">{count} selected</span>}
+        <span className="text-foreground text-xs font-medium">{title}</span>
+        {count > 0 && (
+          <span className="text-primary text-[10px]">{t('selected_count', { count })}</span>
+        )}
       </div>
       {children}
     </div>

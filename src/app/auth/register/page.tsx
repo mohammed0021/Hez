@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Eye, EyeOff, UserPlus } from 'lucide-react';
 
 import { AuthLayout } from '@/components/auth/auth-layout';
@@ -18,6 +19,7 @@ import { signUpWithEmail } from '@/services/auth';
 import { useToastStore } from '@/stores/toast-store';
 
 export default function RegisterPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const toast = useToastStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -35,10 +37,10 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       await signUpWithEmail(data.email, data.password, data.name);
-      toast.success('Account created! Check your email to verify.');
+      toast.success(t('account_created'));
       router.replace('/auth/verify-email');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create account. Try again.';
+      const message = err instanceof Error ? err.message : t('create_account_failed');
       toast.error(message);
       console.error('Registration error:', err);
     } finally {
@@ -48,10 +50,10 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen-safe flex flex-col items-center justify-center p-4">
-      <AuthLayout title="Create account" subtitle="Start your fitness journey">
+      <AuthLayout title={t('register_title')} subtitle={t('register_subtitle')}>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 w-full max-w-sm space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Full Name</Label>
+            <Label htmlFor="name">{t('full_name')}</Label>
             <Input
               id="name"
               placeholder="Alex Johnson"
@@ -64,11 +66,11 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('email_placeholder')}
               autoCapitalize="none"
               autoComplete="email"
               {...register('email')}
@@ -77,12 +79,12 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('password')}</Label>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Min. 8 characters"
+                placeholder={t('password_min_hint')}
                 autoComplete="new-password"
                 {...register('password')}
               />
@@ -100,11 +102,11 @@ export default function RegisterPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="confirmPassword">{t('confirm_password')}</Label>
             <Input
               id="confirmPassword"
               type="password"
-              placeholder="Repeat your password"
+              placeholder={t('confirm_password_placeholder')}
               autoComplete="new-password"
               {...register('confirmPassword')}
             />
@@ -116,16 +118,16 @@ export default function RegisterPage() {
           <motion.div whileTap={{ scale: 0.98 }}>
             <Button type="submit" className="min-h-[44px] w-full" size="lg" disabled={isLoading}>
               <UserPlus size={18} />
-              {isLoading ? 'Creating account...' : 'Create Account'}
+              {isLoading ? t('creating_account') : t('create_account')}
             </Button>
           </motion.div>
 
           <SocialAuthButtons isLoading={isLoading} />
 
           <p className="text-muted-foreground text-center text-sm">
-            Already have an account?{' '}
+            {t('already_have_account')}{' '}
             <Link href="/auth/login" className="text-primary font-medium">
-              Sign in
+              {t('sign_in_link')}
             </Link>
           </p>
         </form>

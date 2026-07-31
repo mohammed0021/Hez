@@ -3,12 +3,14 @@
 import { motion } from 'framer-motion';
 import { Bookmark, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useWorkoutStore } from '@/stores/workout-store';
 import { starterTemplates } from '@/data/workout-templates';
 import { TemplateCard } from '@/components/workouts/template-card';
 
 export default function TemplatesPage() {
   const userTemplates = useWorkoutStore((s) => s.templates);
+  const t = useTranslations('workouts');
 
   return (
     <div className="space-y-6">
@@ -21,9 +23,9 @@ export default function TemplatesPage() {
           <ArrowLeft size={20} />
         </Link>
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Template Library</h1>
+          <h1 className="text-foreground text-2xl font-bold">{t('template_library')}</h1>
           <p className="text-muted-foreground mt-0.5 text-sm">
-            {starterTemplates.length + userTemplates.length} templates
+            {t('templates_count', { count: starterTemplates.length + userTemplates.length })}
           </p>
         </div>
       </motion.div>
@@ -32,7 +34,7 @@ export default function TemplatesPage() {
       <section>
         <h2 className="text-foreground mb-3 flex items-center gap-2 text-sm font-semibold">
           <Bookmark size={16} className="text-primary" />
-          Starter Templates
+          {t('starter_templates')}
         </h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {starterTemplates.map((t, i) => (
@@ -44,7 +46,7 @@ export default function TemplatesPage() {
       {/* User-created templates */}
       {userTemplates.length > 0 && (
         <section>
-          <h2 className="text-foreground mb-3 text-sm font-semibold">Your Templates</h2>
+          <h2 className="text-foreground mb-3 text-sm font-semibold">{t('your_templates')}</h2>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {userTemplates.map((t, i) => (
               <TemplateCard key={t.id} template={t} index={i} />
@@ -56,12 +58,12 @@ export default function TemplatesPage() {
       {starterTemplates.length === 0 && userTemplates.length === 0 && (
         <div className="border-border/50 bg-card flex flex-col items-center gap-3 rounded-2xl border p-4">
           <Bookmark size={40} className="text-muted-foreground/30" />
-          <p className="text-muted-foreground text-sm">No templates yet</p>
+          <p className="text-muted-foreground text-sm">{t('no_templates')}</p>
           <Link
             href="/workouts/new"
             className="bg-primary text-primary-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs font-medium"
           >
-            Create your first template
+            {t('create_first_template')}
           </Link>
         </div>
       )}

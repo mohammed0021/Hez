@@ -1,6 +1,7 @@
 'use client';
 
 import { memo, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Heart, ImageOff } from 'lucide-react';
 import Link from 'next/link';
 import type { Exercise } from '@/types/exercise';
@@ -31,7 +32,24 @@ const MUSCLE_GRADIENT: Record<string, string> = {
   'Full Body': 'from-gray-500/20 to-gray-600/10',
 };
 
+const DIFFICULTY_LABELS: Record<string, string> = {
+  beginner: 'beginner',
+  intermediate: 'intermediate',
+  advanced: 'advanced',
+};
+
+const EQUIPMENT_LABELS: Record<string, string> = {
+  Barbell: 'barbell',
+  Dumbbell: 'dumbbell',
+  Machine: 'machine',
+  Cable: 'cable',
+  Kettlebell: 'kettlebell',
+  'Resistance Band': 'band',
+  Bodyweight: 'bodyweight',
+};
+
 export const ExerciseCard = memo(function ExerciseCard({ exercise }: { exercise: Exercise }) {
+  const t = useTranslations('exercises');
   const isFavorite = useExerciseStore((s) => s.isFavorite(exercise.id));
   const toggleFavorite = useExerciseStore((s) => s.toggleFavorite);
   const [imgError, setImgError] = useState(false);
@@ -50,7 +68,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise }: { exercise:
         {exercise.imageUrl && !imgError ? (
           <img
             src={exercise.imageUrl}
-            alt={exercise.name}
+            alt={t('image_alt', { name: exercise.name })}
             className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
             loading="lazy"
             onError={() => setImgError(true)}
@@ -82,7 +100,7 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise }: { exercise:
         <span
           className={`absolute right-2 bottom-2 rounded-md px-1.5 py-0.5 text-[9px] font-medium backdrop-blur-sm ${difficultyColors[exercise.difficulty]}`}
         >
-          {exercise.difficulty}
+          {t(DIFFICULTY_LABELS[exercise.difficulty] ?? 'beginner')}
         </span>
       </div>
 
@@ -103,7 +121,11 @@ export const ExerciseCard = memo(function ExerciseCard({ exercise }: { exercise:
 
         <div className="flex items-center justify-between pt-0.5">
           <span className="text-muted-foreground/60 text-[10px]">
-            {exercise.equipment[0] ?? 'Bodyweight'}
+            {t(
+              exercise.equipment[0]
+                ? (EQUIPMENT_LABELS[exercise.equipment[0]] ?? 'other')
+                : 'bodyweight',
+            )}
           </span>
           <span className="text-muted-foreground/40 text-[9px]">{exercise.exerciseType}</span>
         </div>

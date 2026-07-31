@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Mail, ArrowLeft, Send } from 'lucide-react';
 import Link from 'next/link';
 
@@ -15,6 +16,7 @@ import { sendPasswordResetEmail } from '@/services/auth';
 import { useToastStore } from '@/stores/toast-store';
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations('auth');
   const toast = useToastStore();
   const [isLoading, setIsLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -32,9 +34,9 @@ export default function ForgotPasswordPage() {
     try {
       await sendPasswordResetEmail(data.email);
       setSent(true);
-      toast.success('Check your email for reset instructions');
+      toast.success(t('forgot_password_check_email'));
     } catch {
-      toast.error('Failed to send reset email. Try again.');
+      toast.error(t('send_reset_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -59,11 +61,9 @@ export default function ForgotPasswordPage() {
           <div className="bg-primary mb-4 inline-flex size-10 items-center justify-center rounded-2xl">
             <Mail size={20} className="text-primary-foreground" />
           </div>
-          <h1 className="text-foreground text-2xl font-bold">Reset password</h1>
+          <h1 className="text-foreground text-2xl font-bold">{t('forgot_password_title')}</h1>
           <p className="text-muted-foreground mt-1.5 text-sm">
-            {sent
-              ? 'Email sent! Check your inbox for the reset link.'
-              : "Enter your email and we'll send you a reset link."}
+            {sent ? t('forgot_password_email_sent') : t('forgot_password_subtitle')}
           </p>
         </motion.div>
 
@@ -75,11 +75,11 @@ export default function ForgotPasswordPage() {
           >
             <form onSubmit={handleSubmit(onSubmit)} className="mt-8 space-y-5">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('email')}</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t('email_placeholder')}
                   autoCapitalize="none"
                   autoComplete="email"
                   autoFocus
@@ -96,7 +96,7 @@ export default function ForgotPasswordPage() {
                   disabled={isLoading}
                 >
                   <Send size={18} />
-                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                  {isLoading ? t('sending') : t('forgot_password_button')}
                 </Button>
               </motion.div>
             </form>
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
               className="min-h-[44px] w-full"
               onClick={() => setSent(false)}
             >
-              Send again
+              {t('send_again')}
             </Button>
           </motion.div>
         )}

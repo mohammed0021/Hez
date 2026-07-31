@@ -142,7 +142,12 @@ interface ActiveWorkoutState {
   startWorkout: (workout: Workout) => void;
   resumeWorkout: () => void;
   startSession: () => void;
-  completeSet: (actualWeightKg: number, actualReps: number, rpe: number | null, tempo: string) => void;
+  completeSet: (
+    actualWeightKg: number,
+    actualReps: number,
+    rpe: number | null,
+    tempo: string,
+  ) => void;
   skipSet: () => void;
   goToNextSet: () => void;
   goToNextExercise: () => void;
@@ -152,7 +157,11 @@ interface ActiveWorkoutState {
   startRest: () => void;
   skipRest: () => void;
   tickRest: () => boolean; // returns true if timer expired
-  updateSetField: (setIndex: number, field: 'actualWeightKg' | 'actualReps' | 'rpe' | 'tempo', value: number | string) => void;
+  updateSetField: (
+    setIndex: number,
+    field: 'actualWeightKg' | 'actualReps' | 'rpe' | 'tempo',
+    value: number | string,
+  ) => void;
   reset: () => void;
 }
 
@@ -171,13 +180,22 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
         const d = get().data;
         if (d && d.status === 'paused') {
           const pausedDuration = d.pausedAt ? Date.now() - new Date(d.pausedAt).getTime() : 0;
-          set({ data: { ...d, status: 'active', pausedAt: null, totalPausedMs: d.totalPausedMs + pausedDuration } });
+          set({
+            data: {
+              ...d,
+              status: 'active',
+              pausedAt: null,
+              totalPausedMs: d.totalPausedMs + pausedDuration,
+            },
+          });
         }
       },
 
       startSession: () =>
         set((s) =>
-          s.data ? { data: { ...s.data, status: 'active', startedAt: new Date().toISOString() } } : {},
+          s.data
+            ? { data: { ...s.data, status: 'active', startedAt: new Date().toISOString() } }
+            : {},
         ),
 
       completeSet: (actualWeightKg, actualReps, rpe, tempo) =>
@@ -191,7 +209,15 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
           if (!set) return {};
           const updatedSets = ex.sets.map((st, i) =>
             i === s.data!.currentSetIndex
-              ? { ...st, actualWeightKg, actualReps, rpe, tempo, completed: true, completedAt: new Date().toISOString() }
+              ? {
+                  ...st,
+                  actualWeightKg,
+                  actualReps,
+                  rpe,
+                  tempo,
+                  completed: true,
+                  completedAt: new Date().toISOString(),
+                }
               : st,
           );
           const updatedExercises = block.exercises.map((e, i) =>
@@ -255,7 +281,9 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
               data: {
                 ...s.data,
                 blocks: s.data.blocks.map((b, i) =>
-                  i === s.data!.currentBlockIndex ? { ...b, completed: true, exercises: updatedExercises } : b,
+                  i === s.data!.currentBlockIndex
+                    ? { ...b, completed: true, exercises: updatedExercises }
+                    : b,
                 ),
                 currentBlockIndex: nextBlockIndex,
                 currentExerciseIndex: 0,
@@ -268,7 +296,9 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
             data: {
               ...s.data,
               blocks: s.data.blocks.map((b, i) =>
-                i === s.data!.currentBlockIndex ? { ...b, completed: true, exercises: updatedExercises } : b,
+                i === s.data!.currentBlockIndex
+                  ? { ...b, completed: true, exercises: updatedExercises }
+                  : b,
               ),
               status: 'completed',
               completedAt: new Date().toISOString(),
@@ -292,12 +322,24 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
         set((s) => {
           if (!s.data) return {};
           if (s.data.status === 'active' || s.data.status === 'resting') {
-            return { data: { ...s.data, status: 'paused', pausedAt: new Date().toISOString(), restTimerEnd: null } };
+            return {
+              data: {
+                ...s.data,
+                status: 'paused',
+                pausedAt: new Date().toISOString(),
+                restTimerEnd: null,
+              },
+            };
           }
           if (s.data.status === 'paused') {
             const pausedMs = s.data.pausedAt ? Date.now() - new Date(s.data.pausedAt).getTime() : 0;
             return {
-              data: { ...s.data, status: 'active', pausedAt: null, totalPausedMs: s.data.totalPausedMs + pausedMs },
+              data: {
+                ...s.data,
+                status: 'active',
+                pausedAt: null,
+                totalPausedMs: s.data.totalPausedMs + pausedMs,
+              },
             };
           }
           return {};
@@ -305,7 +347,16 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
 
       completeWorkout: () =>
         set((s) =>
-          s.data ? { data: { ...s.data, status: 'completed', completedAt: new Date().toISOString(), restTimerEnd: null } } : {},
+          s.data
+            ? {
+                data: {
+                  ...s.data,
+                  status: 'completed',
+                  completedAt: new Date().toISOString(),
+                  restTimerEnd: null,
+                },
+              }
+            : {},
         ),
 
       cancelWorkout: () => set({ data: null }),
@@ -314,13 +365,17 @@ export const useActiveWorkoutStore = create<ActiveWorkoutState>()(
         set((s) => {
           if (!s.data) return {};
           const duration = getRestDuration(s.data);
-          return { data: { ...s.data, status: 'resting', restTimerEnd: new Date(Date.now() + duration * 1000).toISOString() } };
+          return {
+            data: {
+              ...s.data,
+              status: 'resting',
+              restTimerEnd: new Date(Date.now() + duration * 1000).toISOString(),
+            },
+          };
         }),
 
       skipRest: () =>
-        set((s) =>
-          s.data ? { data: { ...s.data, status: 'active', restTimerEnd: null } } : {},
-        ),
+        set((s) => (s.data ? { data: { ...s.data, status: 'active', restTimerEnd: null } } : {})),
 
       tickRest: () => {
         const d = get().data;

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -23,16 +24,30 @@ import { useExerciseStore } from '@/stores/exercise-store';
 import exercises from '@/data/exercises';
 import { Badge } from '@/components/ui/badge';
 
-const difficultyConfig: { [key: string]: { color: string; label: string } } = {
-  beginner: { color: 'bg-green-500/10 text-green-500 border-green-500/20', label: 'Beginner' },
-  intermediate: {
-    color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-    label: 'Intermediate',
-  },
-  advanced: { color: 'bg-red-500/10 text-red-500 border-red-500/20', label: 'Advanced' },
+const difficultyConfig: { [key: string]: { color: string } } = {
+  beginner: { color: 'bg-green-500/10 text-green-500 border-green-500/20' },
+  intermediate: { color: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20' },
+  advanced: { color: 'bg-red-500/10 text-red-500 border-red-500/20' },
+};
+
+const DIFFICULTY_LABELS: Record<string, string> = {
+  beginner: 'beginner',
+  intermediate: 'intermediate',
+  advanced: 'advanced',
+};
+
+const EQUIPMENT_LABELS: Record<string, string> = {
+  Barbell: 'barbell',
+  Dumbbell: 'dumbbell',
+  Machine: 'machine',
+  Cable: 'cable',
+  Kettlebell: 'kettlebell',
+  'Resistance Band': 'band',
+  Bodyweight: 'bodyweight',
 };
 
 export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
+  const t = useTranslations('exercises');
   const isFavorite = useExerciseStore((s) => s.isFavorite(exercise.id));
   const toggleFavorite = useExerciseStore((s) => s.toggleFavorite);
   const [imgError, setImgError] = useState(false);
@@ -49,7 +64,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         href="/exercises"
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-sm transition-colors"
       >
-        <ArrowLeft size={16} /> Back to library
+        <ArrowLeft size={16} /> {t('back_to_library')}
       </Link>
 
       {/* Hero Image */}
@@ -61,7 +76,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         {exercise.imageUrl && !imgError ? (
           <img
             src={exercise.imageUrl}
-            alt={exercise.name}
+            alt={t('image_alt', { name: exercise.name })}
             className="size-full object-cover"
             onError={() => setImgError(true)}
           />
@@ -85,7 +100,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
             <span
               className={`rounded-full border px-2.5 py-0.5 text-[10px] font-medium ${difficulty.color}`}
             >
-              {difficulty.label}
+              {t(DIFFICULTY_LABELS[exercise.difficulty] ?? 'beginner')}
             </span>
             <Badge variant="secondary" className="text-[10px]">
               {exercise.category}
@@ -108,10 +123,10 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         className="flex flex-wrap gap-2"
       >
         <button className="bg-primary text-primary-foreground hover:bg-primary/90 inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors">
-          <Play size={16} /> Start Exercise
+          <Play size={16} /> {t('start_exercise')}
         </button>
         <button className="border-border text-foreground hover:bg-muted inline-flex items-center gap-1.5 rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors">
-          <Plus size={16} /> Add to Workout
+          <Plus size={16} /> {t('add_to_workout')}
         </button>
         <button
           onClick={() => toggleFavorite(exercise.id)}
@@ -122,7 +137,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
           }`}
         >
           <Heart size={16} className={isFavorite ? 'fill-red-500' : ''} />
-          {isFavorite ? 'Favorited' : 'Favorite'}
+          {isFavorite ? t('favorited') : t('favorite')}
         </button>
       </motion.div>
 
@@ -136,12 +151,12 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         <div className="border-border/50 bg-card rounded-2xl border p-4">
           <div className="mb-3 flex items-center gap-2">
             <Dumbbell size={16} className="text-primary" />
-            <h2 className="text-foreground text-sm font-semibold">Equipment</h2>
+            <h2 className="text-foreground text-sm font-semibold">{t('equipment')}</h2>
           </div>
           <div className="flex flex-wrap gap-1.5">
             {exercise.equipment.map((eq) => (
               <Badge key={eq} variant="outline" className="text-xs">
-                {eq}
+                {t(EQUIPMENT_LABELS[eq] ?? 'other')}
               </Badge>
             ))}
           </div>
@@ -150,12 +165,12 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         <div className="border-border/50 bg-card rounded-2xl border p-4">
           <div className="mb-3 flex items-center gap-2">
             <Zap size={16} className="text-primary" />
-            <h2 className="text-foreground text-sm font-semibold">Target Muscles</h2>
+            <h2 className="text-foreground text-sm font-semibold">{t('target_muscles')}</h2>
           </div>
           <div className="space-y-1.5">
             <div>
               <p className="text-muted-foreground/60 mb-1 text-[10px] font-medium tracking-wider uppercase">
-                Primary
+                {t('primary')}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {exercise.primaryMuscleGroups.map((mg) => (
@@ -168,7 +183,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
             {exercise.secondaryMuscleGroups.length > 0 && (
               <div>
                 <p className="text-muted-foreground/60 mb-1 text-[10px] font-medium tracking-wider uppercase">
-                  Secondary
+                  {t('secondary')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
                   {exercise.secondaryMuscleGroups.map((mg) => (
@@ -194,7 +209,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         >
           <div className="mb-4 flex items-center gap-2">
             <Dumbbell size={16} className="text-primary" />
-            <h2 className="text-foreground text-sm font-semibold">Step-by-Step Instructions</h2>
+            <h2 className="text-foreground text-sm font-semibold">{t('instructions')}</h2>
           </div>
           <ol className="space-y-3">
             {exercise.instructions.map((instruction, i) => (
@@ -219,7 +234,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
             <div className="border-border/50 bg-card rounded-2xl border p-4">
               <div className="mb-3 flex items-center gap-2">
                 <HelpCircle size={16} className="text-red-500" />
-                <h2 className="text-foreground text-sm font-semibold">Common Mistakes</h2>
+                <h2 className="text-foreground text-sm font-semibold">{t('common_mistakes')}</h2>
               </div>
               <ul className="space-y-2">
                 {exercise.commonMistakes.map((mistake, i) => (
@@ -236,7 +251,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
             <div className="border-border/50 bg-card rounded-2xl border p-4">
               <div className="mb-3 flex items-center gap-2">
                 <Lightbulb size={16} className="text-yellow-500" />
-                <h2 className="text-foreground text-sm font-semibold">Pro Tips</h2>
+                <h2 className="text-foreground text-sm font-semibold">{t('pro_tips')}</h2>
               </div>
               <ul className="space-y-2">
                 {exercise.trainingTips.map((tip, i) => (
@@ -260,7 +275,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
       >
         <div className="mb-3 flex items-center gap-2">
           <BarChart3 size={16} className="text-primary" />
-          <h2 className="text-foreground text-sm font-semibold">Muscle Anatomy</h2>
+          <h2 className="text-foreground text-sm font-semibold">{t('muscle_anatomy')}</h2>
         </div>
         <MuscleAnatomy activeMuscles={exercise.muscleGroups} compact />
       </motion.div>
@@ -275,7 +290,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
         >
           <div className="mb-3 flex items-center gap-2">
             <Repeat2 size={16} className="text-primary" />
-            <h2 className="text-foreground text-sm font-semibold">Alternative Exercises</h2>
+            <h2 className="text-foreground text-sm font-semibold">{t('alternatives')}</h2>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {alternatives.map((alt) => {
@@ -298,7 +313,7 @@ export function ExerciseDetail({ exercise }: { exercise: Exercise }) {
                   <span
                     className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9px] font-medium ${altDifficulty.color}`}
                   >
-                    {alt.difficulty}
+                    {t(DIFFICULTY_LABELS[alt.difficulty] ?? 'beginner')}
                   </span>
                 </Link>
               );

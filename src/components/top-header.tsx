@@ -2,23 +2,24 @@
 
 import { usePathname } from 'next/navigation';
 import { Menu, Search } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useUiStore } from '@/stores/ui-store';
 import { NotificationCenter } from './notification-center';
 import { UserMenu } from './user-menu';
 import { APP_NAME, SIDEBAR_ITEMS } from '@/lib/constants';
 
-const pageTitles: Record<string, string> = {};
-for (const item of SIDEBAR_ITEMS) pageTitles[item.href] = item.label;
-for (const item of [
-  { id: 'profile', label: 'Profile', icon: 'User', href: '/profile' },
-  { id: 'settings', label: 'Settings', icon: 'Settings', href: '/settings' },
-]) {
-  pageTitles[item.href] = item.label;
-}
-
 export function TopHeader() {
   const pathname = usePathname();
+  const t = useTranslations('nav');
   const { toggleSidebar, setCommandPaletteOpen } = useUiStore();
+  const pageTitles: Record<string, string> = {};
+  for (const item of SIDEBAR_ITEMS) pageTitles[item.href] = t(item.id);
+  for (const item of [
+    { id: 'profile', href: '/profile' },
+    { id: 'settings', href: '/settings' },
+  ]) {
+    pageTitles[item.href] = t(item.id);
+  }
   const title = pageTitles[pathname] || APP_NAME;
 
   return (
@@ -43,7 +44,7 @@ export function TopHeader() {
             className="bg-muted text-muted-foreground hover:bg-muted/80 hidden items-center gap-2 rounded-xl px-3 py-1.5 text-xs transition-colors sm:flex"
           >
             <Search size={14} />
-            <span>Search...</span>
+            <span>{t('search_placeholder')}</span>
             <kbd className="border-border/50 bg-background rounded-md border px-1 py-0.5 text-[9px] font-medium">
               ⌘K
             </kbd>

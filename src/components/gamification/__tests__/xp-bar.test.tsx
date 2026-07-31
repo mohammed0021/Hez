@@ -39,7 +39,7 @@ describe('XpBar', () => {
 
   it('shows XP progress', () => {
     render(<XpBar />);
-    expect(screen.getByText(/0 \/ 100 XP/)).toBeInTheDocument();
+    expect(screen.getByText(/100 XP to next level/)).toBeInTheDocument();
   });
 
   it('shows correct level for XP', () => {
@@ -51,7 +51,7 @@ describe('XpBar', () => {
   it('renders without label when showLabel is false', () => {
     render(<XpBar showLabel={false} />);
     expect(screen.queryByText('Level 1')).not.toBeInTheDocument();
-    expect(screen.queryByText(/0 \/ 100 XP/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/100 XP to next level/)).not.toBeInTheDocument();
   });
 
   it('applies size classes', () => {

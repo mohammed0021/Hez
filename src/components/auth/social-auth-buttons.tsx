@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Globe, Apple, AlertCircle } from 'lucide-react';
 import { signInWithGoogle, signInWithApple } from '@/services/auth';
@@ -11,6 +12,7 @@ interface SocialAuthButtonsProps {
 }
 
 export function SocialAuthButtons({ isLoading }: SocialAuthButtonsProps) {
+  const t = useTranslations('auth');
   const [loading, setLoading] = useState<'google' | 'apple' | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -21,7 +23,7 @@ export function SocialAuthButtons({ isLoading }: SocialAuthButtonsProps) {
       await signInWithGoogle();
     } catch {
       setLoading(null);
-      setError('Failed to sign in with Google. Please try again.');
+      setError(t('google_failed'));
     }
   };
 
@@ -32,7 +34,7 @@ export function SocialAuthButtons({ isLoading }: SocialAuthButtonsProps) {
       await signInWithApple();
     } catch {
       setLoading(null);
-      setError('Failed to sign in with Apple. Please try again.');
+      setError(t('apple_failed'));
     }
   };
 
@@ -43,7 +45,7 @@ export function SocialAuthButtons({ isLoading }: SocialAuthButtonsProps) {
           <span className="border-border w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background text-muted-foreground px-2">Or continue with</span>
+          <span className="bg-background text-muted-foreground px-2">{t('or_continue_with')}</span>
         </div>
       </div>
 

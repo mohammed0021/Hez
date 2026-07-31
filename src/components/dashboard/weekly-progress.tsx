@@ -1,9 +1,13 @@
 'use client';
 
 import { BarChart3, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 
 export function WeeklyProgress() {
+  const t = useTranslations('dashboard');
+  const tNotif = useTranslations('notifications');
+  const tCommon = useTranslations('common');
   const sessions = useWorkoutHistoryStore((s) => s.sessions);
 
   const today = new Date();
@@ -18,6 +22,7 @@ export function WeeklyProgress() {
 
   const totalVolume = weeklySessions.reduce((sum, s) => sum + (s.volume || 0), 0);
   const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
   const dayData = weekDays.map((_, i) => {
     const day = new Date(weekStart);
@@ -32,11 +37,11 @@ export function WeeklyProgress() {
       <div className="mb-3 flex items-center justify-between">
         <p className="text-muted-foreground/60 flex items-center gap-1 text-[10px] font-medium tracking-wider uppercase">
           <BarChart3 size={12} />
-          Weekly Progress
+          {t('weekly_progress')}
         </p>
         {totalVolume > 0 && (
           <span className="text-muted-foreground text-[10px] font-medium">
-            {(totalVolume / 1000).toFixed(1)}k kg
+            {(totalVolume / 1000).toFixed(1)}k {tCommon('units_kg')}
           </span>
         )}
       </div>
@@ -52,7 +57,9 @@ export function WeeklyProgress() {
                 className="bg-primary/30 w-full rounded-full transition-all"
                 style={{ height }}
               />
-              <span className="text-muted-foreground/60 text-[9px]">{weekDays[i]}</span>
+              <span className="text-muted-foreground/60 text-[9px]">
+                {tNotif(`days_${dayKeys[i]}`)}
+              </span>
             </div>
           );
         })}

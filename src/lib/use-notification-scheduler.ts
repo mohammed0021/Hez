@@ -2,7 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { useNotificationStore } from '@/stores/notification-store';
-import { getMessageForType, shouldNotify, notify } from '@/lib/notification-service';
+import {
+  getMessageForType,
+  shouldNotify,
+  notify,
+  sendPushNotification,
+  getNotificationUrl,
+} from '@/lib/notification-service';
 import type { NotificationTypeId } from '@/lib/notification-types';
 import { useSupplementStore } from '@/stores/supplement-store';
 
@@ -19,13 +25,32 @@ function formatDate(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
+function fire(
+  type: NotificationTypeId,
+  title: string,
+  body: string,
+  extraData?: Record<string, unknown>,
+  onClick?: () => void,
+) {
+  const url = getNotificationUrl(type);
+  const data = { type, url, ...(extraData || {}) };
+  notify(title, { body, tag: type, data, onClick });
+  sendPushNotification({ title, body, tag: type, url, data });
+}
+
 export function useNotificationScheduler() {
   const lastSentRef = useRef<Partial<Record<string, string>>>({});
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const globalEnabled = useNotificationStore((s) => s.globalEnabled);
 
   useEffect(() => {
-    const store = useNotificationStore.getState();
-    if (!store.globalEnabled) return;
+    if (!globalEnabled) {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      return;
+    }
 
     const check = () => {
       const now = new Date();
@@ -49,7 +74,7 @@ export function useNotificationScheduler() {
         ) {
           const msg = getMessageForType(type);
           if (msg) {
-            notify(msg.title, { body: msg.body, tag: type, data: { type } });
+            fire(type, msg.title, msg.body);
             lastSentRef.current[key] = currentSlot;
           }
         }
@@ -105,14 +130,15 @@ export function useNotificationScheduler() {
               if (creatine) {
                 const todayLog = suppStore.getTodayLog();
                 if (todayLog[creatine.id] !== 'taken') {
-                  notify('Creatine Reminder', {
-                    body: `Don't forget to take your creatine!`,
-                    tag: targetType,
-                    data: { type: targetType, supplementId: creatine.id },
-                    onClick: () => {
+                  fire(
+                    targetType,
+                    'Creatine Reminder',
+                    "Don't forget to take your creatine!",
+                    { supplementId: creatine.id },
+                    () => {
                       suppStore.markTaken(creatine.id);
                     },
-                  });
+                  );
                   lastSentRef.current[key] = currentSlot;
                 }
               }
@@ -127,12 +153,11 @@ export function useNotificationScheduler() {
         if (shouldNotify(type)) {
           const key = `${type}-week-${getWeekNumber(now)}`;
           if (!lastSentRef.current[key]) {
-            notify('Weekly Summary', {
-              body: 'Your workout week is complete! Check your progress.',
-              tag: type,
-              data: { type },
-            });
-            lastSentRef.current[key] = 'sent';
+            const msg = getMessageForType(type);
+            if (msg) {
+              fire(type, msg.title, msg.body);
+              lastSentRef.current[key] = 'sent';
+            }
           }
         }
       }
@@ -143,12 +168,11 @@ export function useNotificationScheduler() {
         if (shouldNotify(type)) {
           const key = `${type}-${now.getFullYear()}-${now.getMonth()}`;
           if (!lastSentRef.current[key]) {
-            notify('Monthly Summary', {
-              body: 'Your monthly progress report is ready!',
-              tag: type,
-              data: { type },
-            });
-            lastSentRef.current[key] = 'sent';
+            const msg = getMessageForType(type);
+            if (msg) {
+              fire(type, msg.title, msg.body);
+              lastSentRef.current[key] = 'sent';
+            }
           }
         }
       }
@@ -163,7 +187,7 @@ export function useNotificationScheduler() {
         intervalRef.current = null;
       }
     };
-  }, []);
+  }, [globalEnabled]);
 }
 
 function getWeekNumber(d: Date): number {

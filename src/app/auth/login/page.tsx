@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 
 import { AuthLayout } from '@/components/auth/auth-layout';
@@ -18,6 +19,7 @@ import { signInWithEmail } from '@/services/auth';
 import { useToastStore } from '@/stores/toast-store';
 
 export default function LoginPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const toast = useToastStore();
   const [showPassword, setShowPassword] = useState(false);
@@ -35,10 +37,10 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithEmail(data.email, data.password);
-      toast.success('Welcome back!');
+      toast.success(t('welcome_back_toast'));
       router.replace('/');
     } catch (err) {
-      toast.error('Invalid email or password');
+      toast.error(t('invalid_credentials'));
     } finally {
       setIsLoading(false);
     }
@@ -46,14 +48,14 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen-safe flex flex-col items-center justify-center p-4">
-      <AuthLayout title="Welcome back" subtitle="Sign in to continue your journey">
+      <AuthLayout title={t('login_title')} subtitle={t('login_subtitle')}>
         <form onSubmit={handleSubmit(onSubmit)} className="mt-8 w-full max-w-sm space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t('email')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('email_placeholder')}
               autoCapitalize="none"
               autoComplete="email"
               autoFocus
@@ -64,16 +66,16 @@ export default function LoginPage() {
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Link href="/auth/forgot-password" className="text-primary text-xs font-medium">
-                Forgot?
+                {t('forgot_password')}
               </Link>
             </div>
             <div className="relative">
               <Input
                 id="password"
                 type={showPassword ? 'text' : 'password'}
-                placeholder="Enter your password"
+                placeholder={t('password_placeholder')}
                 autoComplete="current-password"
                 {...register('password')}
               />
@@ -93,16 +95,16 @@ export default function LoginPage() {
           <motion.div whileTap={{ scale: 0.98 }}>
             <Button type="submit" className="min-h-[44px] w-full" size="lg" disabled={isLoading}>
               <LogIn size={18} />
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? t('signing_in') : t('sign_in')}
             </Button>
           </motion.div>
 
           <SocialAuthButtons isLoading={isLoading} />
 
           <p className="text-muted-foreground text-center text-sm">
-            Don&apos;t have an account?{' '}
+            {t('dont_have_account')}{' '}
             <Link href="/auth/register" className="text-primary font-medium">
-              Sign up
+              {t('sign_up')}
             </Link>
           </p>
         </form>

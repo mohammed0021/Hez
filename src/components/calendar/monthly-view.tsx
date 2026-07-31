@@ -2,13 +2,11 @@
 
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useCalendarStore } from '@/stores/calendar-store';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 import { useWeightStore } from '@/stores/weight-store';
 import { useMeasurementStore } from '@/stores/measurement-store';
-
-const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 function getDateKey(date?: Date): string {
   return (date || new Date()).toISOString().slice(0, 10);
@@ -31,11 +29,8 @@ function useCalendarDays(month: number, year: number) {
   }, [month, year]);
 }
 
-export function MonthlyView({
-  onSelectDate,
-}: {
-  onSelectDate?: (date: string) => void;
-}) {
+export function MonthlyView({ onSelectDate }: { onSelectDate?: (date: string) => void }) {
+  const t = useTranslations('calendar');
   const [month, setMonth] = useState(() => new Date().getMonth());
   const [year, setYear] = useState(() => new Date().getFullYear());
 
@@ -48,18 +43,46 @@ export function MonthlyView({
   const weightEntries = useWeightStore((s) => s.entries);
   const measurementEntries = useMeasurementStore((s) => s.entries);
 
+  const weekDays = [
+    t('monday'),
+    t('tuesday'),
+    t('wednesday'),
+    t('thursday'),
+    t('friday'),
+    t('saturday'),
+    t('sunday'),
+  ];
+  const monthNames = [
+    t('january'),
+    t('february'),
+    t('march'),
+    t('april'),
+    t('may'),
+    t('june'),
+    t('july'),
+    t('august'),
+    t('september'),
+    t('october'),
+    t('november'),
+    t('december'),
+  ];
+
   const { blanks, days } = useCalendarDays(month, year);
 
   const todayStr = getDateKey();
 
   const prevMonth = () => {
-    if (month === 0) { setMonth(11); setYear((y) => y - 1); }
-    else setMonth((m) => m - 1);
+    if (month === 0) {
+      setMonth(11);
+      setYear((y) => y - 1);
+    } else setMonth((m) => m - 1);
   };
 
   const nextMonth = () => {
-    if (month === 11) { setMonth(0); setYear((y) => y + 1); }
-    else setMonth((m) => m + 1);
+    if (month === 11) {
+      setMonth(0);
+      setYear((y) => y + 1);
+    } else setMonth((m) => m + 1);
   };
 
   const generateRecurring = () => {
@@ -114,12 +137,20 @@ export function MonthlyView({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={prevMonth} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors">
+      <div className="mb-4 flex items-center justify-between">
+        <button
+          onClick={prevMonth}
+          className="text-muted-foreground hover:bg-muted flex size-8 items-center justify-center rounded-lg transition-colors"
+        >
           <ChevronLeft size={16} />
         </button>
-        <p className="text-sm font-semibold text-foreground">{monthNames[month]} {year}</p>
-        <button onClick={nextMonth} className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors">
+        <p className="text-foreground text-sm font-semibold">
+          {monthNames[month]} {year}
+        </p>
+        <button
+          onClick={nextMonth}
+          className="text-muted-foreground hover:bg-muted flex size-8 items-center justify-center rounded-lg transition-colors"
+        >
           <ChevronRight size={16} />
         </button>
       </div>
@@ -130,13 +161,17 @@ export function MonthlyView({
           {trainingCycles.map((cycle) => {
             const cycleStart = parseDate(cycle.startDate);
             const cycleEnd = parseDate(cycle.endDate);
-            const inView = cycleStart.getFullYear() === year ||
+            const inView =
+              cycleStart.getFullYear() === year ||
               cycleEnd.getFullYear() === year ||
               (cycleStart < new Date(year, month + 1, 0) && cycleEnd > new Date(year, month, 1));
             if (!inView) return null;
             return (
-              <div key={cycle.id} className="flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-medium"
-                style={{ backgroundColor: cycle.color + '20', color: cycle.color }}>
+              <div
+                key={cycle.id}
+                className="flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[9px] font-medium"
+                style={{ backgroundColor: cycle.color + '20', color: cycle.color }}
+              >
                 <div className="size-1.5 rounded-full" style={{ backgroundColor: cycle.color }} />
                 {cycle.name}
               </div>
@@ -147,17 +182,23 @@ export function MonthlyView({
 
       {/* Recurring generate button */}
       {recurringSchedules.some((r) => r.active) && (
-        <button onClick={generateRecurring}
-          className="mb-3 w-full rounded-lg bg-muted py-1.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/80 transition-colors">
-          Generate recurring workouts for this month
+        <button
+          onClick={generateRecurring}
+          className="bg-muted text-muted-foreground hover:bg-muted/80 mb-3 w-full rounded-lg py-1.5 text-[10px] font-medium transition-colors"
+        >
+          {t('generate_recurring')}
         </button>
       )}
 
       <div className="grid grid-cols-7 gap-px">
         {weekDays.map((d) => (
-          <div key={d} className="py-1 text-center text-[10px] font-medium text-muted-foreground">{d[0]}</div>
+          <div key={d} className="text-muted-foreground py-1 text-center text-[10px] font-medium">
+            {d[0]}
+          </div>
         ))}
-        {blanks.map((k) => <div key={k} />)}
+        {blanks.map((k) => (
+          <div key={k} />
+        ))}
         {days.map((d) => {
           const { dateStr, events: dayEvents } = getEventsForDay(d);
           const isToday = dateStr === todayStr;
@@ -167,21 +208,26 @@ export function MonthlyView({
             <button
               key={d}
               onClick={() => onSelectDate?.(dateStr)}
-              className={`relative flex flex-col items-center rounded-lg py-1 text-xs transition-colors min-h-[52px] ${
-                isToday ? 'bg-primary/15 font-semibold ring-1 ring-primary/30' : 'hover:bg-muted'
+              className={`relative flex min-h-[52px] flex-col items-center rounded-lg py-1 text-xs transition-colors ${
+                isToday ? 'bg-primary/15 ring-primary/30 font-semibold ring-1' : 'hover:bg-muted'
               }`}
               style={cycle && !isToday ? { backgroundColor: cycle.color + '08' } : undefined}
             >
-              <span className={`${isToday ? 'flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-[10px]' : ''}`}>
+              <span
+                className={`${isToday ? 'bg-primary text-primary-foreground flex size-5 items-center justify-center rounded-full text-[10px]' : ''}`}
+              >
                 {d}
               </span>
               <div className="mt-0.5 flex flex-wrap justify-center gap-px px-0.5">
                 {dayEvents.slice(0, 4).map((ev, i) => (
-                  <div key={i} className={`size-1 rounded-full ${STATUS_COLORS[ev.status] || 'bg-muted-foreground'}`}
-                    title={`${ev.type}: ${ev.workoutName || ev.notes || ev.status}`} />
+                  <div
+                    key={i}
+                    className={`size-1 rounded-full ${STATUS_COLORS[ev.status] || 'bg-muted-foreground'}`}
+                    title={`${ev.type}: ${ev.workoutName || ev.notes || ev.status}`}
+                  />
                 ))}
                 {dayEvents.length > 4 && (
-                  <span className="text-[6px] text-muted-foreground">+{dayEvents.length - 4}</span>
+                  <span className="text-muted-foreground text-[6px]">+{dayEvents.length - 4}</span>
                 )}
               </div>
             </button>

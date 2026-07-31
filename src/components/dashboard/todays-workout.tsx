@@ -2,10 +2,14 @@
 
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { DashboardWidget } from './widget-shell';
 import { useWorkoutStore } from '@/stores/workout-store';
 
 export function TodaysWorkout() {
+  const t = useTranslations('dashboard');
+  const tEx = useTranslations('exercises');
+  const tCommon = useTranslations('common');
   const savedWorkouts = useWorkoutStore((s) => s.savedWorkouts);
   const latest = savedWorkouts.length > 0 ? savedWorkouts[0] : null;
 
@@ -15,9 +19,9 @@ export function TodaysWorkout() {
         <div className="flex items-start justify-between">
           <div className="space-y-1">
             <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-              Today&apos;s Workout
+              {t('today_workout')}
             </p>
-            <p className="text-foreground text-lg font-bold">No workout yet</p>
+            <p className="text-foreground text-lg font-bold">{t('no_workout_today')}</p>
             <p className="text-muted-foreground text-xs">Create a workout to get started</p>
           </div>
         </div>
@@ -36,13 +40,15 @@ export function TodaysWorkout() {
       <div className="flex items-start justify-between">
         <div className="space-y-1">
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Today&apos;s Workout
+            {t('today_workout')}
           </p>
           <p className="text-foreground text-lg font-bold">{latest.name}</p>
           <div className="text-muted-foreground flex items-center gap-3 text-xs">
-            <span>{exerciseCount} exercises</span>
+            <span>{tEx('showing_count', { count: exerciseCount })}</span>
             <span>•</span>
-            <span>~{latest.estimatedDuration} min</span>
+            <span>
+              ~{latest.estimatedDuration} {tCommon('minute_short')}
+            </span>
           </div>
         </div>
         <div className="bg-primary text-primary-foreground flex size-10 items-center justify-center rounded-full shadow-lg">

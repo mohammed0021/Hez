@@ -12,7 +12,7 @@ interface ThemeState {
   setResolvedMode: (mode: 'light' | 'dark') => void;
 }
 
-function syncToSupabase(data: { theme_id?: string; theme_mode?: string }) {
+function syncToSupabase(data: { theme_id?: string; mode?: string }) {
   try {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
@@ -35,7 +35,7 @@ export const useThemeStore = create<ThemeState>()(
       },
       setMode: (mode) => {
         set({ mode });
-        syncToSupabase({ theme_mode: mode });
+        syncToSupabase({ mode });
       },
       setResolvedMode: (resolvedMode) => set({ resolvedMode }),
     }),

@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { useUiStore } from '@/stores/ui-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { SIDEBAR_ITEMS, SIDEBAR_BOTTOM_ITEMS } from '@/lib/constants';
@@ -43,6 +44,7 @@ function SidebarItem({
   isActive: boolean;
   onNavigate: (href: string) => void;
 }) {
+  const t = useTranslations('nav');
   const Icon = iconMap[item.icon] as React.ComponentType<{ size?: number; className?: string }>;
 
   return (
@@ -63,7 +65,7 @@ function SidebarItem({
       )}
       <span className="relative z-10 flex items-center gap-3">
         <Icon size={18} />
-        {item.label}
+        {t(item.id)}
       </span>
     </button>
   );
@@ -72,6 +74,8 @@ function SidebarItem({
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('nav');
+  const tCommon = useTranslations('common');
   const sidebarOpen = useUiStore((s) => s.sidebarOpen);
   const user = useAuthStore((s) => s.user);
   const displayName = (user?.user_metadata?.name as string) || user?.email?.split('@')[0] || 'User';
@@ -112,7 +116,7 @@ export function Sidebar() {
 
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <p className="text-muted-foreground/60 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
-            Main
+            {t('main')}
           </p>
           <div className="space-y-0.5">
             {SIDEBAR_ITEMS.map((item) => (
@@ -126,7 +130,7 @@ export function Sidebar() {
           </div>
 
           <p className="text-muted-foreground/60 mt-6 mb-2 px-3 text-[10px] font-semibold tracking-widest uppercase">
-            Account
+            {t('account')}
           </p>
           <div className="space-y-0.5">
             {SIDEBAR_BOTTOM_ITEMS.map((item) => (
@@ -155,7 +159,7 @@ export function Sidebar() {
             <button
               onClick={handleSignOut}
               className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive flex size-8 items-center justify-center rounded-lg"
-              aria-label="Sign out"
+              aria-label={tCommon('sign_out')}
             >
               <LogOut size={16} />
             </button>

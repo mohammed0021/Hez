@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Clock, Layers, Columns3, LayoutGrid, Pencil, Share2, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import type { Workout, BlockType } from '@/types/workout';
 import { useActiveWorkoutStore } from '@/stores/active-workout-store';
 import { ShareDialog } from './share-dialog';
@@ -14,13 +15,14 @@ const blockIcons: Record<BlockType, typeof Layers> = {
   giant_set: LayoutGrid,
 };
 
-const blockLabels: Record<BlockType, string> = {
-  standard: 'Standard',
-  superset: 'Superset',
-  giant_set: 'Giant Set',
-};
-
 export function WorkoutDetail({ workout }: { workout: Workout }) {
+  const t = useTranslations('workouts');
+  const c = useTranslations('common');
+  const blockLabels: Record<BlockType, string> = {
+    standard: t('block_standard'),
+    superset: t('block_superset'),
+    giant_set: t('block_giant_set'),
+  };
   const [showShare, setShowShare] = useState(false);
   const startWorkout = useActiveWorkoutStore((s) => s.startWorkout);
 
@@ -47,10 +49,14 @@ export function WorkoutDetail({ workout }: { workout: Workout }) {
 
         <div className="flex flex-wrap items-center gap-3">
           <span className="text-muted-foreground flex items-center gap-1.5 text-xs">
-            <Clock size={14} /> ~{workout.estimatedDuration} min
+            <Clock size={14} /> {t('duration_min', { minutes: workout.estimatedDuration })}
           </span>
-          <span className="text-muted-foreground text-xs">{workout.blocks.length} blocks</span>
-          <span className="text-muted-foreground text-xs">{totalSets} sets</span>
+          <span className="text-muted-foreground text-xs">
+            {t('blocks_count', { count: workout.blocks.length })}
+          </span>
+          <span className="text-muted-foreground text-xs">
+            {t('sets_count', { count: totalSets })}
+          </span>
           {workout.tags.length > 0 && (
             <div className="flex gap-1">
               {workout.tags.map((tag) => (
@@ -73,19 +79,19 @@ export function WorkoutDetail({ workout }: { workout: Workout }) {
             }}
             className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-medium"
           >
-            <Zap size={14} /> Start Workout
+            <Zap size={14} /> {t('start_workout')}
           </button>
           <Link
             href={`/workouts/${workout.id}/edit`}
             className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
           >
-            <Pencil size={14} /> Edit
+            <Pencil size={14} /> {c('edit')}
           </Link>
           <button
             onClick={() => setShowShare(true)}
             className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
           >
-            <Share2 size={14} /> Share
+            <Share2 size={14} /> {c('share')}
           </button>
         </div>
       </motion.div>
@@ -107,7 +113,7 @@ export function WorkoutDetail({ workout }: { workout: Workout }) {
                   {blockLabels[block.type]}
                 </span>
                 <span className="text-muted-foreground/60 ml-auto text-[10px]">
-                  Rest:{' '}
+                  {t('rest')}:{' '}
                   {block.restAfterBlock >= 60
                     ? `${block.restAfterBlock / 60}m`
                     : `${block.restAfterBlock}s`}
@@ -125,7 +131,10 @@ export function WorkoutDetail({ workout }: { workout: Workout }) {
                         {ex.exerciseName}
                       </span>
                       <span className="text-muted-foreground/60 text-[10px]">
-                        {ex.sets.length} sets × {ex.sets[0]?.reps || 0} reps
+                        {t('sets_reps', {
+                          sets: ex.sets.length,
+                          reps: ex.sets[0]?.reps || 0,
+                        })}
                         {ex.sets[0]?.weightKg ? ` @ ${ex.sets[0].weightKg}kg` : ''}
                       </span>
                     </div>
@@ -177,7 +186,7 @@ export function WorkoutDetail({ workout }: { workout: Workout }) {
           animate={{ opacity: 1, y: 0 }}
           className="border-border/50 bg-card rounded-2xl border p-4"
         >
-          <h3 className="text-foreground mb-2 text-xs font-semibold">Notes</h3>
+          <h3 className="text-foreground mb-2 text-xs font-semibold">{t('notes')}</h3>
           <p className="text-muted-foreground text-sm whitespace-pre-wrap">{workout.notes}</p>
         </motion.div>
       )}

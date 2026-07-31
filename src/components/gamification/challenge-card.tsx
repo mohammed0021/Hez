@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import type { ChallengeDef } from '@/lib/gamification-types';
 import type { ChallengeProgress } from '@/stores/gamification-store';
+import { useTranslations } from 'next-intl';
 
 const ICON_MAP: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
   Dumbbell,
@@ -44,6 +45,7 @@ export function ChallengeCard({
   progress?: ChallengeProgress;
   index: number;
 }) {
+  const t = useTranslations('gamification');
   const Icon = ICON_MAP[def.icon] || Dumbbell;
   const current = progress?.current || 0;
   const isCompleted = !!progress?.completedAt;
@@ -97,7 +99,9 @@ export function ChallengeCard({
             </span>
           </div>
 
-          <p className="mt-1 text-[9px] text-amber-600/60">+{def.xpReward} XP</p>
+          <p className="mt-1 text-[9px] text-amber-600/60">
+            +{def.xpReward} {t('xp')}
+          </p>
         </div>
       </div>
     </motion.div>

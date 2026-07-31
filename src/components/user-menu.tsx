@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/auth-store';
 import { signOut } from '@/services/auth';
 import { useRouter } from 'next/navigation';
 import { User, Settings, LogOut, Moon, Sun, Monitor } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { THEMES } from '@/lib/constants';
 import { useThemeStore } from '@/stores/theme-store';
 import type { ThemeId } from '@/types/theme';
@@ -41,6 +42,9 @@ export function UserMenu() {
   const user = useAuthStore((s) => s.user);
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
+  const t = useTranslations('nav');
+  const tSettings = useTranslations('settings');
+  const tCommon = useTranslations('common');
   const displayName = (user?.user_metadata?.name as string) || user?.email?.split('@')[0] || 'User';
 
   const handleSignOut = async () => {
@@ -50,7 +54,7 @@ export function UserMenu() {
   };
 
   const ModeIcon = mode === 'dark' ? Moon : mode === 'light' ? Sun : Monitor;
-  const modeLabel = mode === 'dark' ? 'Dark' : mode === 'light' ? 'Light' : 'System';
+  const modeLabel = tSettings(mode);
   const nextMode = mode === 'dark' ? 'light' : mode === 'light' ? 'system' : 'dark';
 
   return (
@@ -92,7 +96,7 @@ export function UserMenu() {
                   }}
                   className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
-                  <User size={16} /> Profile
+                  <User size={16} /> {t('profile')}
                 </button>
                 <button
                   onClick={() => {
@@ -101,13 +105,13 @@ export function UserMenu() {
                   }}
                   className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
-                  <Settings size={16} /> Settings
+                  <Settings size={16} /> {t('settings')}
                 </button>
               </div>
 
               <div className="border-border/50 border-t py-1">
                 <p className="text-muted-foreground/60 px-4 py-1 text-[10px] font-semibold tracking-widest uppercase">
-                  Theme
+                  {tSettings('theme')}
                 </p>
                 <div className="max-h-40 overflow-y-auto">
                   {THEMES.map((t) => (
@@ -123,13 +127,13 @@ export function UserMenu() {
                   }}
                   className="text-muted-foreground hover:bg-muted flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
-                  <ModeIcon size={16} /> {modeLabel} mode
+                  <ModeIcon size={16} /> {modeLabel}
                 </button>
                 <button
                   onClick={handleSignOut}
                   className="text-destructive hover:bg-destructive/10 flex w-full items-center gap-3 px-4 py-2 text-sm transition-colors"
                 >
-                  <LogOut size={16} /> Sign out
+                  <LogOut size={16} /> {tCommon('sign_out')}
                 </button>
               </div>
             </motion.div>

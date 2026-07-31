@@ -83,7 +83,9 @@ export default function ReportsPage() {
                     size="xs"
                     onClick={() => !isDisabled && handleGenerate(key)}
                     disabled={isDisabled || generating === key}
-                    title={isDisabled ? 'CSV only — Excel/PDF export not yet implemented' : undefined}
+                    title={
+                      isDisabled ? 'CSV only — Excel/PDF export not yet implemented' : undefined
+                    }
                   >
                     {generating === key ? (
                       'Generating...'

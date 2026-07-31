@@ -50,9 +50,12 @@ export const completeProfileSchema = z.object({
     .max(30)
     .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   bio: z.string().max(160, 'Bio must be less than 160 characters').optional(),
-  goal: z.enum(['lose_weight', 'build_muscle', 'maintain', 'improve_endurance', 'general_fitness'] as const, {
-    message: 'Please select a goal',
-  }),
+  goal: z.enum(
+    ['lose_weight', 'build_muscle', 'maintain', 'improve_endurance', 'general_fitness'] as const,
+    {
+      message: 'Please select a goal',
+    },
+  ),
 });
 
 export type LoginFormData = z.infer<typeof loginSchema>;

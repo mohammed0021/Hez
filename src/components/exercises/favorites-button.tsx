@@ -1,10 +1,12 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Heart } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useExerciseStore } from '@/stores/exercise-store';
 
 export function FavoritesButton({ exerciseId, size = 20 }: { exerciseId: string; size?: number }) {
+  const t = useTranslations('exercises');
   const toggleFavorite = useExerciseStore((s) => s.toggleFavorite);
   const isFavorite = useExerciseStore((s) => s.isFavorite(exerciseId));
   const fav = isFavorite;
@@ -18,7 +20,7 @@ export function FavoritesButton({ exerciseId, size = 20 }: { exerciseId: string;
       }`}
     >
       <Heart size={size} className={fav ? 'fill-red-500' : ''} />
-      {fav ? 'Favorited' : 'Favorite'}
+      {fav ? t('favorited') : t('favorite')}
     </motion.button>
   );
 }

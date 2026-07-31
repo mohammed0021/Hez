@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 import { canNotify, notify } from '@/lib/notification-service';
 
 function playBeep() {
@@ -41,6 +42,8 @@ export function RestTimer({
   onSkip: () => void;
 }) {
   const [remaining, setRemaining] = useState(0);
+  const t = useTranslations('workouts');
+  const n = useTranslations('notifications');
   const expiredRef = useRef(false);
   const hadEndTimeRef = useRef(false);
 
@@ -68,10 +71,10 @@ export function RestTimer({
           expiredRef.current = true;
           playBeep();
           if (canNotify()) {
-            notify('Rest Over!', { body: 'Time for your next set', tag: 'rest_timer_alert' });
+            notify(t('rest_over'), { body: n('rest_over_body'), tag: 'rest_timer_alert' });
           } else if ('Notification' in window && Notification.permission === 'granted') {
-            new Notification('Rest Over!', {
-              body: 'Time for your next set',
+            new Notification(t('rest_over'), {
+              body: n('rest_over_body'),
               icon: '/icons/icon-192x192.png',
             });
           }
@@ -86,7 +89,7 @@ export function RestTimer({
     tick();
     const interval = setInterval(tick, 100);
     return () => clearInterval(interval);
-  }, [endTime, onExpire]);
+  }, [endTime, onExpire, t, n]);
 
   if (!endTime || remaining <= 0) return null;
 
@@ -120,12 +123,12 @@ export function RestTimer({
           {minutes}:{secs.toString().padStart(2, '0')}
         </span>
       </div>
-      <p className="text-muted-foreground text-sm">Rest</p>
+      <p className="text-muted-foreground text-sm">{t('rest')}</p>
       <button
         onClick={onSkip}
         className="bg-primary text-primary-foreground min-h-[44px] rounded-xl px-6 py-2 text-sm font-medium transition-transform active:scale-95"
       >
-        Skip Rest
+        {t('skip_rest')}
       </button>
     </motion.div>
   );

@@ -100,11 +100,9 @@ export const useCalendarStore = create<CalendarState>()(
           events: s.events.map((e) => (e.id === id ? { ...e, ...updates } : e)),
         })),
 
-      removeEvent: (id) =>
-        set((s) => ({ events: s.events.filter((e) => e.id !== id) })),
+      removeEvent: (id) => set((s) => ({ events: s.events.filter((e) => e.id !== id) })),
 
-      getEventsForDate: (date) =>
-        get().events.filter((e) => e.date === date),
+      getEventsForDate: (date) => get().events.filter((e) => e.date === date),
 
       getEventsForRange: (start, end) =>
         get().events.filter((e) => e.date >= start && e.date <= end),
@@ -129,20 +127,14 @@ export const useCalendarStore = create<CalendarState>()(
       addRestDay: (date, notes) => {
         const id = uid();
         set((s) => ({
-          events: [
-            ...s.events,
-            { id, date, type: 'rest', status: 'scheduled', notes },
-          ],
+          events: [...s.events, { id, date, type: 'rest', status: 'scheduled', notes }],
         }));
       },
 
       addNote: (date, notes) => {
         const id = uid();
         set((s) => ({
-          events: [
-            ...s.events,
-            { id, date, type: 'note', status: 'scheduled', notes },
-          ],
+          events: [...s.events, { id, date, type: 'note', status: 'scheduled', notes }],
         }));
       },
 
@@ -180,7 +172,11 @@ export const useCalendarStore = create<CalendarState>()(
             const day = getDayOfWeek(current);
             if (schedule.daysOfWeek.includes(day)) {
               const key = `${dateStr}-${schedule.workoutId}`;
-              if (!existingKeys.has(key) && (!schedule.startDate || dateStr >= schedule.startDate) && (!schedule.endDate || dateStr <= schedule.endDate)) {
+              if (
+                !existingKeys.has(key) &&
+                (!schedule.startDate || dateStr >= schedule.startDate) &&
+                (!schedule.endDate || dateStr <= schedule.endDate)
+              ) {
                 newEvents.push({
                   id: uid(),
                   date: dateStr,
@@ -208,9 +204,7 @@ export const useCalendarStore = create<CalendarState>()(
 
       updateTrainingCycle: (id, updates) =>
         set((s) => ({
-          trainingCycles: s.trainingCycles.map((c) =>
-            c.id === id ? { ...c, ...updates } : c,
-          ),
+          trainingCycles: s.trainingCycles.map((c) => (c.id === id ? { ...c, ...updates } : c)),
         })),
 
       removeTrainingCycle: (id) =>

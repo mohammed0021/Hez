@@ -4,11 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useInstallPrompt } from '@/lib/pwa';
 import { Button } from '@/components/ui/button';
 import { Download, Share2, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 export function InstallPrompt() {
   const { isInstallable, isInstalled, install, showIOSInstructions } = useInstallPrompt();
   const [dismissed, setDismissed] = useState(false);
+  const t = useTranslations('common');
 
   if (isInstalled || dismissed) return null;
 
@@ -47,7 +49,7 @@ export function InstallPrompt() {
                 className="flex-1"
                 onClick={() => setDismissed(true)}
               >
-                Not Now
+                {t('not_now')}
               </Button>
               <Button size="sm" className="flex-1" onClick={install}>
                 <Download size={14} />

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useGamificationStore } from '@/stores/gamification-store';
 import { Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 export function XpBar({
   showLabel = true,
@@ -11,6 +12,7 @@ export function XpBar({
   showLabel?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }) {
+  const t = useTranslations('gamification');
   const getLevel = useGamificationStore((s) => s.getLevel);
   const { level, currentXp, nextXp, progress } = getLevel();
 
@@ -23,10 +25,12 @@ export function XpBar({
         <div className="mb-1 flex items-center justify-between">
           <div className="flex items-center gap-1.5">
             <Sparkles size={size === 'sm' ? 10 : 12} className="text-amber-500" />
-            <span className={`text-foreground font-bold ${textSizes[size]}`}>Level {level}</span>
+            <span className={`text-foreground font-bold ${textSizes[size]}`}>
+              {t('level', { level })}
+            </span>
           </div>
           <span className={`text-muted-foreground ${textSizes[size]}`}>
-            {currentXp.toLocaleString()} / {nextXp.toLocaleString()} XP
+            {t('xp_to_next_level', { xp: nextXp - currentXp })}
           </span>
         </div>
       )}

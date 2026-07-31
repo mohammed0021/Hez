@@ -182,5 +182,3 @@ function InfoCard({ title, value, subtitle }: { title: string; value: string; su
     </motion.div>
   );
 }
-
-

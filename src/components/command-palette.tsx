@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useUiStore } from '@/stores/ui-store';
 import { SEARCH_RESULTS } from '@/lib/constants';
+import { useTranslations } from 'next-intl';
 import type { SearchResult } from '@/types';
 
 const iconMap: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -34,10 +35,27 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Settings,
 };
 
+const resultDescriptions: Record<string, string> = {
+  'go-dashboard': 'View your fitness overview',
+  'go-workouts': 'Start or track a workout',
+  'go-exercises': 'Browse exercise library',
+  'go-programs': 'Browse workout programs',
+  'go-progress': 'Track your improvements',
+  'go-supplements': 'Track supplements',
+  'go-gamification': 'Achievements, challenges, and rewards',
+  'go-calendar': 'View your schedule',
+  'go-profile': 'Manage your profile',
+  'go-settings': 'App preferences',
+  'go-notifications': 'Notification preferences',
+};
+
 export function CommandPalette() {
   const { commandPaletteOpen, setCommandPaletteOpen } = useUiStore();
   const router = useRouter();
   const pathname = usePathname();
+  const t = useTranslations('nav');
+  const tNotif = useTranslations('notifications');
+  const tCommon = useTranslations('common');
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,6 +113,9 @@ export function CommandPalette() {
     if (e.key === 'Enter' && results[activeIndex]) handleSelect(results[activeIndex]);
   };
 
+  const resultLabel = (result: SearchResult) =>
+    result.id === 'go-notifications' ? tNotif('title') : t(result.id.replace('go-', ''));
+
   return (
     <AnimatePresence>
       {commandPaletteOpen && (
@@ -118,7 +139,7 @@ export function CommandPalette() {
               <input
                 ref={inputRef}
                 type="text"
-                placeholder="Search pages..."
+                placeholder={t('search_placeholder')}
                 value={query}
                 onChange={(e) => {
                   setQuery(e.target.value);
@@ -145,10 +166,10 @@ export function CommandPalette() {
                   >
                     <Icon size={18} className="text-muted-foreground shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-foreground text-sm font-medium">{result.label}</p>
+                      <p className="text-foreground text-sm font-medium">{resultLabel(result)}</p>
                       {result.description && (
                         <p className="text-muted-foreground truncate text-xs">
-                          {result.description}
+                          {resultDescriptions[result.id]}
                         </p>
                       )}
                     </div>
@@ -167,7 +188,8 @@ export function CommandPalette() {
                 <kbd className="border-border/50 bg-muted rounded border px-1">↑↓</kbd> Navigate
               </span>
               <span>
-                <kbd className="border-border/50 bg-muted rounded border px-1">↵</kbd> Open
+                <kbd className="border-border/50 bg-muted rounded border px-1">↵</kbd>{' '}
+                {tCommon('open')}
               </span>
               <span>
                 <kbd className="border-border/50 bg-muted rounded border px-1">⌘K</kbd> Toggle

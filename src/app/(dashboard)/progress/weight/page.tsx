@@ -13,8 +13,10 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useWeightStore } from '@/stores/weight-store';
+import { useTranslations } from 'next-intl';
 
 export default function WeightTrackerPage() {
+  const t = useTranslations();
   const { entries, addEntry, deleteEntry } = useWeightStore();
   const [showForm, setShowForm] = useState(false);
   const [weight, setWeight] = useState('');
@@ -52,14 +54,16 @@ export default function WeightTrackerPage() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Weight Tracker</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">{entries.length} entries</p>
+          <h1 className="text-foreground text-2xl font-bold">{t('progress.weight')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">
+            {t('progress.entries_count', { count: entries.length })}
+          </p>
         </div>
         <button
           onClick={() => setShowForm(!showForm)}
           className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
         >
-          <Plus className="size-4" /> Log Weight
+          <Plus className="size-4" /> {t('progress.log_weight')}
         </button>
       </div>
 
@@ -72,7 +76,7 @@ export default function WeightTrackerPage() {
           <div className="flex gap-3">
             <div className="flex-1">
               <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-                Weight (kg)
+                {t('progress.weight')} (kg)
               </label>
               <input
                 type="number"
@@ -86,7 +90,7 @@ export default function WeightTrackerPage() {
             </div>
             <div className="flex-1">
               <label className="text-muted-foreground mb-1 block text-[10px] font-medium">
-                Body Fat % (opt)
+                {t('progress.body_fat_optional')}
               </label>
               <input
                 type="number"
@@ -103,20 +107,20 @@ export default function WeightTrackerPage() {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             className="border-border/30 bg-background text-foreground focus:border-primary/40 w-full rounded-xl border px-3 py-2.5 text-sm focus:outline-none"
-            placeholder="Notes (optional)"
+            placeholder={t('progress.notes_optional')}
           />
           <div className="flex gap-2">
             <button
               onClick={() => setShowForm(false)}
               className="bg-muted text-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
-              Cancel
+              {t('common.cancel')}
             </button>
             <button
               onClick={handleAdd}
               className="bg-primary text-primary-foreground min-h-[44px] flex-1 rounded-xl py-2 text-xs font-medium"
             >
-              Save
+              {t('common.save')}
             </button>
           </div>
         </motion.div>
@@ -130,7 +134,7 @@ export default function WeightTrackerPage() {
           className="from-primary/10 to-primary/5 border-primary/20 mt-5 rounded-2xl border bg-gradient-to-br p-4"
         >
           <p className="text-primary text-[10px] font-semibold tracking-widest uppercase">
-            Current
+            {t('progress.current')}
           </p>
           <div className="mt-1 flex items-end gap-3">
             <span className="text-foreground text-4xl font-bold">{latest.weightKg}</span>
@@ -150,7 +154,7 @@ export default function WeightTrackerPage() {
           </div>
           {latest.bodyFatPercent && (
             <p className="text-muted-foreground mt-0.5 text-xs">
-              Body Fat: {latest.bodyFatPercent}%
+              {t('progress.body_fat_value', { percent: latest.bodyFatPercent })}
             </p>
           )}
           <p className="text-muted-foreground/60 mt-1 text-[10px]">

@@ -6,7 +6,16 @@ import { Providers } from '@/components/providers';
 import { LocaleInit } from '@/components/locale-init';
 import { PwaProvider } from '@/components/pwa-provider';
 import { locales, defaultLocale, getDirection } from '@/i18n/locales';
+import enMessages from '@/messages/en.json';
+import kuMessages from '@/messages/ku.json';
+import arMessages from '@/messages/ar.json';
 import './globals.css';
+
+const messageMap: Record<string, Record<string, unknown>> = {
+  en: enMessages,
+  ku: kuMessages,
+  ar: arMessages,
+};
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -121,13 +130,7 @@ export default async function RootLayout({
     ? (localeCookie as (typeof locales)[number])
     : defaultLocale;
   const dir = getDirection(locale);
-
-  let messages: Record<string, unknown>;
-  try {
-    messages = (await import(`@/locales/${locale}.json`)).default;
-  } catch {
-    messages = (await import(`@/locales/en.json`)).default;
-  }
+  const messages = messageMap[locale] ?? messageMap[defaultLocale]!;
 
   return (
     <html

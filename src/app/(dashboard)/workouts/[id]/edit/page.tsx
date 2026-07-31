@@ -12,6 +12,7 @@ export default function EditWorkoutPage({ params }: { params: Promise<{ id: stri
   const saved = useWorkoutStore((s) => s.savedWorkouts.find((w) => w.id === id));
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHydrated(true);
   }, []);
 

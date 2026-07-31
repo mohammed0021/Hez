@@ -42,11 +42,13 @@ import { useMeasurementStore, MEASUREMENT_FIELDS } from '@/stores/measurement-st
 import { useGamificationStore } from '@/stores/gamification-store';
 import { useWorkoutHistoryStore } from '@/stores/workout-history-store';
 import { ACHIEVEMENTS } from '@/lib/gamification-types';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 type ProfileTab = 'personal' | 'stats' | 'goals' | 'activity' | 'achievements';
 
 export default function ProfilePage() {
+  const t = useTranslations();
   const user = useAuthStore((s) => s.user);
   const profile = useProfileStore();
   const { heightUnit, weightUnit } = useSettingsStore();
@@ -75,7 +77,7 @@ export default function ProfilePage() {
   });
 
   const email = user?.email || '';
-  const displayName = profile.displayName || email.split('@')[0] || 'User';
+  const displayName = profile.displayName || email.split('@')[0] || t('profile.user');
   const initial = displayName.charAt(0).toUpperCase();
 
   const latestWeight = weightEntries.length > 0 ? weightEntries[0] : null;
@@ -98,16 +100,57 @@ export default function ProfilePage() {
   const recentVolume = sessions.slice(0, 30).reduce((s, e) => s + e.volume, 0);
   const [thirtyDaysAgo] = useState(() => Date.now() - 30 * 86400000);
 
+  const genderLabel = (value: string) =>
+    ({ male: t('profile.male'), female: t('profile.female') })[value] ?? value;
+  const goalLabel = (value: string) =>
+    ({
+      build_muscle: t('profile.build_muscle'),
+      lose_fat: t('profile.lose_fat'),
+      maintain: t('profile.maintain'),
+      increase_strength: t('profile.increase_strength'),
+      improve_endurance: t('profile.improve_endurance'),
+    })[value] ?? value;
+  const experienceLabel = (value: string) =>
+    ({
+      beginner: t('profile.beginner'),
+      intermediate: t('profile.intermediate'),
+      advanced: t('profile.advanced'),
+    })[value] ?? value;
+  const activityLabel = (value: string) =>
+    ({
+      sedentary: t('profile.sedentary'),
+      light: t('profile.lightly_active'),
+      moderate: t('profile.moderately_active'),
+      active: t('profile.very_active'),
+      very_active: t('profile.extremely_active'),
+    })[value] ?? value;
+  const unitLabel = (value: string) =>
+    ({ metric: t('profile.unit_metric'), imperial: t('profile.unit_imperial') })[value] ?? value;
+  const measurementLabel = (key: string) =>
+    ({
+      chest: t('progress.measurement_chest'),
+      waist: t('progress.measurement_waist'),
+      hips: t('progress.measurement_hips'),
+      leftArm: t('progress.measurement_left_arm'),
+      rightArm: t('progress.measurement_right_arm'),
+      leftThigh: t('progress.measurement_left_thigh'),
+      rightThigh: t('progress.measurement_right_thigh'),
+      leftCalf: t('progress.measurement_left_calf'),
+      rightCalf: t('progress.measurement_right_calf'),
+      shoulders: t('progress.measurement_shoulders'),
+      neck: t('progress.measurement_neck'),
+    })[key] ?? key;
+
   const tabs: {
     id: ProfileTab;
     label: string;
     icon: React.ComponentType<{ size?: number; className?: string }>;
   }[] = [
-    { id: 'personal', label: 'Personal', icon: User },
-    { id: 'stats', label: 'Body Stats', icon: Ruler },
-    { id: 'goals', label: 'Goals', icon: Target },
-    { id: 'activity', label: 'Activity', icon: Activity },
-    { id: 'achievements', label: 'Achievements', icon: Award },
+    { id: 'personal', label: t('profile.tab_personal'), icon: User },
+    { id: 'stats', label: t('profile.body_stats'), icon: Ruler },
+    { id: 'goals', label: t('profile.tab_goals'), icon: Target },
+    { id: 'activity', label: t('profile.tab_activity'), icon: Activity },
+    { id: 'achievements', label: t('gamification.achievements'), icon: Award },
   ];
 
   const startEdit = () => {
@@ -176,13 +219,13 @@ export default function ProfilePage() {
         <p className="text-muted-foreground text-sm">{email}</p>
         <div className="text-muted-foreground mt-3 flex items-center gap-4 text-xs">
           <span className="flex items-center gap-1">
-            <Trophy size={12} /> Lv.{levelInfo.level}
+            <Trophy size={12} /> {t('gamification.level', { level: levelInfo.level })}
           </span>
           <span className="flex items-center gap-1">
-            <Flame size={12} /> {currentStreak} day streak
+            <Flame size={12} /> {t('profile.day_streak_value', { count: currentStreak })}
           </span>
           <span className="flex items-center gap-1">
-            <Dumbbell size={12} /> {totalWorkouts} workouts
+            <Dumbbell size={12} /> {t('profile.workouts_value', { count: totalWorkouts })}
           </span>
         </div>
       </div>
@@ -220,38 +263,40 @@ export default function ProfilePage() {
         {/* Personal Information */}
         {activeTab === 'personal' && (
           <SectionCard>
-            <SectionHeader icon={User} title="Personal Information" onEdit={startEdit} />
+            <SectionHeader icon={User} title={t('profile.personal_info')} onEdit={startEdit} />
             {editing ? (
               <div className="space-y-3">
                 <InputField
-                  label="Display Name"
+                  label={t('profile.display_name')}
                   value={editForm.displayName}
                   onChange={(v) => setEditForm((f) => ({ ...f, displayName: v }))}
                 />
                 <TextareaField
-                  label="Bio"
+                  label={t('profile.bio')}
                   value={editForm.bio}
                   onChange={(v) => setEditForm((f) => ({ ...f, bio: v }))}
                 />
                 <InputField
-                  label="Location"
+                  label={t('profile.location')}
                   value={editForm.location}
                   onChange={(v) => setEditForm((f) => ({ ...f, location: v }))}
                 />
                 <InputField
-                  label="Birthday"
+                  label={t('profile.birthday')}
                   value={editForm.birthday}
                   type="date"
                   onChange={(v) => setEditForm((f) => ({ ...f, birthday: v }))}
                 />
                 <InputField
-                  label="Phone"
+                  label={t('profile.phone')}
                   value={editForm.phone}
                   type="tel"
                   onChange={(v) => setEditForm((f) => ({ ...f, phone: v }))}
                 />
                 <div>
-                  <p className="text-foreground/80 mb-2 text-xs font-medium">Gender</p>
+                  <p className="text-foreground/80 mb-2 text-xs font-medium">
+                    {t('profile.gender')}
+                  </p>
                   <div className="flex gap-2">
                     {GENDER_OPTIONS.map((g) => (
                       <button
@@ -263,13 +308,15 @@ export default function ProfilePage() {
                             : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {g.label}
+                        {genderLabel(g.value)}
                       </button>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="text-foreground/80 mb-2 text-xs font-medium">Unit System</p>
+                  <p className="text-foreground/80 mb-2 text-xs font-medium">
+                    {t('profile.unit_system')}
+                  </p>
                   <div className="flex gap-2">
                     {UNIT_OPTIONS.map((u) => (
                       <button
@@ -283,7 +330,7 @@ export default function ProfilePage() {
                             : 'bg-muted text-muted-foreground'
                         }`}
                       >
-                        {u.label}
+                        {unitLabel(u.value)}
                       </button>
                     ))}
                   </div>
@@ -293,28 +340,38 @@ export default function ProfilePage() {
                     onClick={cancelEdit}
                     className="border-border text-muted-foreground hover:bg-muted min-h-[44px] flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </button>
                   <button
                     onClick={saveEdit}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
                   >
-                    Save
+                    {t('common.save')}
                   </button>
                 </div>
               </div>
             ) : (
               <div className="space-y-3">
-                <InfoRow icon={MapPin} label="Location" value={profile.location || 'Not set'} />
+                <InfoRow
+                  icon={MapPin}
+                  label={t('profile.location')}
+                  value={profile.location || t('profile.not_set')}
+                />
                 <InfoRow
                   icon={Cake}
-                  label="Birthday"
+                  label={t('profile.birthday')}
                   value={
-                    profile.birthday ? new Date(profile.birthday).toLocaleDateString() : 'Not set'
+                    profile.birthday
+                      ? new Date(profile.birthday).toLocaleDateString()
+                      : t('profile.not_set')
                   }
                 />
-                <InfoRow icon={Phone} label="Phone" value={profile.phone || 'Not set'} />
-                <InfoRow icon={User} label="Email" value={email} />
+                <InfoRow
+                  icon={Phone}
+                  label={t('profile.phone')}
+                  value={profile.phone || t('profile.not_set')}
+                />
+                <InfoRow icon={User} label={t('auth.email')} value={email} />
               </div>
             )}
           </SectionCard>
@@ -324,18 +381,18 @@ export default function ProfilePage() {
         {activeTab === 'stats' && (
           <>
             <SectionCard>
-              <SectionHeader icon={Ruler} title="Body Stats" />
+              <SectionHeader icon={Ruler} title={t('profile.body_stats')} />
               <div className="space-y-3">
                 {editing ? (
                   <>
                     <InputField
-                      label={`Height (${heightUnit})`}
+                      label={`${t('profile.height')} (${heightUnit})`}
                       value={String(editForm.heightCm)}
                       type="number"
                       onChange={(v) => setEditForm((f) => ({ ...f, heightCm: Number(v) }))}
                     />
                     <InputField
-                      label={`Weight (${editForm.unitSystem === 'imperial' ? 'lbs' : 'kg'})`}
+                      label={`${t('profile.weight')} (${editForm.unitSystem === 'imperial' ? 'lbs' : 'kg'})`}
                       value={String(editForm.weightKg)}
                       type="number"
                       onChange={(v) => setEditForm((f) => ({ ...f, weightKg: Number(v) }))}
@@ -343,27 +400,31 @@ export default function ProfilePage() {
                   </>
                 ) : (
                   <>
-                    <InfoRow icon={Ruler} label="Height" value={formatHeight(profile.heightCm)} />
+                    <InfoRow
+                      icon={Ruler}
+                      label={t('profile.height')}
+                      value={formatHeight(profile.heightCm)}
+                    />
                     <InfoRow
                       icon={Weight}
-                      label="Base Weight"
+                      label={t('profile.base_weight')}
                       value={`${profile.weightKg || '—'} kg`}
                     />
                   </>
                 )}
                 <InfoRow
                   icon={Weight}
-                  label="Latest Weight"
+                  label={t('profile.latest_weight')}
                   value={
                     latestWeight
-                      ? `${formatWeight(latestWeight.weightKg)} ${latestWeight.bodyFatPercent ? `· ${latestWeight.bodyFatPercent}% body fat` : ''}`
-                      : 'No entries yet'
+                      ? `${formatWeight(latestWeight.weightKg)}${latestWeight.bodyFatPercent ? ` · ${t('profile.body_fat_value', { percent: latestWeight.bodyFatPercent })}` : ''}`
+                      : t('profile.no_entries')
                   }
                 />
                 {latestWeight?.bodyFatPercent && (
                   <InfoRow
                     icon={BarChart3}
-                    label="Body Fat"
+                    label={t('profile.body_fat')}
                     value={`${latestWeight.bodyFatPercent}%`}
                   />
                 )}
@@ -372,7 +433,7 @@ export default function ProfilePage() {
                 href="/progress/weight"
                 className="bg-muted/50 text-muted-foreground hover:bg-muted mt-3 flex items-center justify-between rounded-xl px-3 py-2 text-sm transition-colors"
               >
-                Track Weight
+                {t('profile.track_weight')}
                 <ChevronRight size={14} />
               </Link>
             </SectionCard>
@@ -381,7 +442,7 @@ export default function ProfilePage() {
               <SectionCard>
                 <SectionHeader
                   icon={Ruler}
-                  title="Latest Measurements"
+                  title={t('profile.latest_measurements')}
                   subtitle={new Date(latestMeasurement.date).toLocaleDateString()}
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -390,7 +451,7 @@ export default function ProfilePage() {
                     return (
                       <div key={field.key} className="bg-muted/30 rounded-xl px-3 py-2">
                         <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                          {field.label}
+                          {measurementLabel(field.key)}
                         </p>
                         <p className="text-foreground text-sm font-medium">
                           {val ? `${val} cm` : '—'}
@@ -403,7 +464,7 @@ export default function ProfilePage() {
                   href="/progress/measurements"
                   className="bg-muted/50 text-muted-foreground hover:bg-muted mt-3 flex items-center justify-between rounded-xl px-3 py-2 text-sm transition-colors"
                 >
-                  All Measurements
+                  {t('profile.all_measurements')}
                   <ChevronRight size={14} />
                 </Link>
               </SectionCard>
@@ -417,33 +478,41 @@ export default function ProfilePage() {
             <SectionCard>
               <SectionHeader
                 icon={Target}
-                title="Fitness Goals"
+                title={t('profile.fitness_goals')}
                 onEdit={activeTab === 'goals' ? startEdit : undefined}
               />
               {editing ? (
                 <div className="space-y-3">
                   <SelectField
-                    label="Primary Goal"
+                    label={t('profile.primary_goal')}
                     value={editForm.primaryGoal}
-                    options={FITNESS_GOALS.map((g) => ({ value: g.value, label: g.label }))}
+                    options={FITNESS_GOALS.map((g) => ({
+                      value: g.value,
+                      label: goalLabel(g.value),
+                    }))}
                     onChange={(v) => setEditForm((f) => ({ ...f, primaryGoal: v as FitnessGoal }))}
                   />
                   <SelectField
-                    label="Experience Level"
+                    label={t('profile.experience_level')}
                     value={editForm.experienceLevel}
-                    options={EXPERIENCE_LEVELS.map((l) => ({ value: l.value, label: l.label }))}
+                    options={EXPERIENCE_LEVELS.map((l) => ({
+                      value: l.value,
+                      label: experienceLabel(l.value),
+                    }))}
                     onChange={(v) =>
                       setEditForm((f) => ({ ...f, experienceLevel: v as ExperienceLevel }))
                     }
                   />
                   <InputField
-                    label="Weekly Workout Goal"
+                    label={t('profile.weekly_workout_goal')}
                     value={String(editForm.weeklyWorkoutGoal)}
                     type="number"
                     onChange={(v) => setEditForm((f) => ({ ...f, weeklyWorkoutGoal: Number(v) }))}
                   />
                   <div>
-                    <p className="text-foreground/80 mb-2 text-xs font-medium">Activity Level</p>
+                    <p className="text-foreground/80 mb-2 text-xs font-medium">
+                      {t('profile.activity_level')}
+                    </p>
                     <div className="flex flex-wrap gap-2">
                       {ACTIVITY_LEVELS.map((a) => (
                         <button
@@ -457,13 +526,15 @@ export default function ProfilePage() {
                               : 'bg-muted text-muted-foreground'
                           }`}
                         >
-                          {a.label}
+                          {activityLabel(a.value)}
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <p className="text-foreground/80 mb-2 text-xs font-medium">Workout Duration</p>
+                    <p className="text-foreground/80 mb-2 text-xs font-medium">
+                      {t('profile.workout_duration')}
+                    </p>
                     <div className="flex gap-2">
                       {[30, 45, 60, 90].map((d) => (
                         <button
@@ -475,7 +546,7 @@ export default function ProfilePage() {
                               : 'bg-muted text-muted-foreground'
                           }`}
                         >
-                          {d} min
+                          {d} {t('common.minute_short')}
                         </button>
                       ))}
                     </div>
@@ -485,13 +556,13 @@ export default function ProfilePage() {
                       onClick={cancelEdit}
                       className="border-border text-muted-foreground hover:bg-muted min-h-[44px] flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
                     >
-                      Cancel
+                      {t('common.cancel')}
                     </button>
                     <button
                       onClick={saveEdit}
                       className="bg-primary text-primary-foreground hover:bg-primary/90 min-h-[44px] flex-1 rounded-xl py-2 text-sm font-medium transition-colors"
                     >
-                      Save
+                      {t('common.save')}
                     </button>
                   </div>
                 </div>
@@ -499,49 +570,38 @@ export default function ProfilePage() {
                 <div className="space-y-3">
                   <InfoRow
                     icon={Target}
-                    label="Primary Goal"
-                    value={
-                      FITNESS_GOALS.find((g) => g.value === profile.primaryGoal)?.label ||
-                      profile.primaryGoal
-                    }
+                    label={t('profile.primary_goal')}
+                    value={goalLabel(profile.primaryGoal) || profile.primaryGoal}
                   />
                   <InfoRow
                     icon={BarChart3}
-                    label="Experience"
-                    value={
-                      EXPERIENCE_LEVELS.find((l) => l.value === profile.experienceLevel)?.label ||
-                      profile.experienceLevel
-                    }
+                    label={t('profile.experience')}
+                    value={experienceLabel(profile.experienceLevel) || profile.experienceLevel}
                   />
                   <InfoRow
                     icon={Calendar}
-                    label="Weekly Goal"
-                    value={`${profile.weeklyWorkoutGoal} sessions`}
+                    label={t('dashboard.weekly_goal')}
+                    value={t('profile.sessions_value', { count: profile.weeklyWorkoutGoal })}
                   />
                   <InfoRow
                     icon={Activity}
-                    label="Activity Level"
-                    value={
-                      ACTIVITY_LEVELS.find((a) => a.value === profile.activityLevel)?.label ||
-                      profile.activityLevel
-                    }
+                    label={t('profile.activity_level')}
+                    value={activityLabel(profile.activityLevel) || profile.activityLevel}
                   />
                   <InfoRow
                     icon={Clock}
-                    label="Workout Duration"
-                    value={`${profile.workoutDuration || 45} min`}
+                    label={t('profile.workout_duration')}
+                    value={`${profile.workoutDuration || 45} ${t('common.minute_short')}`}
                   />
                   <InfoRow
                     icon={User}
-                    label="Gender"
-                    value={
-                      GENDER_OPTIONS.find((g) => g.value === profile.gender)?.label ||
-                      profile.gender ||
-                      'Not set'
-                    }
+                    label={t('profile.gender')}
+                    value={genderLabel(profile.gender) || profile.gender || t('profile.not_set')}
                   />
                   <div className="bg-muted/30 mt-3 rounded-xl p-3">
-                    <p className="text-foreground mb-2 text-xs font-medium">Progress this week</p>
+                    <p className="text-foreground mb-2 text-xs font-medium">
+                      {t('profile.progress_this_week')}
+                    </p>
                     <div className="flex gap-1">
                       {Array.from({ length: profile.weeklyWorkoutGoal }).map((_, i) => (
                         <div
@@ -561,13 +621,13 @@ export default function ProfilePage() {
         {activeTab === 'activity' && (
           <>
             <SectionCard>
-              <SectionHeader icon={Activity} title="Overview" />
+              <SectionHeader icon={Activity} title={t('profile.overview')} />
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-muted/30 rounded-xl p-3 text-center">
                   <Dumbbell size={20} className="text-primary mx-auto" />
                   <p className="text-foreground mt-1 text-lg font-bold">{totalWorkouts}</p>
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Total Workouts
+                    {t('profile.total_workouts')}
                   </p>
                 </div>
                 <div className="bg-muted/30 rounded-xl p-3 text-center">
@@ -576,28 +636,28 @@ export default function ProfilePage() {
                     {totalVolume.toLocaleString()}
                   </p>
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Total Volume (kg)
+                    {t('profile.total_volume')} (kg)
                   </p>
                 </div>
                 <div className="bg-muted/30 rounded-xl p-3 text-center">
                   <Flame size={20} className="text-primary mx-auto" />
                   <p className="text-foreground mt-1 text-lg font-bold">{currentStreak}</p>
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Day Streak
+                    {t('profile.streak_days')}
                   </p>
                 </div>
                 <div className="bg-muted/30 rounded-xl p-3 text-center">
                   <Zap size={20} className="text-primary mx-auto" />
                   <p className="text-foreground mt-1 text-lg font-bold">{levelInfo.level}</p>
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Level
+                    {t('profile.level')}
                   </p>
                 </div>
               </div>
             </SectionCard>
 
             <SectionCard>
-              <SectionHeader icon={Clock} title="Recent Workouts" />
+              <SectionHeader icon={Clock} title={t('dashboard.recent_workouts')} />
               {recentSessions.length > 0 ? (
                 <div className="space-y-1">
                   {recentSessions.map((session) => (
@@ -616,7 +676,9 @@ export default function ProfilePage() {
                           {session.volume.toLocaleString()} kg
                         </p>
                         <p className="text-muted-foreground text-xs">
-                          {session.blocks.reduce((s, b) => s + b.exercises.length, 0)} exercises
+                          {t('profile.exercises_value', {
+                            count: session.blocks.reduce((s, b) => s + b.exercises.length, 0),
+                          })}
                         </p>
                       </div>
                     </div>
@@ -624,24 +686,24 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <p className="text-muted-foreground py-6 text-center text-sm">
-                  No workouts yet. Start your first workout!
+                  {t('dashboard.no_recent_workouts')}
                 </p>
               )}
               <Link
                 href="/workouts"
                 className="bg-muted/50 text-muted-foreground hover:bg-muted mt-2 flex items-center justify-between rounded-xl px-3 py-2 text-sm transition-colors"
               >
-                View All Workouts
+                {t('profile.view_all_workouts')}
                 <ChevronRight size={14} />
               </Link>
             </SectionCard>
 
             <SectionCard>
-              <SectionHeader icon={BarChart3} title="Last 30 Days" />
+              <SectionHeader icon={BarChart3} title={t('profile.last_30_days')} />
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-muted/30 rounded-xl p-3">
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Workouts
+                    {t('profile.workouts_completed')}
                   </p>
                   <p className="text-foreground text-lg font-bold">
                     {
@@ -652,7 +714,7 @@ export default function ProfilePage() {
                 </div>
                 <div className="bg-muted/30 rounded-xl p-3">
                   <p className="text-muted-foreground/60 text-[10px] tracking-wider uppercase">
-                    Volume
+                    {t('workouts.volume')}
                   </p>
                   <p className="text-foreground text-lg font-bold">
                     {recentVolume.toLocaleString()} kg
@@ -668,8 +730,11 @@ export default function ProfilePage() {
           <SectionCard>
             <SectionHeader
               icon={Award}
-              title="Achievements"
-              subtitle={`${gamification.achievements.length} / ${ACHIEVEMENTS.length} unlocked`}
+              title={t('gamification.achievements')}
+              subtitle={t('profile.unlocked_count', {
+                count: gamification.achievements.length,
+                total: ACHIEVEMENTS.length,
+              })}
             />
             <div className="grid grid-cols-2 gap-2">
               {ACHIEVEMENTS.map((ach) => {
@@ -771,6 +836,7 @@ function SectionHeader({
   subtitle?: string;
   onEdit?: () => void;
 }) {
+  const t = useTranslations();
   return (
     <div className="mb-3 flex items-center justify-between">
       <div className="flex items-center gap-2">
@@ -783,7 +849,7 @@ function SectionHeader({
           onClick={onEdit}
           className="text-primary hover:text-primary/80 text-xs font-medium transition-colors"
         >
-          Edit
+          {t('common.edit')}
         </button>
       )}
     </div>

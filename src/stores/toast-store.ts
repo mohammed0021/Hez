@@ -17,9 +17,15 @@ interface ToastState {
   addToast: (toast: Omit<Toast, 'id'>) => string;
   removeToast: (id: string) => void;
   clearToasts: () => void;
-  success: (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => string;
+  success: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>,
+  ) => string;
   error: (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => string;
-  warning: (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => string;
+  warning: (
+    message: string,
+    options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>,
+  ) => string;
   info: (message: string, options?: Partial<Omit<Toast, 'id' | 'message' | 'variant'>>) => string;
 }
 

@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, Dumbbell, Award, Zap, Target, CheckCheck } from 'lucide-react';
 import { useInAppNotificationStore, useUiStore } from '@/stores/ui-store';
+import { useTranslations } from 'next-intl';
 import type { Notification } from '@/types';
 
 const typeIcons: Record<string, React.ComponentType<{ size?: number; className?: string }>> = {
@@ -63,6 +64,7 @@ function NotificationItem({ notification }: { notification: Notification }) {
 export function NotificationCenter() {
   const { notificationOpen, setNotificationOpen } = useUiStore();
   const { notifications, unreadCount, markAllAsRead } = useInAppNotificationStore();
+  const t = useTranslations('notifications');
 
   return (
     <div className="relative">
@@ -96,7 +98,7 @@ export function NotificationCenter() {
               className="border-border/50 bg-background absolute top-full right-0 z-50 mt-2 w-80 origin-top-right overflow-hidden rounded-xl border shadow-xl"
             >
               <div className="border-border/50 flex items-center justify-between border-b px-4 py-3">
-                <h3 className="text-foreground text-sm font-semibold">Notifications</h3>
+                <h3 className="text-foreground text-sm font-semibold">{t('title')}</h3>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllAsRead}

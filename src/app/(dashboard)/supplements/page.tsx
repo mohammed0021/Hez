@@ -14,11 +14,14 @@ import {
   Settings,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { useSupplementStore } from '@/stores/supplement-store';
 import type { Supplement } from '@/stores/supplement-store';
 import { canNotify, notify } from '@/lib/notification-service';
 
 export default function SupplementsPage() {
+  const t = useTranslations('supplements');
+  const tc = useTranslations('common');
   const supplements = useSupplementStore((s) => s.supplements);
   const getTodayLog = useSupplementStore((s) => s.getTodayLog);
   const markTaken = useSupplementStore((s) => s.markTaken);
@@ -57,8 +60,8 @@ export default function SupplementsPage() {
         const missed = state.supplements.filter((s) => state.getTodayLog()[s.id] !== 'taken');
         if (missed.length > 0) {
           if (canNotify()) {
-            notify('Supplements Reminder', {
-              body: `You still need to take: ${missed.map((s) => s.name).join(', ')}`,
+            notify(t('reminder_title'), {
+              body: t('reminder_body', { names: missed.map((s) => s.name).join(', ') }),
               tag: 'supplement-reminder',
               data: { type: 'creatine_reminder' },
               onClick: () => {
@@ -68,8 +71,8 @@ export default function SupplementsPage() {
               },
             });
           } else if ('Notification' in window && Notification.permission === 'granted') {
-            const notification = new Notification('Supplements Reminder', {
-              body: `You still need to take: ${missed.map((s) => s.name).join(', ')}`,
+            const notification = new Notification(t('reminder_title'), {
+              body: t('reminder_body', { names: missed.map((s) => s.name).join(', ') }),
               icon: '/icons/icon-192x192.png',
               tag: 'supplement-reminder',
               requireInteraction: true,
@@ -85,15 +88,15 @@ export default function SupplementsPage() {
       }
     }, 60000);
     return () => clearInterval(check);
-  }, [reminder]);
+  }, [reminder, t]);
 
   return (
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Supplements</h1>
+          <h1 className="text-foreground text-2xl font-bold">{t('title')}</h1>
           <p className="text-muted-foreground mt-0.5 text-sm">
-            {takenCount}/{supplements.length} taken today
+            {t('taken_today', { taken: takenCount, total: supplements.length })}
           </p>
         </div>
         <div className="flex gap-2">
@@ -101,13 +104,13 @@ export default function SupplementsPage() {
             href="/supplements/manage"
             className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
           >
-            <Settings size={14} /> Manage
+            <Settings size={14} /> {t('manage')}
           </Link>
           <Link
             href="/supplements/history"
             className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
           >
-            <History size={14} /> History
+            <History size={14} /> {t('history')}
           </Link>
         </div>
       </div>
@@ -122,7 +125,7 @@ export default function SupplementsPage() {
           <Flame size={16} className="mx-auto text-orange-500" />
           <p className="text-foreground mt-1 text-lg font-bold">{streak}</p>
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Day Streak
+            {t('streak')}
           </p>
         </motion.div>
         <motion.div
@@ -136,7 +139,7 @@ export default function SupplementsPage() {
             {takenCount}/{supplements.length}
           </p>
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Today
+            {tc('today')}
           </p>
         </motion.div>
         <motion.div
@@ -148,7 +151,7 @@ export default function SupplementsPage() {
           <CalendarDays size={16} className="mx-auto text-blue-500" />
           <p className="text-foreground mt-1 text-lg font-bold">{missed.length}</p>
           <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-            Missed This Week
+            {t('missed_this_week')}
           </p>
         </motion.div>
       </div>
@@ -161,10 +164,8 @@ export default function SupplementsPage() {
           className="mt-4 rounded-2xl border border-green-500/30 bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-4 text-center"
         >
           <Check size={24} className="mx-auto text-green-500" />
-          <p className="mt-1 text-sm font-semibold text-green-600">All supplements taken today!</p>
-          <p className="text-[10px] text-green-600/70">
-            Streak: {streak} day{streak !== 1 ? 's' : ''}
-          </p>
+          <p className="mt-1 text-sm font-semibold text-green-600">{t('all_taken_today')}</p>
+          <p className="text-[10px] text-green-600/70">{t('streak_days', { streak })}</p>
         </motion.div>
       )}
 
@@ -178,10 +179,8 @@ export default function SupplementsPage() {
               className="flex items-center gap-2 rounded-xl border border-amber-500/20 bg-amber-500/10 px-3 py-2 text-[10px] text-amber-600 transition-colors hover:bg-amber-500/20"
             >
               <AlertTriangle size={12} />
-              <span className="flex-1">
-                {s.name} running low ({s.stock} left)
-              </span>
-              <span>Refill</span>
+              <span className="flex-1">{t('running_low', { name: s.name, stock: s.stock })}</span>
+              <span>{t('refill')}</span>
             </Link>
           ))}
         </motion.div>
@@ -214,20 +213,20 @@ export default function SupplementsPage() {
               if (todayLog[s.id] !== 'taken') markTaken(s.id);
             }
             if (canNotify()) {
-              notify('All Supplements Taken', {
-                body: 'Great job staying on track!',
+              notify(t('all_taken_title'), {
+                body: t('all_taken_body'),
                 tag: 'all-taken',
               });
             } else if ('Notification' in window && Notification.permission === 'granted') {
-              new Notification('All Supplements Taken', {
-                body: 'Great job staying on track!',
+              new Notification(t('all_taken_title'), {
+                body: t('all_taken_body'),
                 icon: '/icons/icon-192x192.png',
               });
             }
           }}
           className="bg-primary text-primary-foreground mt-3 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl py-3 text-xs font-medium transition-transform active:scale-[0.98]"
         >
-          <Check size={14} /> Mark All as Taken
+          <Check size={14} /> {t('mark_all_taken')}
         </motion.button>
       )}
 
@@ -244,7 +243,7 @@ export default function SupplementsPage() {
           <BellOff size={18} className="text-muted-foreground" />
         )}
         <div className="flex-1">
-          <p className="text-foreground text-sm font-medium">Daily Reminder</p>
+          <p className="text-foreground text-sm font-medium">{t('daily_reminder')}</p>
           <p className="text-muted-foreground text-[10px]">
             {reminder.hour.toString().padStart(2, '0')}:
             {reminder.minute.toString().padStart(2, '0')}
@@ -267,7 +266,7 @@ export default function SupplementsPage() {
           animate={{ opacity: 1, height: 'auto' }}
           className="border-border/50 bg-card mt-2 flex items-center gap-3 rounded-2xl border p-4"
         >
-          <span className="text-foreground flex-1 text-xs">Reminder time</span>
+          <span className="text-foreground flex-1 text-xs">{t('reminder_time')}</span>
           <select
             value={reminder.hour}
             onChange={(e) => setReminder({ hour: parseInt(e.target.value) })}
@@ -310,6 +309,7 @@ function SupplementRow({
   onToggle: () => void;
   index: number;
 }) {
+  const t = useTranslations('supplements');
   return (
     <motion.div
       initial={{ opacity: 0, y: 8 }}
@@ -340,7 +340,9 @@ function SupplementRow({
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-muted-foreground/40 text-[9px]">Stock: {s.stock}</span>
+        <span className="text-muted-foreground/40 text-[9px]">
+          {t('stock_label', { count: s.stock })}
+        </span>
         {s.stock <= s.refillThreshold && <AlertTriangle size={11} className="text-amber-500" />}
       </div>
     </motion.div>

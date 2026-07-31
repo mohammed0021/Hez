@@ -1,6 +1,15 @@
 import type { MetadataRoute } from 'next';
+import { cookies } from 'next/headers';
+import { locales, defaultLocale } from '@/i18n/locales';
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const cookieStore = await cookies();
+  const localeCookie = cookieStore.get('NEXT_LOCALE')?.value;
+  const locale = (locales as readonly string[]).includes(localeCookie ?? '')
+    ? (localeCookie as string)
+    : defaultLocale;
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
+
   return {
     name: 'Hêz — Premium Fitness Tracking',
     short_name: 'Hêz',
@@ -12,8 +21,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#0a0a0a',
     theme_color: '#10b981',
     categories: ['fitness', 'health', 'lifestyle', 'sports'],
-    lang: 'en',
-    dir: 'ltr',
+    lang: locale,
+    dir,
     prefer_related_applications: false,
     scope: '/',
     id: '/',

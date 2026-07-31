@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { createClient } from '@/lib/supabase-client';
 import { useThemeStore } from './theme-store';
+import { useLocaleStore } from './locale-store';
+import type { Locale } from '@/i18n/locales';
 
 export type UnitSystem = 'metric' | 'imperial';
 export type WeightUnit = 'kg' | 'lbs';
@@ -128,9 +130,12 @@ export const useSettingsStore = create<SettingsState>()(
               defaultRestTimer: settings.rest_timer_default || 90,
               soundEnabled: settings.notifications_enabled ?? true,
             });
+            if (settings.language) {
+              useLocaleStore.getState().setLocale(settings.language as Locale);
+            }
             const themeStore = useThemeStore.getState();
             if (settings.theme_id) themeStore.setThemeId(settings.theme_id as never);
-            if (settings.theme_mode) themeStore.setMode(settings.theme_mode as never);
+            if (settings.mode) themeStore.setMode(settings.mode as never);
           }
         } catch (e) {
           console.error('Failed to sync settings from server:', e);

@@ -29,5 +29,11 @@
       ]
     }
   ],
-  "redirects": [{ "source": "/home", "destination": "/", "permanent": true }]
+  "redirects": [{ "source": "/home", "destination": "/", "permanent": true }],
+  "crons": [
+    {
+      "path": "/api/cron/reminders",
+      "schedule": "*/15 * * * *"
+    }
+  ]
 }

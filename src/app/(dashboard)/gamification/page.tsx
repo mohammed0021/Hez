@@ -21,10 +21,13 @@ import { XpBar } from '@/components/gamification/xp-bar';
 import { AchievementCard } from '@/components/gamification/achievement-card';
 import { ChallengeCard } from '@/components/gamification/challenge-card';
 import { LevelUpModal } from '@/components/gamification/level-up-modal';
+import { useTranslations } from 'next-intl';
 
 type Tab = 'overview' | 'achievements' | 'challenges';
 
 export default function GamificationPage() {
+  const t = useTranslations('gamification');
+  const tp = useTranslations('profile');
   const [tab, setTab] = useState<Tab>('overview');
   const [showAllAchievements, setShowAllAchievements] = useState(false);
   const [showLevelUp, setShowLevelUp] = useState(false);
@@ -63,10 +66,8 @@ export default function GamificationPage() {
     <>
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Gamification</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">
-            Track your achievements and progress
-          </p>
+          <h1 className="text-foreground text-2xl font-bold">{t('title')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">{t('subtitle')}</p>
         </div>
         <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/20 text-sm font-bold text-amber-500">
           {level.level}
@@ -81,7 +82,12 @@ export default function GamificationPage() {
       {/* Stats grid */}
       <div className="mt-4 grid grid-cols-4 gap-3">
         {[
-          { icon: Dumbbell, label: 'Workouts', value: getTotalWorkouts(), color: 'text-primary' },
+          {
+            icon: Dumbbell,
+            label: tp('workouts_completed'),
+            value: getTotalWorkouts(),
+            color: 'text-primary',
+          },
           { icon: Zap, label: 'Streak', value: `${getCurrentStreak()}d`, color: 'text-amber-500' },
           { icon: Flame, label: 'Level', value: level.level, color: 'text-orange-500' },
           {
@@ -111,22 +117,22 @@ export default function GamificationPage() {
       <div className="bg-muted mt-4 flex gap-1 rounded-xl p-1">
         {[
           { id: 'overview' as const, label: 'Overview', icon: Sparkles },
-          { id: 'achievements' as const, label: 'Achievements', icon: Trophy },
-          { id: 'challenges' as const, label: 'Challenges', icon: Target },
-        ].map((t) => {
-          const Icon = t.icon;
+          { id: 'achievements' as const, label: t('achievements'), icon: Trophy },
+          { id: 'challenges' as const, label: t('challenges'), icon: Target },
+        ].map((tabOpt) => {
+          const Icon = tabOpt.icon;
           return (
             <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
+              key={tabOpt.id}
+              onClick={() => setTab(tabOpt.id)}
               className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-all ${
-                tab === t.id
+                tab === tabOpt.id
                   ? 'bg-card text-foreground shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               <Icon size={14} />
-              {t.label}
+              {tabOpt.label}
             </button>
           );
         })}
@@ -203,7 +209,7 @@ export default function GamificationPage() {
                           isCurrent ? 'text-foreground font-medium' : 'text-muted-foreground'
                         }`}
                       >
-                        {req.toLocaleString()} XP
+                        {req.toLocaleString()} {t('xp')}
                       </span>
                     </div>
                   );

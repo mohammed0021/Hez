@@ -3,6 +3,7 @@
 import { useMemo, useRef, useCallback } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Dumbbell, Heart, Clock, SearchX } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useExerciseStore } from '@/stores/exercise-store';
@@ -24,15 +25,16 @@ const ExerciseMediaViewer = dynamic(
 );
 
 const TABS = [
-  { id: 'all', label: 'All Exercises', icon: Dumbbell },
-  { id: 'favorites', label: 'Favorites', icon: Heart },
-  { id: 'recent', label: 'Recent', icon: Clock },
+  { id: 'all', labelKey: 'all_exercises', icon: Dumbbell },
+  { id: 'favorites', labelKey: 'favorites', icon: Heart },
+  { id: 'recent', labelKey: 'recent', icon: Clock },
 ] as const;
 
 const CARD_HEIGHT = 280;
 const COLUMN_COUNT = 3;
 
 export function ExerciseLibrary() {
+  const t = useTranslations('exercises');
   const searchQuery = useExerciseStore((s) => s.searchQuery);
   const filters = useExerciseStore((s) => s.activeFilters);
   const favorites = useExerciseStore((s) => s.favorites);
@@ -98,8 +100,10 @@ export function ExerciseLibrary() {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-foreground text-2xl font-bold">Exercise Library</h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">{exercises.length} exercises</p>
+          <h1 className="text-foreground text-2xl font-bold">{t('exercise_library')}</h1>
+          <p className="text-muted-foreground mt-0.5 text-sm">
+            {t('showing_count', { count: exercises.length })}
+          </p>
         </div>
       </div>
 
@@ -117,7 +121,7 @@ export function ExerciseLibrary() {
               }`}
             >
               <Icon size={14} />
-              {tab.label}
+              {t(tab.labelKey)}
               {tab.id === 'favorites' && favorites.length > 0 && (
                 <span className="ml-1 text-xs">{favorites.length}</span>
               )}
@@ -140,12 +144,12 @@ export function ExerciseLibrary() {
           {filtered.length === 0 ? (
             <div className="border-border/50 bg-card flex flex-col items-center gap-3 rounded-2xl border p-12">
               <SearchX size={40} className="text-muted-foreground/30" />
-              <p className="text-muted-foreground text-sm">No exercises match your search</p>
+              <p className="text-muted-foreground text-sm">{t('no_results')}</p>
               <button
                 onClick={() => useExerciseStore.getState().clearFilters()}
                 className="bg-muted text-foreground min-h-[44px] rounded-xl px-4 py-2 text-xs"
               >
-                Clear filters
+                {t('clear_filters')}
               </button>
             </div>
           ) : (
@@ -195,7 +199,7 @@ export function ExerciseLibrary() {
           <div className="sticky top-24 space-y-4">
             <div className="border-border/50 bg-card rounded-2xl border p-4">
               <h3 className="text-muted-foreground/60 mb-3 text-[10px] font-medium tracking-wider uppercase">
-                Browse by Muscle
+                {t('browse_by_muscle')}
               </h3>
               <div className="flex flex-wrap gap-1.5">
                 {['Chest', 'Back', 'Shoulders', 'Legs', 'Arms', 'Core', 'Full Body'].map(

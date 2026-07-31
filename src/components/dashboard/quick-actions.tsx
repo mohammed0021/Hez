@@ -14,6 +14,18 @@ import {
   BarChart3,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+
+const actionLabelKey: Record<string, string | undefined> = {
+  'start-workout': 'dashboard.start_workout',
+  'create-workout': 'workouts.new_workout',
+  weight: 'dashboard.log_weight',
+  calendar: 'nav.calendar',
+  supplements: 'nav.supplements',
+  progress: 'nav.progress',
+  profile: 'nav.profile',
+  settings: 'nav.settings',
+};
 
 const actions = [
   {
@@ -96,9 +108,10 @@ const actions = [
 ];
 
 export function QuickActions() {
+  const t = useTranslations();
   return (
     <div className="border-border/50 bg-card rounded-2xl border p-4">
-      <h3 className="text-foreground mb-3 text-sm font-semibold">Quick Actions</h3>
+      <h3 className="text-foreground mb-3 text-sm font-semibold">{t('dashboard.quick_actions')}</h3>
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {actions.map((a) => {
           const Icon = a.icon;
@@ -112,7 +125,7 @@ export function QuickActions() {
                 <Icon size={18} />
               </div>
               <span className="text-foreground text-center text-[10px] leading-tight font-medium">
-                {a.label}
+                {actionLabelKey[a.id] ? t(actionLabelKey[a.id] as string) : a.label}
               </span>
             </Link>
           );

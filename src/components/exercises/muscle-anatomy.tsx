@@ -14,12 +14,18 @@ const MUSCLE_REGIONS = [
     name: 'Shoulders',
     path: 'M 160 70 Q 165 50 190 50 Q 215 50 220 70 Q 210 85 190 85 Q 170 85 160 70 Z',
   },
-  { name: 'Chest', path: 'M 155 95 Q 165 90 190 90 Q 215 90 225 95 Q 220 120 190 125 Q 160 120 155 95 Z' },
+  {
+    name: 'Chest',
+    path: 'M 155 95 Q 165 90 190 90 Q 215 90 225 95 Q 220 120 190 125 Q 160 120 155 95 Z',
+  },
   { name: 'Biceps', path: 'M 125 100 Q 130 95 140 95 L 145 130 Q 135 140 125 135 Z' },
   { name: 'Biceps', path: 'M 240 100 Q 235 95 225 95 L 220 130 Q 230 140 240 135 Z' },
   { name: 'Forearms', path: 'M 120 145 Q 125 140 135 140 L 140 195 Q 130 200 120 200 Z' },
   { name: 'Forearms', path: 'M 245 145 Q 240 140 230 140 L 225 195 Q 235 200 245 200 Z' },
-  { name: 'Core', path: 'M 155 135 Q 160 125 190 125 Q 220 125 225 135 L 220 180 Q 190 185 160 180 Z' },
+  {
+    name: 'Core',
+    path: 'M 155 135 Q 160 125 190 125 Q 220 125 225 135 L 220 180 Q 190 185 160 180 Z',
+  },
   { name: 'Obliques', path: 'M 150 135 Q 155 130 158 132 L 155 182 Q 150 180 148 175 Z' },
   { name: 'Obliques', path: 'M 230 135 Q 225 130 222 132 L 225 182 Q 230 180 232 175 Z' },
   { name: 'Quadriceps', path: 'M 150 195 Q 160 190 175 190 L 175 285 Q 165 290 150 290 Z' },
@@ -39,14 +45,27 @@ const BACK_REGIONS = [
   { name: 'Triceps', path: 'M 250 95 Q 242 90 235 95 L 230 145 Q 240 155 250 150 Z' },
   { name: 'Forearms', path: 'M 128 155 Q 135 150 145 155 L 150 200 Q 140 205 130 205 Z' },
   { name: 'Forearms', path: 'M 252 155 Q 245 150 235 155 L 230 200 Q 240 205 250 205 Z' },
-  { name: 'Lower Back', path: 'M 160 175 Q 175 168 190 168 Q 205 168 220 175 L 215 195 Q 190 200 165 195 Z' },
-  { name: 'Glutes', path: 'M 150 195 Q 170 185 190 185 Q 210 185 230 195 L 235 220 Q 190 230 145 220 Z' },
-  { name: 'Hamstrings', path: 'M 155 225 Q 175 218 190 218 Q 205 218 225 225 L 220 295 Q 190 300 160 295 Z' },
+  {
+    name: 'Lower Back',
+    path: 'M 160 175 Q 175 168 190 168 Q 205 168 220 175 L 215 195 Q 190 200 165 195 Z',
+  },
+  {
+    name: 'Glutes',
+    path: 'M 150 195 Q 170 185 190 185 Q 210 185 230 195 L 235 220 Q 190 230 145 220 Z',
+  },
+  {
+    name: 'Hamstrings',
+    path: 'M 155 225 Q 175 218 190 218 Q 205 218 225 225 L 220 295 Q 190 300 160 295 Z',
+  },
   { name: 'Calves', path: 'M 168 300 Q 178 295 188 295 L 188 365 Q 178 370 168 370 Z' },
   { name: 'Calves', path: 'M 212 300 Q 202 295 192 295 L 192 365 Q 202 370 212 370 Z' },
 ];
 
-export function MuscleAnatomy({ activeMuscles, onMuscleClick, compact = false }: MuscleAnatomyProps) {
+export function MuscleAnatomy({
+  activeMuscles,
+  onMuscleClick,
+  compact = false,
+}: MuscleAnatomyProps) {
   const size = compact ? 160 : 220;
   const viewBox = `0 0 ${size} ${size}`;
 

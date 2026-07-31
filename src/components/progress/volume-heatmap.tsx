@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface DayData {
   date: string;
@@ -8,7 +9,16 @@ interface DayData {
   sessions: number;
 }
 
-export function VolumeHeatmap({ data, startDate, endDate }: { data: DayData[]; startDate: string; endDate: string }) {
+export function VolumeHeatmap({
+  data,
+  startDate,
+  endDate,
+}: {
+  data: DayData[];
+  startDate: string;
+  endDate: string;
+}) {
+  const t = useTranslations();
   const weeks = useMemo(() => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -32,19 +42,24 @@ export function VolumeHeatmap({ data, startDate, endDate }: { data: DayData[]; s
         currentWeek = [];
       }
     }
-    if (currentWeek.length > 0) weeks.push({ date: currentWeek[currentWeek.length - 1]!.date, days: currentWeek });
+    if (currentWeek.length > 0)
+      weeks.push({ date: currentWeek[currentWeek.length - 1]!.date, days: currentWeek });
     return weeks;
   }, [data, startDate, endDate]);
 
   const maxVolume = Math.max(...data.map((d) => d.volume), 1);
 
   return (
-    <div className="overflow-x-auto scrollbar-none">
+    <div className="scrollbar-none overflow-x-auto">
       <div className="flex gap-1">
-        <div className="flex flex-col gap-1 pr-2 pt-6">
-          {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
-            <span key={d} className="text-[8px] text-muted-foreground h-[14px] leading-[14px]">{d}</span>
-          ))}
+        <div className="flex flex-col gap-1 pt-6 pr-2">
+          {['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].map(
+            (d) => (
+              <span key={d} className="text-muted-foreground h-[14px] text-[8px] leading-[14px]">
+                {t(`calendar.${d}`)}
+              </span>
+            ),
+          )}
         </div>
         <div className="flex gap-1">
           {weeks.map((week) => (
@@ -53,13 +68,14 @@ export function VolumeHeatmap({ data, startDate, endDate }: { data: DayData[]; s
                 const day = week.days.find((d) => d.day === dow);
                 if (!day) return <div key={dow} className="size-[14px]" />;
                 const intensity = Math.min(day.volume / maxVolume, 1);
-                const bg = day.volume === 0
-                  ? 'bg-muted/30'
-                  : intensity > 0.75
-                    ? 'bg-primary'
-                    : intensity > 0.4
-                      ? 'bg-primary/70'
-                      : 'bg-primary/40';
+                const bg =
+                  day.volume === 0
+                    ? 'bg-muted/30'
+                    : intensity > 0.75
+                      ? 'bg-primary'
+                      : intensity > 0.4
+                        ? 'bg-primary/70'
+                        : 'bg-primary/40';
                 return (
                   <div
                     key={dow}
@@ -72,13 +88,13 @@ export function VolumeHeatmap({ data, startDate, endDate }: { data: DayData[]; s
           ))}
         </div>
       </div>
-      <div className="flex items-center gap-1.5 mt-2 justify-end text-[8px] text-muted-foreground">
-        <span>Less</span>
-        <div className="size-[10px] rounded-sm bg-muted/30" />
-        <div className="size-[10px] rounded-sm bg-primary/40" />
-        <div className="size-[10px] rounded-sm bg-primary/70" />
-        <div className="size-[10px] rounded-sm bg-primary" />
-        <span>More</span>
+      <div className="text-muted-foreground mt-2 flex items-center justify-end gap-1.5 text-[8px]">
+        <span>{t('common.less')}</span>
+        <div className="bg-muted/30 size-[10px] rounded-sm" />
+        <div className="bg-primary/40 size-[10px] rounded-sm" />
+        <div className="bg-primary/70 size-[10px] rounded-sm" />
+        <div className="bg-primary size-[10px] rounded-sm" />
+        <span>{t('common.more')}</span>
       </div>
     </div>
   );

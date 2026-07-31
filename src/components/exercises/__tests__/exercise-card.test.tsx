@@ -26,16 +26,23 @@ const mockExercise: Exercise = {
   name: 'Bench Press',
   description: 'A compound upper body exercise',
   muscleGroups: ['Chest', 'Shoulders', 'Triceps'],
+  primaryMuscleGroups: ['Chest', 'Shoulders'],
+  secondaryMuscleGroups: ['Triceps'],
   equipment: ['Barbell', 'Bench'],
   difficulty: 'intermediate',
+  exerciseType: 'strength',
   instructions: ['Lie on bench', 'Press bar up'],
-  tips: ['Keep elbows at 45 degrees'],
+  trainingTips: ['Keep elbows at 45 degrees'],
   commonMistakes: ['Bouncing the bar'],
   category: 'strength',
   movementPattern: 'push',
   mechanics: 'compound',
   grip: 'pronated',
   primeMovers: ['Chest'],
+  videoUrl: null,
+  imageUrl: null,
+  thumbnailUrl: null,
+  alternativeIds: [],
 };
 
 beforeEach(() => {
@@ -52,7 +59,7 @@ beforeEach(() => {
 describe('ExerciseCard', () => {
   it('renders exercise name', () => {
     render(<ExerciseCard exercise={mockExercise} />);
-    expect(screen.getByText('Bench Press')).toBeInTheDocument();
+    expect(screen.getAllByText('Bench Press').length).toBeGreaterThan(0);
   });
 
   it('renders description', () => {
@@ -68,7 +75,7 @@ describe('ExerciseCard', () => {
 
   it('renders difficulty label', () => {
     render(<ExerciseCard exercise={mockExercise} />);
-    expect(screen.getByText('intermediate')).toBeInTheDocument();
+    expect(screen.getByText('Intermediate')).toBeInTheDocument();
   });
 
   it('links to exercise detail page', () => {

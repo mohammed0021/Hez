@@ -26,12 +26,66 @@ export interface ReminderSettings {
 }
 
 const DEFAULT_SUPPLEMENTS: Supplement[] = [
-  { id: 's1', name: 'Creatine Monohydrate', dosage: '5g', time: 'Morning', stock: 60, refillThreshold: 10, color: 'bg-blue-500', isDefault: true },
-  { id: 's2', name: 'Whey Protein', dosage: '1 scoop', time: 'Post-workout', stock: 30, refillThreshold: 5, color: 'bg-green-500', isDefault: true },
-  { id: 's3', name: 'Omega-3', dosage: '2 capsules', time: 'With meals', stock: 60, refillThreshold: 10, color: 'bg-amber-500', isDefault: true },
-  { id: 's4', name: 'Vitamin D3', dosage: '2000 IU', time: 'Morning', stock: 90, refillThreshold: 15, color: 'bg-purple-500', isDefault: true },
-  { id: 's5', name: 'Magnesium', dosage: '400mg', time: 'Before bed', stock: 60, refillThreshold: 10, color: 'bg-rose-500', isDefault: true },
-  { id: 's6', name: 'Electrolytes', dosage: '1 tablet', time: 'During workout', stock: 30, refillThreshold: 5, color: 'bg-cyan-500', isDefault: true },
+  {
+    id: 's1',
+    name: 'Creatine Monohydrate',
+    dosage: '5g',
+    time: 'Morning',
+    stock: 60,
+    refillThreshold: 10,
+    color: 'bg-blue-500',
+    isDefault: true,
+  },
+  {
+    id: 's2',
+    name: 'Whey Protein',
+    dosage: '1 scoop',
+    time: 'Post-workout',
+    stock: 30,
+    refillThreshold: 5,
+    color: 'bg-green-500',
+    isDefault: true,
+  },
+  {
+    id: 's3',
+    name: 'Omega-3',
+    dosage: '2 capsules',
+    time: 'With meals',
+    stock: 60,
+    refillThreshold: 10,
+    color: 'bg-amber-500',
+    isDefault: true,
+  },
+  {
+    id: 's4',
+    name: 'Vitamin D3',
+    dosage: '2000 IU',
+    time: 'Morning',
+    stock: 90,
+    refillThreshold: 15,
+    color: 'bg-purple-500',
+    isDefault: true,
+  },
+  {
+    id: 's5',
+    name: 'Magnesium',
+    dosage: '400mg',
+    time: 'Before bed',
+    stock: 60,
+    refillThreshold: 10,
+    color: 'bg-rose-500',
+    isDefault: true,
+  },
+  {
+    id: 's6',
+    name: 'Electrolytes',
+    dosage: '1 tablet',
+    time: 'During workout',
+    stock: 30,
+    refillThreshold: 5,
+    color: 'bg-cyan-500',
+    isDefault: true,
+  },
 ];
 
 function uid() {
@@ -96,7 +150,9 @@ export const useSupplementStore = create<SupplementState>()(
         const d = date || getDateKey();
         set((state) => {
           const existing = state.logs.find((l) => l.date === d);
-          const updatedSupps: Record<string, TakenStatus> = existing ? { ...existing.supplements } : {};
+          const updatedSupps: Record<string, TakenStatus> = existing
+            ? { ...existing.supplements }
+            : {};
           updatedSupps[supplementId] = 'taken';
           const newLog: SupplementLog = { date: d, supplements: updatedSupps };
           const logs = existing
@@ -110,7 +166,9 @@ export const useSupplementStore = create<SupplementState>()(
         const d = date || getDateKey();
         set((state) => {
           const existing = state.logs.find((l) => l.date === d);
-          const updatedSupps: Record<string, TakenStatus> = existing ? { ...existing.supplements } : {};
+          const updatedSupps: Record<string, TakenStatus> = existing
+            ? { ...existing.supplements }
+            : {};
           updatedSupps[supplementId] = 'missed';
           const newLog: SupplementLog = { date: d, supplements: updatedSupps };
           const logs = existing
@@ -132,8 +190,7 @@ export const useSupplementStore = create<SupplementState>()(
         }));
       },
 
-      setReminder: (settings) =>
-        set((state) => ({ reminder: { ...state.reminder, ...settings } })),
+      setReminder: (settings) => set((state) => ({ reminder: { ...state.reminder, ...settings } })),
 
       getTodayLog: () => {
         const d = getDateKey();
@@ -189,7 +246,12 @@ export const useSupplementStore = create<SupplementState>()(
         const end = new Date();
         const start = new Date();
         start.setDate(start.getDate() - days);
-        return get().logs.filter((l) => l.date >= start.toISOString().slice(0, 10) && l.date <= end.toISOString().slice(0, 10))
+        return get()
+          .logs.filter(
+            (l) =>
+              l.date >= start.toISOString().slice(0, 10) &&
+              l.date <= end.toISOString().slice(0, 10),
+          )
           .sort((a, b) => b.date.localeCompare(a.date));
       },
 

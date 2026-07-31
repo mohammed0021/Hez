@@ -3,9 +3,12 @@
 import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, X, Minus, TrendingUp } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useSupplementStore } from '@/stores/supplement-store';
 
 export default function SupplementHistoryPage() {
+  const t = useTranslations('supplements');
+  const tc = useTranslations('common');
   const supplements = useSupplementStore((s) => s.supplements);
   const getHistory = useSupplementStore((s) => s.getHistory);
   const [days, setDays] = useState(30);
@@ -45,8 +48,10 @@ export default function SupplementHistoryPage() {
   return (
     <>
       <div>
-        <h1 className="text-foreground text-2xl font-bold">Supplement History</h1>
-        <p className="text-muted-foreground mt-0.5 text-sm">{history.length} days logged</p>
+        <h1 className="text-foreground text-2xl font-bold">{t('history_title')}</h1>
+        <p className="text-muted-foreground mt-0.5 text-sm">
+          {t('days_logged', { count: history.length })}
+        </p>
       </div>
 
       {/* Adherence */}
@@ -58,7 +63,7 @@ export default function SupplementHistoryPage() {
         <div className="flex items-center justify-between">
           <div>
             <p className="text-muted-foreground/60 text-[10px] font-medium tracking-wider uppercase">
-              Adherence
+              {t('adherence')}
             </p>
             <p className="text-foreground mt-1 text-3xl font-bold">{adherence}%</p>
           </div>
@@ -69,7 +74,7 @@ export default function SupplementHistoryPage() {
       {/* Weekly summary */}
       <div className="mt-5">
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          This Week
+          {tc('this_week')}
         </p>
         <div className="flex gap-1.5">
           {weeklyData.map((day, i) => (
@@ -161,9 +166,7 @@ export default function SupplementHistoryPage() {
           );
         })}
         {history.length === 0 && (
-          <p className="text-muted-foreground py-8 text-center text-[10px]">
-            No history for this period
-          </p>
+          <p className="text-muted-foreground py-8 text-center text-[10px]">{t('no_history')}</p>
         )}
       </div>
 

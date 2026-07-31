@@ -3,12 +3,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Plus, Save, Copy, Share2, Bookmark, ArrowLeft, Clock } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useWorkoutStore } from '@/stores/workout-store';
 import { BlockCard } from './block-card';
 import { ShareDialog } from './share-dialog';
 
 export function WorkoutBuilder() {
   const router = useRouter();
+  const t = useTranslations('workouts');
+  const c = useTranslations('common');
   const workout = useWorkoutStore((s) => s.currentWorkout);
   const addBlock = useWorkoutStore((s) => s.addBlock);
   const save = useWorkoutStore((s) => s.save);
@@ -66,19 +69,21 @@ export function WorkoutBuilder() {
             value={workout.name}
             onChange={(e) => setField('name', e.target.value)}
             className="text-foreground placeholder:text-muted-foreground/40 w-full bg-transparent text-xl font-bold focus:outline-none"
-            placeholder="Workout name..."
+            placeholder={t('workout_name_input_placeholder')}
           />
           <div className="mt-0.5 flex items-center gap-3">
             <span className="text-muted-foreground/60 flex items-center gap-1 text-[10px]">
-              <Clock size={11} /> ~{Math.round(totalDuration / 60)} min
+              <Clock size={11} /> {t('duration_min', { minutes: Math.round(totalDuration / 60) })}
             </span>
             <span className="text-muted-foreground/60 text-[10px]">
-              {workout.blocks.length} {workout.blocks.length === 1 ? 'block' : 'blocks'}
+              {t('blocks_count', { count: workout.blocks.length })}
             </span>
             <span className="text-muted-foreground/60 text-[10px]">
-              {totalSets} {totalSets === 1 ? 'set' : 'sets'}
+              {t('sets_count', { count: totalSets })}
             </span>
-            {isDirty && <span className="text-[9px] font-medium text-yellow-500">Unsaved</span>}
+            {isDirty && (
+              <span className="text-[9px] font-medium text-yellow-500">{t('unsaved')}</span>
+            )}
           </div>
         </div>
       </div>
@@ -89,7 +94,7 @@ export function WorkoutBuilder() {
         value={workout.description}
         onChange={(e) => setField('description', e.target.value)}
         className="border-border/30 bg-card text-foreground placeholder:text-muted-foreground/40 focus:border-primary/40 w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none"
-        placeholder="Description (optional)"
+        placeholder={t('description_optional')}
       />
 
       {/* Blocks */}
@@ -104,23 +109,23 @@ export function WorkoutBuilder() {
         onClick={() => addBlock()}
         className="border-border/50 bg-card/50 text-muted-foreground hover:border-primary/30 hover:text-primary flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed py-4 text-sm transition-colors"
       >
-        <Plus size={18} /> Add Block
+        <Plus size={18} /> {t('add_block')}
       </button>
 
       {/* Workout notes */}
       <div className="border-border/50 bg-card rounded-2xl border p-4">
-        <p className="text-foreground mb-2 text-sm font-semibold">Workout Notes</p>
+        <p className="text-foreground mb-2 text-sm font-semibold">{t('workout_notes')}</p>
         <textarea
           value={workout.notes}
           onChange={(e) => setField('notes', e.target.value)}
-          placeholder="General notes about this workout..."
+          placeholder={t('notes_placeholder')}
           className="border-border/30 bg-muted text-foreground placeholder:text-muted-foreground/40 focus:border-primary/40 h-24 w-full resize-none rounded-xl border p-3 text-sm focus:outline-none"
         />
       </div>
 
       {/* Tags */}
       <div className="border-border/50 bg-card rounded-2xl border p-4">
-        <p className="text-foreground mb-2 text-sm font-semibold">Tags</p>
+        <p className="text-foreground mb-2 text-sm font-semibold">{t('tags')}</p>
         <div className="flex flex-wrap gap-1.5">
           {[
             'push',
@@ -165,7 +170,7 @@ export function WorkoutBuilder() {
               className="bg-primary text-primary-foreground flex min-h-[44px] items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-medium"
             >
               <Save size={14} />
-              {saved ? 'Saved!' : 'Save'}
+              {saved ? c('saved') : c('save')}
             </button>
             <button
               onClick={() => setShowShare(true)}
@@ -179,13 +184,13 @@ export function WorkoutBuilder() {
               onClick={saveAsTemplate}
               className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
             >
-              <Bookmark size={14} /> Save as Template
+              <Bookmark size={14} /> {t('save_as_template')}
             </button>
             <button
               onClick={duplicate}
               className="bg-muted text-foreground hover:bg-muted/80 flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium"
             >
-              <Copy size={14} /> Duplicate
+              <Copy size={14} /> {t('duplicate')}
             </button>
           </div>
         </div>

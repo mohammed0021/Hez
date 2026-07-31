@@ -26,14 +26,13 @@ import { useThemeStore } from '@/stores/theme-store';
 import { useLocaleStore } from '@/stores/locale-store';
 import type { ThemeId, ThemeMode } from '@/types/theme';
 import type { Locale } from '@/i18n/locales';
-import { THEMES, LANGUAGES } from '@/lib/constants';
+import { THEMES, LANGUAGES, APP_VERSION } from '@/lib/constants';
 import { useSettingsStore, type UnitSystem, type SettingsState } from '@/stores/settings-store';
 import { useProfileStore, VISIBILITY_OPTIONS, type ProfileState } from '@/stores/profile-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { createClient } from '@/lib/supabase-client';
 import Link from 'next/link';
-
-const APP_VERSION = '1.0.0';
+import { useTranslations } from 'next-intl';
 
 type SectionId =
   | 'theme'
@@ -47,25 +46,9 @@ type SectionId =
   | 'help'
   | 'about';
 
-const SECTIONS: {
-  id: SectionId;
-  label: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-}[] = [
-  { id: 'theme', label: 'Theme', icon: Palette },
-  { id: 'language', label: 'Language', icon: Globe },
-  { id: 'units', label: 'Units', icon: Ruler },
-  { id: 'workout', label: 'Workout Preferences', icon: Dumbbell },
-  { id: 'notifications', label: 'Notifications', icon: Bell },
-  { id: 'privacy', label: 'Privacy', icon: Shield },
-  { id: 'export', label: 'Data Export', icon: Download },
-  { id: 'delete', label: 'Account Deletion', icon: Trash2 },
-  { id: 'help', label: 'Help & Support', icon: HelpCircle },
-  { id: 'about', label: 'About Hêz', icon: Info },
-];
-
 export default function SettingsPage() {
   const router = useRouter();
+  const t = useTranslations('settings');
   const { themeId, mode, setThemeId, setMode } = useThemeStore();
   const { setLocale } = useLocaleStore();
   const settings = useSettingsStore();
@@ -75,6 +58,23 @@ export default function SettingsPage() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteText, setDeleteText] = useState('');
   const [exportDone, setExportDone] = useState(false);
+
+  const SECTIONS: {
+    id: SectionId;
+    label: string;
+    icon: React.ComponentType<{ size?: number; className?: string }>;
+  }[] = [
+    { id: 'theme', label: t('theme'), icon: Palette },
+    { id: 'language', label: t('language'), icon: Globe },
+    { id: 'units', label: t('units'), icon: Ruler },
+    { id: 'workout', label: t('workout_preferences'), icon: Dumbbell },
+    { id: 'notifications', label: t('notifications'), icon: Bell },
+    { id: 'privacy', label: t('privacy'), icon: Shield },
+    { id: 'export', label: t('data_export'), icon: Download },
+    { id: 'delete', label: t('account_deletion'), icon: Trash2 },
+    { id: 'help', label: t('help_support'), icon: HelpCircle },
+    { id: 'about', label: t('about'), icon: Info },
+  ];
 
   const toggle = (id: SectionId) => {
     setExpanded((prev) => (prev === id ? null : id));
@@ -133,8 +133,8 @@ export default function SettingsPage() {
 
   return (
     <div className="pb-8">
-      <h2 className="text-foreground text-2xl font-bold">Settings</h2>
-      <p className="text-muted-foreground mt-1 text-sm">Customize your Hêz experience</p>
+      <h2 className="text-foreground text-2xl font-bold">{t('title')}</h2>
+      <p className="text-muted-foreground mt-1 text-sm">{t('subtitle')}</p>
 
       <div className="mt-6 space-y-1">
         {SECTIONS.map((section) => {
@@ -227,39 +227,40 @@ function ThemeSection({
   setThemeId: (id: ThemeId) => void;
   setMode: (mode: ThemeMode) => void;
 }) {
+  const t = useTranslations('settings');
   return (
     <div className="space-y-4">
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Accent Color
+          {t('accent_color')}
         </p>
         <div className="flex flex-wrap gap-3">
-          {THEMES.map((t) => (
+          {THEMES.map((theme) => (
             <button
-              key={t.id}
-              onClick={() => setThemeId(t.id as ThemeId)}
+              key={theme.id}
+              onClick={() => setThemeId(theme.id as ThemeId)}
               className={`relative flex size-10 items-center justify-center rounded-xl transition-all ${
-                themeId === t.id
+                themeId === theme.id
                   ? 'ring-primary ring-offset-background scale-110 ring-2 ring-offset-2'
                   : ''
               }`}
-              style={{ backgroundColor: t.color }}
-              title={t.label}
+              style={{ backgroundColor: theme.color }}
+              title={theme.label}
             >
-              {themeId === t.id && <Check size={14} className="text-white" />}
+              {themeId === theme.id && <Check size={14} className="text-white" />}
             </button>
           ))}
         </div>
       </div>
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Mode
+          {t('mode')}
         </p>
         <div className="flex gap-2">
           {[
-            { value: 'light', icon: Sun, label: 'Light' },
-            { value: 'dark', icon: Moon, label: 'Dark' },
-            { value: 'system', icon: Monitor, label: 'System' },
+            { value: 'light', icon: Sun, label: t('light') },
+            { value: 'dark', icon: Moon, label: t('dark') },
+            { value: 'system', icon: Monitor, label: t('system') },
           ].map((opt) => {
             const OptIcon = opt.icon;
             const isActive = mode === opt.value;
@@ -292,6 +293,7 @@ function LanguageSection({
   current: string;
   onSelect: (code: string) => void;
 }) {
+  const t = useTranslations('settings');
   return (
     <div className="space-y-1">
       {LANGUAGES.map((lang) => (
@@ -308,25 +310,22 @@ function LanguageSection({
           {current === lang.code && <Check size={14} />}
         </button>
       ))}
-      <p className="text-muted-foreground/60 mt-2 text-[10px]">
-        Language changes apply immediately.
-      </p>
+      <p className="text-muted-foreground/60 mt-2 text-[10px]">{t('language_changes')}</p>
     </div>
   );
 }
 
-/* Units */
-const UNIT_SYSTEMS: { value: UnitSystem; label: string }[] = [
-  { value: 'metric', label: 'Metric (kg, cm, ml)' },
-  { value: 'imperial', label: 'Imperial (lbs, ft, oz)' },
-];
-
 function UnitsSection({ settings }: { settings: SettingsState }) {
+  const t = useTranslations('settings');
+  const UNIT_SYSTEMS: { value: UnitSystem; label: string }[] = [
+    { value: 'metric', label: t('metric') },
+    { value: 'imperial', label: t('imperial') },
+  ];
   return (
     <div className="space-y-3">
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          System
+          {t('unit_system')}
         </p>
         <div className="flex gap-2">
           {UNIT_SYSTEMS.map((sys) => (
@@ -346,7 +345,7 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
       </div>
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Weight Unit
+          {t('weight_unit')}
         </p>
         <div className="flex gap-2">
           {(['kg', 'lbs'] as const).map((u) => (
@@ -366,7 +365,7 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
       </div>
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Height Unit
+          {t('height_unit')}
         </p>
         <div className="flex gap-2">
           {(['cm', 'ft_in'] as const).map((u) => (
@@ -379,14 +378,14 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              {u === 'cm' ? 'Centimeters' : 'Feet/Inches'}
+              {u === 'cm' ? t('centimeters') : t('feet_inches')}
             </button>
           ))}
         </div>
       </div>
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Water Unit
+          {t('water_unit')}
         </p>
         <div className="flex gap-2">
           {(['ml', 'oz'] as const).map((u) => (
@@ -399,7 +398,7 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
               }`}
             >
-              {u === 'ml' ? 'Milliliters' : 'Fluid Ounces'}
+              {u === 'ml' ? t('milliliters') : t('fluid_ounces')}
             </button>
           ))}
         </div>
@@ -410,11 +409,12 @@ function UnitsSection({ settings }: { settings: SettingsState }) {
 
 /* Workout Preferences */
 function WorkoutSection({ settings }: { settings: SettingsState }) {
+  const t = useTranslations('settings');
   return (
     <div className="space-y-4">
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Rest Timer Default
+          {t('rest_timer_default')}
         </p>
         <div className="flex gap-2">
           {[30, 60, 90, 120, 180].map((sec) => (
@@ -433,20 +433,20 @@ function WorkoutSection({ settings }: { settings: SettingsState }) {
         </div>
       </div>
       <ToggleRow
-        label="Auto-start Rest Timer"
-        description="Start rest timer automatically after completing a set"
+        label={t('auto_start_rest')}
+        description={t('auto_start_rest_desc')}
         enabled={settings.autoStartRestTimer}
         onChange={(v) => settings.updateSettings({ autoStartRestTimer: v })}
       />
       <ToggleRow
-        label="Sound Effects"
-        description="Play sounds for timer, completion, and alerts"
+        label={t('sound_effects')}
+        description={t('sound_effects_desc')}
         enabled={settings.soundEnabled}
         onChange={(v) => settings.updateSettings({ soundEnabled: v })}
       />
       <ToggleRow
         label="Vibration"
-        description="Vibrate on timer completion and alerts"
+        description={t('vibration_desc')}
         enabled={settings.vibrationEnabled}
         onChange={(v) => settings.updateSettings({ vibrationEnabled: v })}
       />
@@ -456,17 +456,19 @@ function WorkoutSection({ settings }: { settings: SettingsState }) {
 
 /* Notifications Link */
 function NotificationsSection() {
+  const t = useTranslations('settings');
+  const c = useTranslations('common');
   return (
     <Link
       href="/settings/notifications"
       className="bg-muted/50 hover:bg-muted flex items-center justify-between rounded-xl px-4 py-3 transition-colors"
     >
       <div>
-        <p className="text-foreground text-sm font-medium">Notification Preferences</p>
-        <p className="text-muted-foreground text-xs">Push, quiet hours, per-type toggles & more</p>
+        <p className="text-foreground text-sm font-medium">{t('notification_preferences')}</p>
+        <p className="text-muted-foreground text-xs">{t('notification_preferences_desc')}</p>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-primary text-xs font-medium">Open</span>
+        <span className="text-primary text-xs font-medium">{c('open')}</span>
         <ExternalLink size={14} className="text-primary" />
       </div>
     </Link>
@@ -475,11 +477,18 @@ function NotificationsSection() {
 
 /* Privacy */
 function PrivacySection({ profile }: { profile: ProfileState }) {
+  const t = useTranslations('settings');
+  const tp = useTranslations('profile');
+  const visibilityLabels: Record<string, string> = {
+    public: tp('public'),
+    friends: tp('friends'),
+    private: tp('private'),
+  };
   return (
     <div className="space-y-4">
       <div>
         <p className="text-muted-foreground/60 mb-2 text-[10px] font-medium tracking-wider uppercase">
-          Profile Visibility
+          {t('profile_visibility')}
         </p>
         <div className="space-y-1">
           {VISIBILITY_OPTIONS.map((opt) => (
@@ -493,7 +502,7 @@ function PrivacySection({ profile }: { profile: ProfileState }) {
               }`}
             >
               <div>
-                <p className="text-sm">{opt.label}</p>
+                <p className="text-sm">{visibilityLabels[opt.value]}</p>
                 <p className="text-muted-foreground/60 text-[10px]">{opt.description}</p>
               </div>
               {profile.profileVisibility === opt.value && <Check size={14} />}
@@ -503,20 +512,20 @@ function PrivacySection({ profile }: { profile: ProfileState }) {
       </div>
       <div className="space-y-1">
         <ToggleRow
-          label="Show Workout History"
-          description="Display your past workouts on your profile"
+          label={t('show_workout_history')}
+          description={t('show_workout_history_desc')}
           enabled={profile.showWorkoutHistory}
           onChange={(v) => profile.updateProfile({ showWorkoutHistory: v })}
         />
         <ToggleRow
-          label="Show Achievements"
-          description="Display unlocked achievements"
+          label={t('show_achievements')}
+          description={t('show_achievements_desc')}
           enabled={profile.showAchievements}
           onChange={(v) => profile.updateProfile({ showAchievements: v })}
         />
         <ToggleRow
-          label="Show Body Stats"
-          description="Display your body measurements"
+          label={t('show_body_stats')}
+          description={t('show_body_stats_desc')}
           enabled={profile.showBodyStats}
           onChange={(v) => profile.updateProfile({ showBodyStats: v })}
         />
@@ -527,12 +536,10 @@ function PrivacySection({ profile }: { profile: ProfileState }) {
 
 /* Data Export */
 function ExportSection({ onExport, done }: { onExport: () => void; done: boolean }) {
+  const t = useTranslations('settings');
   return (
     <div className="space-y-3">
-      <p className="text-muted-foreground text-sm">
-        Export all your Hêz data as a JSON file. This includes workouts, nutrition logs, body stats,
-        progress photos, and all settings.
-      </p>
+      <p className="text-muted-foreground text-sm">{t('export_desc')}</p>
       <button
         onClick={onExport}
         className={`flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors ${
@@ -542,7 +549,7 @@ function ExportSection({ onExport, done }: { onExport: () => void; done: boolean
         }`}
       >
         <Download size={16} />
-        {done ? 'Exported!' : 'Export My Data'}
+        {done ? t('exported') : t('export_my_data')}
       </button>
     </div>
   );
@@ -562,13 +569,13 @@ function DeleteSection({
   setDeleteText: (v: string) => void;
   onDelete: () => void;
 }) {
+  const t = useTranslations('settings');
+  const c = useTranslations('common');
   return (
     <div className="space-y-3">
       <div className="bg-destructive/10 rounded-xl p-3">
-        <p className="text-destructive text-sm font-medium">Danger Zone</p>
-        <p className="text-muted-foreground mt-1 text-xs">
-          Deleting your account removes all locally stored data. This action cannot be undone.
-        </p>
+        <p className="text-destructive text-sm font-medium">{t('danger_zone')}</p>
+        <p className="text-muted-foreground mt-1 text-xs">{t('delete_desc')}</p>
       </div>
       {!showConfirm ? (
         <button
@@ -576,18 +583,16 @@ function DeleteSection({
           className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-medium transition-colors"
         >
           <Trash2 size={16} />
-          Delete Account
+          {t('delete_account')}
         </button>
       ) : (
         <div className="space-y-2">
-          <p className="text-muted-foreground text-xs">
-            Type <span className="text-destructive font-bold">delete</span> to confirm.
-          </p>
+          <p className="text-muted-foreground text-xs">{t('type_delete', { word: 'delete' })}</p>
           <input
             type="text"
             value={deleteText}
             onChange={(e) => setDeleteText(e.target.value)}
-            placeholder="Type 'delete' to confirm"
+            placeholder={t('type_delete_placeholder')}
             className="border-destructive/50 bg-background text-foreground focus:border-destructive w-full rounded-xl border px-3 py-2 text-sm transition-colors outline-none"
           />
           <div className="flex gap-2">
@@ -598,14 +603,14 @@ function DeleteSection({
               }}
               className="border-border text-muted-foreground hover:bg-muted flex-1 rounded-xl border py-2 text-sm font-medium transition-colors"
             >
-              Cancel
+              {c('cancel')}
             </button>
             <button
               onClick={onDelete}
               disabled={deleteText.toLowerCase() !== 'delete'}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex-1 rounded-xl py-2 text-sm font-medium transition-colors disabled:opacity-50"
             >
-              Delete Everything
+              {t('delete_everything')}
             </button>
           </div>
         </div>
@@ -615,35 +620,36 @@ function DeleteSection({
 }
 
 /* Help & Support */
-const FAQS = [
-  {
-    q: 'How do I start a workout?',
-    a: 'Go to the Workouts tab and tap "Start Workout". You can choose from your templates or create a new one.',
-  },
-  {
-    q: 'How do I track my nutrition?',
-    a: 'Navigate to the Nutrition section to log meals, track macros, and set nutritional goals.',
-  },
-  {
-    q: 'How do I view my progress?',
-    a: 'The Progress section shows your weight trends, body measurements, and workout history.',
-  },
-  {
-    q: 'How do achievements work?',
-    a: 'Achievements are unlocked automatically as you hit milestones. Visit the Gamification section to see all available achievements.',
-  },
-  {
-    q: 'Can I export my data?',
-    a: 'Yes! Go to Settings &gt; Data Export to download all your data as a JSON file.',
-  },
-];
-
 function HelpSection() {
+  const t = useTranslations('settings');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  const FAQS = [
+    {
+      q: t('faq_how_start_workout_q'),
+      a: t('faq_how_start_workout_a'),
+    },
+    {
+      q: 'How do I track my nutrition?',
+      a: 'Navigate to the Nutrition section to log meals, track macros, and set nutritional goals.',
+    },
+    {
+      q: t('faq_track_progress_q'),
+      a: t('faq_track_progress_a'),
+    },
+    {
+      q: t('faq_achievements_q'),
+      a: t('faq_achievements_a'),
+    },
+    {
+      q: t('faq_export_q'),
+      a: t('faq_export_a'),
+    },
+  ];
 
   return (
     <div className="space-y-3">
-      <p className="text-muted-foreground text-sm">Frequently Asked Questions</p>
+      <p className="text-muted-foreground text-sm">{t('faq_title')}</p>
       <div className="space-y-1">
         {FAQS.map((faq, i) => (
           <div key={i} className="border-border overflow-hidden rounded-xl border">
@@ -676,10 +682,13 @@ function HelpSection() {
         ))}
       </div>
       <p className="text-muted-foreground/60 pt-2 text-xs">
-        Need more help? Reach out at{' '}
-        <a href="mailto:support@hez.app" className="text-primary underline">
-          support@hez.app
-        </a>
+        {t.rich('need_more_help', {
+          email: (chunks) => (
+            <a href="mailto:support@hez.app" className="text-primary underline">
+              {chunks}
+            </a>
+          ),
+        })}
       </p>
     </div>
   );
@@ -687,6 +696,7 @@ function HelpSection() {
 
 /* About */
 function AboutSection() {
+  const t = useTranslations('settings');
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-center py-4">
@@ -694,20 +704,14 @@ function AboutSection() {
           H
         </div>
         <p className="text-foreground mt-3 text-lg font-bold">Hêz</p>
-        <p className="text-muted-foreground text-xs">Version {APP_VERSION}</p>
+        <p className="text-muted-foreground text-xs">{t('version', { version: APP_VERSION })}</p>
       </div>
       <div className="text-muted-foreground space-y-2 text-sm">
-        <p>
-          Hêz is a premium fitness tracking app designed to help you build consistency, track
-          progress, and reach your fitness goals. Built with Next.js, TypeScript, and modern web
-          technologies.
-        </p>
-        <p className="text-muted-foreground/60 text-xs">
-          Made with dedication for the fitness community.
-        </p>
+        <p>{t('about_description')}</p>
+        <p className="text-muted-foreground/60 text-xs">{t('made_with_dedication')}</p>
       </div>
       <div className="bg-muted/30 rounded-xl p-3">
-        <p className="text-foreground text-xs font-medium">Tech Stack</p>
+        <p className="text-foreground text-xs font-medium">{t('tech_stack')}</p>
         <div className="mt-1 flex flex-wrap gap-1">
           {['Next.js', 'TypeScript', 'Tailwind CSS', 'Framer Motion', 'Zustand', 'Supabase'].map(
             (tech) => (

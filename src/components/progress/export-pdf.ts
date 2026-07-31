@@ -4,7 +4,10 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { APP_NAME } from '@/lib/constants';
 
-export function exportProgressReport(elementId: string, filename = `${APP_NAME.toLowerCase()}-progress-report.pdf`) {
+export function exportProgressReport(
+  elementId: string,
+  filename = `${APP_NAME.toLowerCase()}-progress-report.pdf`,
+) {
   const element = document.getElementById(elementId);
   if (!element) return;
 
@@ -30,7 +33,7 @@ export function exportProgressReport(elementId: string, filename = `${APP_NAME.t
     let position = 30;
 
     pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= (pageHeight - position);
+    heightLeft -= pageHeight - position;
 
     while (heightLeft > 0) {
       position = -(pageHeight - position) - 10;

@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy, X } from 'lucide-react';
 import { Confetti } from './confetti';
+import { useTranslations } from 'next-intl';
 
 export function PRCelebration({
   exerciseName,
@@ -13,6 +14,7 @@ export function PRCelebration({
   open: boolean;
   onClose: () => void;
 }) {
+  const t = useTranslations('workouts');
   return (
     <AnimatePresence>
       {open && exerciseName && (
@@ -55,7 +57,7 @@ export function PRCelebration({
                 transition={{ delay: 0.3 }}
                 className="mt-4 text-xs font-medium tracking-wider text-green-600 uppercase"
               >
-                New Personal Record!
+                {t('personal_record')}
               </motion.p>
 
               <motion.p

@@ -31,14 +31,14 @@ export function ToastContainer() {
 
   return (
     <>
-      <div className="pointer-events-none fixed inset-x-0 top-4 z-[100] flex flex-col items-center gap-2 safe-top">
+      <div className="safe-top pointer-events-none fixed inset-x-0 top-4 z-[100] flex flex-col items-center gap-2">
         <AnimatePresence mode="popLayout">
           {topToasts.map((toast) => (
             <ToastItem key={toast.id} toast={toast} onDismiss={removeToast} />
           ))}
         </AnimatePresence>
       </div>
-      <div className="pointer-events-none fixed inset-x-0 bottom-20 z-[100] flex flex-col items-center gap-2 safe-bottom">
+      <div className="safe-bottom pointer-events-none fixed inset-x-0 bottom-20 z-[100] flex flex-col items-center gap-2">
         <AnimatePresence mode="popLayout">
           {bottomToasts.map((toast) => (
             <ToastItem key={toast.id} toast={toast} onDismiss={removeToast} />
@@ -69,15 +69,13 @@ function ToastItem({
       )}
     >
       <ToastIcon variant={toast.variant} />
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <p className="text-sm font-medium">{toast.message}</p>
-        {toast.description && (
-          <p className="mt-0.5 text-xs opacity-80">{toast.description}</p>
-        )}
+        {toast.description && <p className="mt-0.5 text-xs opacity-80">{toast.description}</p>}
       </div>
       <button
         onClick={() => onDismiss(toast.id)}
-        className="shrink-0 rounded-full p-0.5 opacity-60 hover:opacity-100 transition-opacity"
+        className="shrink-0 rounded-full p-0.5 opacity-60 transition-opacity hover:opacity-100"
       >
         <X size={16} />
       </button>
