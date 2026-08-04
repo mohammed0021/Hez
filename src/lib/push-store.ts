@@ -20,7 +20,7 @@ function toJSON(row: DBPushSubscription): PushSubscriptionJSON {
 export async function addSubscription(sub: PushSubscriptionJSON, userId?: string): Promise<void> {
   const supabase = await createServerSupabaseClient();
   const row = {
-    user_id: userId || 'anonymous',
+    user_id: userId ?? null,
     endpoint: sub.endpoint,
     keys_p256dh: sub.keys?.p256dh || '',
     keys_auth: sub.keys?.auth || '',

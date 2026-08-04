@@ -188,7 +188,7 @@ export default async function RootLayout({
             })();
           `}
         </Script>
-        <Providers locale={locale} messages={messages}>
+        <Providers messages={messages}>
           <LocaleInit cookieLocale={locale} />
           <PwaProvider>{children}</PwaProvider>
         </Providers>

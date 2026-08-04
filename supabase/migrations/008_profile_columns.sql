@@ -28,3 +28,20 @@ alter table public.profiles
 update public.profiles
 set weight_kg = nullif(weight_kg, 0)
 where weight_kg = 0;
+
+-- 28. PUSH SUBSCRIPTIONS: allow anonymous (unauthenticated) subscriptions
+-- The subscribe API is open (requireAuth:false). Anonymous users get
+-- user_id = NULL; the old FK + RLS blocked their inserts.
+
+alter table public.push_subscriptions
+  alter column user_id drop not null;
+
+alter table public.push_subscriptions
+  drop constraint if exists push_subscriptions_user_id_fkey;
+
+drop policy if exists "Users can create own push subscriptions"
+  on public.push_subscriptions;
+
+create policy "Users can create own push subscriptions"
+  on public.push_subscriptions for insert
+  with check (auth.uid() = user_id or user_id is null);
