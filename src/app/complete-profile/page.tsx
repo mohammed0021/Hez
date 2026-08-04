@@ -67,6 +67,7 @@ export default function CompleteProfilePage() {
             username: data.username,
             bio: data.bio,
             goal: data.goal,
+            onboarding_completed: true,
           })
           .eq('id', user.id);
       }

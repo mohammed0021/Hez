@@ -17,5 +17,8 @@ export default getRequestConfig(async () => {
   return {
     locale,
     messages: messages[locale] ?? messages[defaultLocale]!,
+    // Explicit fixed timezone prevents SSR/client markup mismatches from
+    // differing server/device timezones.
+    timeZone: 'UTC',
   };
 });
