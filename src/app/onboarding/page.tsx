@@ -52,30 +52,36 @@ const slideVariants = {
 
 export default function OnboardingPage() {
   const t = useTranslations('onboarding');
+  const tp = useTranslations('profile');
   const tc = useTranslations('common');
   const router = useRouter();
 
-  const profileStore = useProfileStore();
+  const updateProfile = useProfileStore((s) => s.updateProfile);
+  const completeOnboarding = useProfileStore((s) => s.completeOnboarding);
   const setOnboarded = useAuthStore((s) => s.setOnboarded);
 
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
-  const [displayName, setDisplayName] = useState(profileStore.displayName);
-  const [gender, setGender] = useState<Gender>(profileStore.gender);
-  const [heightCm, setHeightCm] = useState(profileStore.heightCm);
-  const [weightKg, setWeightKg] = useState(profileStore.weightKg);
-  const [primaryGoal, setPrimaryGoal] = useState<FitnessGoal>(profileStore.primaryGoal);
-  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
-    profileStore.experienceLevel,
+  const [displayName, setDisplayName] = useState(() => useProfileStore.getState().displayName);
+  const [gender, setGender] = useState<Gender>(() => useProfileStore.getState().gender);
+  const [heightCm, setHeightCm] = useState(() => useProfileStore.getState().heightCm);
+  const [weightKg, setWeightKg] = useState(() => useProfileStore.getState().weightKg);
+  const [primaryGoal, setPrimaryGoal] = useState<FitnessGoal>(
+    () => useProfileStore.getState().primaryGoal,
   );
-  const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(profileStore.weeklyWorkoutGoal);
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>(
+    () => useProfileStore.getState().experienceLevel,
+  );
+  const [weeklyWorkoutGoal, setWeeklyWorkoutGoal] = useState(
+    () => useProfileStore.getState().weeklyWorkoutGoal,
+  );
 
   const totalSteps = STEP_LABELS.length;
 
   useEffect(() => {
-    profileStore.updateProfile({
+    updateProfile({
       displayName,
       gender,
       heightCm,
@@ -92,7 +98,7 @@ export default function OnboardingPage() {
     primaryGoal,
     experienceLevel,
     weeklyWorkoutGoal,
-    profileStore,
+    updateProfile,
   ]);
 
   const isStepValid = useCallback(() => {
@@ -133,7 +139,7 @@ export default function OnboardingPage() {
   const handleComplete = useCallback(async () => {
     setSubmitting(true);
     try {
-      await profileStore.completeOnboarding({
+      await completeOnboarding({
         displayName,
         gender,
         heightCm,
@@ -156,7 +162,7 @@ export default function OnboardingPage() {
     primaryGoal,
     experienceLevel,
     weeklyWorkoutGoal,
-    profileStore,
+    completeOnboarding,
     setOnboarded,
     router,
   ]);
@@ -238,7 +244,7 @@ export default function OnboardingPage() {
                       }`}
                     >
                       <span className="text-2xl">{opt.value === 'male' ? '♂️' : '♀️'}</span>
-                      <span className="text-base font-medium">{t(opt.value)}</span>
+                      <span className="text-base font-medium">{tp(opt.value)}</span>
                     </button>
                   ))}
                 </div>
@@ -296,7 +302,7 @@ export default function OnboardingPage() {
                                 ? '🏋️'
                                 : '🏃'}
                       </span>
-                      <span className="text-base font-medium">{t(opt.value)}</span>
+                      <span className="text-base font-medium">{tp(opt.value)}</span>
                     </button>
                   ))}
                 </div>
@@ -315,7 +321,7 @@ export default function OnboardingPage() {
                           : 'border-border bg-card text-muted-foreground hover:border-muted-foreground/30 hover:text-foreground'
                       }`}
                     >
-                      <span className="text-base font-medium">{t(opt.value)}</span>
+                      <span className="text-base font-medium">{tp(opt.value)}</span>
                     </button>
                   ))}
                 </div>
