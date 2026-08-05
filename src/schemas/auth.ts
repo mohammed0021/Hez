@@ -42,24 +42,7 @@ export const resetPasswordSchema = z
     path: ['confirmPassword'],
   });
 
-export const completeProfileSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters').max(50),
-  username: z
-    .string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(30)
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-  bio: z.string().max(160, 'Bio must be less than 160 characters').optional(),
-  goal: z.enum(
-    ['lose_weight', 'build_muscle', 'maintain', 'improve_endurance', 'general_fitness'] as const,
-    {
-      message: 'Please select a goal',
-    },
-  ),
-});
-
 export type LoginFormData = z.infer<typeof loginSchema>;
 export type RegisterFormData = z.infer<typeof registerSchema>;
 export type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
-export type CompleteProfileFormData = z.infer<typeof completeProfileSchema>;
