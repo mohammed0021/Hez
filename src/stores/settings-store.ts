@@ -3,7 +3,6 @@ import { persist } from 'zustand/middleware';
 import { createClient } from '@/lib/supabase-client';
 import { useThemeStore } from './theme-store';
 import { useLocaleStore } from './locale-store';
-import type { Locale } from '@/i18n/locales';
 
 export type UnitSystem = 'metric' | 'imperial';
 export type WeightUnit = 'kg' | 'lbs';
@@ -125,14 +124,11 @@ export const useSettingsStore = create<SettingsState>()(
             .single();
           if (settings) {
             set({
-              language: settings.language || 'en',
+              language: useLocaleStore.getState().locale || 'en',
               unitSystem: (settings.measurement_system as UnitSystem) || 'metric',
               defaultRestTimer: settings.rest_timer_default || 90,
               soundEnabled: settings.notifications_enabled ?? true,
             });
-            if (settings.language) {
-              useLocaleStore.getState().setLocale(settings.language as Locale);
-            }
             const themeStore = useThemeStore.getState();
             if (settings.theme_id) themeStore.setThemeId(settings.theme_id as never);
             if (settings.mode) themeStore.setMode(settings.mode as never);
